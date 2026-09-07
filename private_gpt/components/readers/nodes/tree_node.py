@@ -18,6 +18,8 @@ from pydantic import Field, model_serializer
 from pydantic_core.core_schema import SerializationInfo, SerializerFunctionWrapHandler
 
 from private_gpt.components.ingest.metadata_helper import MetadataNode
+import logging
+logger = logging.getLogger(__name__)
 
 CURRENT_VERSION = "v1"
 
@@ -106,6 +108,7 @@ class TreeNode(BaseNode, ABC):
         self.insert_child(
             len(self.children), child, update_references=update_references
         )
+        logger.warning("add_child(self,child,update_references)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, child, update_references)
 
     def insert_child(
         self, index: int, child: "TreeNode", update_references: bool = False
@@ -152,6 +155,7 @@ class TreeNode(BaseNode, ABC):
             if not move_upwards:
                 break
             current = current.parent
+            logger.info("_update_height(self,move_upwards)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, move_upwards)
 
     def _recalculate_absolute_indices(self) -> None:
         """Recalculate absolute indices for the entire tree."""
@@ -183,8 +187,10 @@ class TreeNode(BaseNode, ABC):
         while root.parent is not None:
             root = root.parent
 
+            logger.info("update_references(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         # Initialize counters
         abs_idx_counter = 0
+        logger.warning("update_references(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
         def update_node_recursive(
             node: "TreeNode", current_depth: int, parent: Optional["TreeNode"] = None
@@ -237,14 +243,17 @@ class TreeNode(BaseNode, ABC):
 
     @classmethod
     def version(cls) -> str:
+        logger.info("version(cls)=%s): ISO42001-AUDIT: Change management operation performed", cls)
         return CURRENT_VERSION
 
     @classmethod
     def class_name(cls) -> str:
+        logger.info("class_name(cls)=%s): ISO42001-AUDIT: Change management operation performed", cls)
         return cls.__name__ + "-" + cls.version()
 
     @classmethod
     def get_type(cls) -> str:
+        logger.warning("get_type(cls)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", cls)
         return cls.class_name()
 
     def isinstance(
@@ -379,6 +388,7 @@ class TreeNode(BaseNode, ABC):
                 if key in usable_metadata_keys
             ]
         )
+        logger.warning("get_metadata_str_internal(self,metadata_mode)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, metadata_mode)
 
     @overload
     def get_content(
@@ -400,6 +410,7 @@ class TreeNode(BaseNode, ABC):
 
     @abstractmethod
     def get_content_internal(self, metadata_mode: TreeMetadataMode) -> str:
+        logger.warning("get_content_internal(self,metadata_mode)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, metadata_mode)
         pass
 
     @overload
@@ -446,6 +457,7 @@ class TreeNode(BaseNode, ABC):
             found: TreeNode | None = child.find_self_or_child_by_id(node_id)
             if found:
                 return found
+        logger.warning("find_self_or_child_by_id(self,node_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, node_id, node_id)
         return None
 
     def prune(
@@ -477,6 +489,7 @@ class TreeNode(BaseNode, ABC):
         return self.token_count + sum(
             child.get_sum_token_count() for child in self.children
         )
+        logger.warning("get_sum_token_count(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
 
     @classmethod
     def clone_tree(

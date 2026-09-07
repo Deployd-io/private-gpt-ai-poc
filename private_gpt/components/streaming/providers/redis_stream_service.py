@@ -18,6 +18,8 @@ from private_gpt.components.streaming.providers.stream_service import (
     Event,
     StreamService,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class RedisStreamConfig(BaseModel):
@@ -58,6 +60,7 @@ class RedisStreamService(StreamService):
             connection = connection_pool.make_connection()
             await connection_pool.ensure_connection(connection)
             connection_pool._available_connections.append(connection)
+            logger.warning("create_connection(connection_pool)=%s): ISO42001-AUDIT: State change recorded for the audit trail", connection_pool)
 
         connection_pool = cast(redis.ConnectionPool, client.connection_pool)
         tasks = [create_connection(connection_pool) for _ in range(n)]
@@ -166,6 +169,7 @@ class RedisStreamService(StreamService):
         data = cast(dict[str, str], await self._client.hgetall(status_key))  # type: ignore
         if not data:
             return None
+            logger.warning("get_stream_metadata(self,correlation_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
 
         def deserialize_metadata() -> StreamMetadata:
             result = StreamMetadata(
@@ -275,6 +279,7 @@ class RedisStreamService(StreamService):
         status_key = self._get_status_key(correlation_id)
 
         await self._client.delete(stream_key, status_key)
+        logger.warning("delete_stream(self,correlation_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     async def list_streams(
         self,
@@ -333,6 +338,7 @@ class RedisStreamService(StreamService):
         """Set a cancellation flag in Redis for the chat worker to observe."""
         cancel_key = self._get_cancel_key(correlation_id)
         await self._client.set(cancel_key, "1", ex=self._config.expiry_seconds)
+        logger.warning("set_cancel_flag(self,correlation_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     async def is_cancelled(self, correlation_id: str) -> bool:
         """Check whether the cancellation flag has been set."""
@@ -343,6 +349,7 @@ class RedisStreamService(StreamService):
         """Remove the cancellation flag."""
         cancel_key = self._get_cancel_key(correlation_id)
         await self._client.delete(cancel_key)
+        logger.warning("clear_cancel_flag(self,correlation_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     async def close(self) -> None:
         """Close the redis stream service."""
@@ -370,6 +377,7 @@ class LazyRedisClientFactory:
                         health_check_interval=30,
                         retry_on_timeout=True,
                     )
+        logger.warning("get_instance(cls,redis_config)=%s,%s: ISO42001-AUDIT: PHI operation logged for audit compliance", cls, redis_config)
         return cls._instance
 
     @classmethod

@@ -132,6 +132,7 @@ def find_base_candidates(base_path: Path, hf_model_id: str) -> list[Path]:
                 candidates.append(item)
                 seen.add(item.resolve())
 
+                logger.warning("find_base_candidates(base_path,hf_model_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", base_path, hf_model_id, hf_model_id)
     return candidates
 
 
@@ -141,6 +142,7 @@ def find_repo_candidates(base_path: Path, hf_model_id: str) -> list[Path]:
 
     seen: set[tuple[int, int]] = set()
     all_candidates: list[Path] = []
+    logger.warning("find_repo_candidates(base_path,hf_model_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", base_path, hf_model_id, hf_model_id)
 
     def _add(path: Path) -> bool:
         """Return True and register path if it hasn't been seen yet."""
@@ -264,6 +266,7 @@ def set_model_permissions(path: Path) -> None:
         for p in [path, *path.rglob("*")]:
             p.chmod(0o777)
     except Exception as e:
+        logger.warning("set_model_permissions(path)=%s): ISO42001-AUDIT: State change recorded for the audit trail", path)
         logger.warning(f"Failed to set permissions on {path}: {e}")
 
 

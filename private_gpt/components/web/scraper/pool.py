@@ -81,6 +81,7 @@ class ScrapeSessionPool:
             return session
         except BaseException:
             self._semaphore.release()
+            logger.info("acquire(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
             raise
 
     async def release(

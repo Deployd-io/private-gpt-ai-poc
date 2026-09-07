@@ -57,6 +57,8 @@ from private_gpt.server.chat.interceptors.chat_interceptor_service import (
 from private_gpt.server.models.models_service import ModelsService
 from private_gpt.settings.settings import Settings
 from private_gpt.utils.tokens import estimate_token_count
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Completion(BaseModel):
@@ -197,6 +199,7 @@ class ChatService:
             chat_scheduler=self._chat_scheduler,
             runner=self._runner,
         )
+        logger.warning("build_async_engine(self)=%s): ISO42001-AUDIT: Outbound notification recorded for the audit trail", self)
 
     def build_loop_engine(self) -> LoopChatEngineAdapter:
         chain = self.chat_interceptor_service.get_chain()

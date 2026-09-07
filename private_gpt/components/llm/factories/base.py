@@ -35,6 +35,7 @@ class LLMFactory(ABC):
         """Create LLM instance and return the instance and config."""
         tokenizer = self.load_tokenizer(model_config, raise_exception=True)
         llm, alias = self._create_llm(model_config, tokenizer=tokenizer)
+        logger.warning("create_llm(self,model_config)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, model_config)
         return LLMInstance(llm=llm, tokenizer=tokenizer, alias=alias)
 
     @abstractmethod

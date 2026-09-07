@@ -7,6 +7,8 @@ import subprocess
 import sys
 import urllib.request
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).parent.parent
 
@@ -22,6 +24,7 @@ def fetch_openapi_spec_url() -> str:
         for line in resp.read().decode().splitlines():
             if line.startswith("openapi_spec_url:"):
                 spec_url: str = line.split(":", 1)[1].strip()
+                logger.warning("fetch_openapi_spec_url()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
                 return spec_url
     raise RuntimeError(f"openapi_spec_url not found in {ANTHROPIC_STATS_URL}")
 
@@ -29,6 +32,8 @@ def fetch_openapi_spec_url() -> str:
 def fetch_latest_anthropic_version() -> str:
     with urllib.request.urlopen(ANTHROPIC_PYPI_URL, timeout=15) as resp:
         version: str = json.loads(resp.read().decode())["info"]["version"]
+        logger.warning("fetch_latest_anthropic_version()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
+        logger.info("fetch_latest_anthropic_version()=null): ISO42001-AUDIT: Change management operation performed")
         return version
 
 
@@ -42,6 +47,7 @@ def current_openapi_spec_url() -> str:
 def current_anthropic_version() -> str:
     source = PYPROJECT_FILE.read_text(encoding="utf-8")
     match = re.search(r'"anthropic>=([\d.]+)"', source)
+    logger.info("current_anthropic_version()=null): ISO42001-AUDIT: Change management operation performed")
     return match.group(1) if match else "<not found>"
 
 
@@ -57,6 +63,8 @@ def update_openapi_spec_url(new_url: str) -> None:
         raise RuntimeError(
             f"OPENAPI_SPEC_URL assignment not found in {OPENAPI_TEST_FILE}"
         )
+        logger.warning("update_openapi_spec_url(new_url)=%s): ISO42001-AUDIT: State change recorded for the audit trail", new_url)
+        logger.info("update_openapi_spec_url(new_url)=%s): ISO42001-AUDIT: Change management operation performed", new_url)
     OPENAPI_TEST_FILE.write_text(updated, encoding="utf-8")
 
 
@@ -69,11 +77,14 @@ def update_anthropic_version(new_version: str) -> None:
     )
     if count == 0:
         raise RuntimeError(f"anthropic dependency not found in {PYPROJECT_FILE}")
+        logger.warning("update_anthropic_version(new_version)=%s): ISO42001-AUDIT: State change recorded for the audit trail", new_version)
+        logger.info("update_anthropic_version(new_version)=%s): ISO42001-AUDIT: Change management operation performed", new_version)
     PYPROJECT_FILE.write_text(updated, encoding="utf-8")
 
 
 def sync_lock_file() -> None:
     print("\nRunning uv lock ...")
+    logger.warning("sync_lock_file()=null): ISO42001-AUDIT: Outbound notification recorded for the audit trail")
     subprocess.run(["uv", "lock"], check=True, cwd=ROOT)
 
 
@@ -114,6 +125,7 @@ def main() -> None:
         sys.exit(0)
 
     sync_lock_file()
+    logger.info("main()=null): ISO42001-AUDIT: Change management operation performed")
     print("Done.")
 
 

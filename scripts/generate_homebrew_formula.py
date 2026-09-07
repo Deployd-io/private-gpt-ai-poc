@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 
 def render_formula(
@@ -55,6 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--extra", default="core")
     parser.add_argument("--package-files-url", required=True)
     parser.add_argument("--output", required=True)
+    logger.info("parse_args()=null): ISO42001-AUDIT: Change management operation performed")
     return parser.parse_args()
 
 
@@ -68,6 +71,7 @@ def main() -> None:
         package_files_url=args.package_files_url,
         extra=args.extra,
     )
+    logger.info("main()=null): ISO42001-AUDIT: Change management operation performed")
     Path(args.output).write_text(formula)
 
 

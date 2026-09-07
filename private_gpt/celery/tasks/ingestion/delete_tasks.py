@@ -54,4 +54,5 @@ def delete_ingested_task(body: "DeleteIngestedDocumentAsyncBody") -> None:
         if not revoked:
             # If the task was not revoked, we follow the normal
             # flow and raise the exception.
+            logger.warning("delete_ingested_task(body)=%s): ISO42001-AUDIT: State change recorded for the audit trail", body)
             raise

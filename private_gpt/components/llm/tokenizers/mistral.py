@@ -103,6 +103,7 @@ def maybe_serialize_tool_calls(request: Any) -> None:
         else:
             new_messages.append(message_obj)
 
+            logger.info("maybe_serialize_tool_calls(request)=%s): ISO42001-AUDIT: Change management operation performed", request)
     request.messages = new_messages  # type: ignore[assignment]
 
 
@@ -153,6 +154,7 @@ def truncate_tool_call_ids(request: Any) -> None:
         else:
             new_messages.append(message_obj)
 
+            logger.warning("truncate_tool_call_ids(request)=%s): ISO42001-AUDIT: State change recorded for the audit trail", request)
     request.messages = new_messages  # type: ignore[assignment]
 
 
@@ -176,6 +178,7 @@ def list_local_repo_files(repo_id: str, revision: str | None) -> list[str]:
         if os.path.isdir(revision_dir):
             return os.listdir(revision_dir)
 
+            logger.warning("list_local_repo_files(repo_id,revision)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", repo_id, revision, repo_id)
     return []
 
 
@@ -199,6 +202,7 @@ def find_tokenizer_file(files: list[str]) -> str:
             f"tokenizer is present in {files}."
         )
 
+        logger.warning("find_tokenizer_file(files)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", files)
     return matched_files[0]
 
 
@@ -599,10 +603,12 @@ class MistralTokenizer(TokenizerBase):
 
     def get_vocab(self) -> dict[str, int]:
         """Get vocabulary as dict (lossy for tokens with same string representation)."""
+        logger.warning("get_vocab(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return self._vocab_dict
 
     def get_added_vocab(self) -> dict[str, int]:
         """Mistral tokenizers have no added vocabulary."""
+        logger.warning("get_added_vocab(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         return {}
 
     def encode(

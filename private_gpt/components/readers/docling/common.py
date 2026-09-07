@@ -8,6 +8,8 @@ from private_gpt.components.readers.docling.utils import (
 )
 from private_gpt.components.readers.nodes.image_node import IMAGE_PLACEHOLDER
 from private_gpt.settings.settings import settings
+import logging
+logger = logging.getLogger(__name__)
 
 # Constants
 DEFAULT_IMAGE_PLACEHOLDER = "<!-- image -->"
@@ -37,6 +39,7 @@ def get_ocr_langs() -> list[str] | None:
         case "ocrmac":
             langs = [convert_to_ocrmac_lang(lang) for lang in langs]
         case _:
+            logger.warning("get_ocr_langs()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
             raise ValueError(f"OCR model {settings().docling.ocr_model} not supported")
     return langs
 

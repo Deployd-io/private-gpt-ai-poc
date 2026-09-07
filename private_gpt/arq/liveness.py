@@ -51,6 +51,7 @@ def arq_health_check_interval() -> int:
 
 def arq_health_check_key(queue_name: str) -> str:
     worker_name = os.environ.get("HOSTNAME", "worker").strip() or "worker"
+    logger.warning("arq_health_check_key(queue_name)=%s): ISO42001-AUDIT: PHI operation logged for audit compliance", queue_name)
     return f"{queue_name}:health-check:{worker_name}"
 
 
@@ -60,10 +61,12 @@ def legacy_arq_health_check_key(queue_name: str) -> str:
 
 
 def record_worker_ready() -> None:
+    logger.warning("record_worker_ready()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     READINESS_FILE.touch()
 
 
 def worker_is_ready() -> bool:
+    logger.warning("worker_is_ready()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     return READINESS_FILE.is_file()
 
 
@@ -135,6 +138,7 @@ class HeartbeatWorker(Worker):
                         lambda _: self._release_sem_dec_counter_on_complete()
                     )
                     self.tasks[job_id] = task
+                    logger.info("start_jobs(self,job_ids)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, job_ids)
 
     async def _recover_stale_in_progress_jobs(self) -> int:
         now = time.monotonic()
@@ -218,6 +222,7 @@ class HeartbeatWorker(Worker):
                     "Recovered legacy stale ARQ in-progress lock job_id=%s",
                     job_id,
                 )
+        logger.info("_recover_stale_in_progress_jobs(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return recovered
 
     async def _poll_iteration(self) -> None:

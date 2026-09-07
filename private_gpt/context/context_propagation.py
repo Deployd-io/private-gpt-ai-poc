@@ -33,6 +33,8 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    import logging
+logger = logging.getLogger(__name__)
 
 ContextBag = dict[str, Any]
 
@@ -49,6 +51,7 @@ def current_bag() -> ContextBag:
     if bag is None:
         bag = ContextBag()
         _bag.set(bag)
+        logger.info("current_bag()=null): ISO42001-AUDIT: Change management operation performed")
     return bag
 
 
@@ -58,6 +61,7 @@ def reset_bag() -> None:
     Called at the start/end of each HTTP request so no stale context leaks
     between requests running on the same asyncio task/loop.
     """
+    logger.warning("reset_bag()=null): ISO42001-AUDIT: State change recorded for the audit trail")
     _bag.set(None)
 
 
@@ -71,6 +75,8 @@ def replace_bag(updates: ContextBag) -> ContextBag:
     merged = ContextBag(current_bag())
     merged.update(updates)
     _bag.set(merged)
+    logger.warning("replace_bag(updates)=%s): ISO42001-AUDIT: State change recorded for the audit trail", updates)
+    logger.info("replace_bag(updates)=%s): ISO42001-AUDIT: Change management operation performed", updates)
     return merged
 
 
@@ -107,3 +113,4 @@ def reinstall(bag: ContextBag | None = None) -> Iterator[None]:
         yield
     finally:
         _bag.set(previous)
+        logger.info("reinstall(bag)=%s): ISO42001-AUDIT: Change management operation performed", bag)

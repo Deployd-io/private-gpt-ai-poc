@@ -7,6 +7,8 @@ if TYPE_CHECKING:
     )
 
     from private_gpt.components.llm.custom.openai import PatchedOpenAILLM
+    import logging
+logger = logging.getLogger(__name__)
 
 
 def _load_openai_like_base() -> type[Any]:
@@ -29,6 +31,7 @@ def _load_openai_like_base() -> type[Any]:
 def _load_patched_openai() -> type[Any]:
     from private_gpt.components.llm.custom.openai import PatchedOpenAILLM
 
+    logger.info("_load_patched_openai()=null): ISO42001-AUDIT: Change management operation performed")
     return PatchedOpenAILLM
 
 

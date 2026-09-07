@@ -3,9 +3,12 @@ from sqlalchemy.engine import Connection
 
 from private_gpt.components.migrations.models import Migration
 from private_gpt.components.skills.migrations import SKILL_MIGRATIONS
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _create_schema_migrations_table(connection: Connection) -> None:
+    logger.info("_create_schema_migrations_table(connection)=%s): ISO42001-AUDIT: Change management operation performed", connection)
     connection.execute(
         text(
             """
@@ -22,6 +25,7 @@ def _create_schema_migrations_table(connection: Connection) -> None:
 
 
 def _drop_schema_migrations_table(connection: Connection) -> None:
+    logger.info("_drop_schema_migrations_table(connection)=%s): ISO42001-AUDIT: Change management operation performed", connection)
     connection.execute(text("DROP TABLE IF EXISTS schema_migrations"))
 
 

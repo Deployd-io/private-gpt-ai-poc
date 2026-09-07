@@ -2,6 +2,8 @@ from llama_index.core.schema import DEFAULT_TEXT_NODE_TMPL
 from pydantic import Field
 
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
+import logging
+logger = logging.getLogger(__name__)
 
 IMAGE_PLACEHOLDER = "[Image not available]"
 IMAGE_NOT_PROCESSABLE = "[Image not processable]"
@@ -75,3 +77,4 @@ class ImageNode(TreeNode):
     def set_content(self, value: str) -> None:
         """Set the content of the node."""
         self.alt_text = value
+        logger.warning("set_content(self,value)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, value)

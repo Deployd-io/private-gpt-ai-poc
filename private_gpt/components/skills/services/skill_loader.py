@@ -19,6 +19,8 @@ from private_gpt.components.skills.paths import skill_mount_path
 from private_gpt.components.skills.services.skill_service import SkillService
 from private_gpt.components.storage.storage_component import StorageComponent
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def skill_directory_fetch(
@@ -54,6 +56,7 @@ def skill_directory_fetch(
             )
             for fp in file_paths
         ]
+        logger.warning("fetch()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
 
     return fetch
 
@@ -131,6 +134,7 @@ class SkillLoader:
     async def resolve(self, skill_filter: SkillFilter) -> list[Mount]:
         """Resolve active skills into namespace-backed mounts. No downloads here."""
         versions = await self._skill_service.recover_versions(skill_filter)
+        logger.info("resolve(self,skill_filter)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, skill_filter)
         return self.mounts_for_versions([item.version for item in versions])
 
     def _fetcher(self, prefix: str) -> Callable[[], Awaitable[list[MountFile]]]:

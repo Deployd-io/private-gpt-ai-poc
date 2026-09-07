@@ -12,6 +12,8 @@ from private_gpt.arq.task_registry import get_task_packages
 if TYPE_CHECKING:
     from arq.typing import WorkerCoroutine
     from arq.worker import Function
+    import logging
+logger = logging.getLogger(__name__)
 
 TaskFn = TypeVar("TaskFn", bound=Callable[..., Any])
 
@@ -52,4 +54,5 @@ def autodiscover_registered_tasks(*task_packages: str) -> list[Function]:
     discovered: list[Function] = []
     for package_name in get_task_packages(*task_packages):
         discovered.extend(autodiscover_tasks(package_name))
+        logger.warning("autodiscover_registered_tasks()=null): ISO42001-AUDIT: State change recorded for the audit trail")
     return discovered

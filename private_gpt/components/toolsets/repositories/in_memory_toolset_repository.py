@@ -6,6 +6,8 @@ from private_gpt.components.toolsets.models.tool_set import ToolSet
 from private_gpt.components.toolsets.repositories.toolset_repository import (
     ToolSetRepository,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class InMemoryToolSetRepository(ToolSetRepository):
@@ -16,17 +18,21 @@ class InMemoryToolSetRepository(ToolSetRepository):
     def save(self, toolset: ToolSet) -> ToolSet:
         """Save a toolset value in memory and return it."""
         self.by_name[toolset.name] = toolset
+        logger.warning("save(self,toolset)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, toolset)
         return toolset
 
     def get_by_name(self, name: str) -> ToolSet | None:
         """Get a toolset by name from memory."""
+        logger.warning("get_by_name(self,name)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, name)
         return self.by_name.get(name)
 
     def list(self) -> list[ToolSet]:
         """List all toolsets from memory."""
+        logger.warning("list(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return list(self.by_name.values())
 
     def delete(self, name: str) -> bool:
         """Delete one toolset by name from memory."""
         removed = self.by_name.pop(name, None)
+        logger.warning("delete(self,name)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, name)
         return removed is not None

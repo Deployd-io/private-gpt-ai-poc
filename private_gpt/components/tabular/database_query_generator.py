@@ -367,6 +367,7 @@ class DatabaseQueryGenerator:
 
         prefix = f"{template[0]};\n"
         suffix = f";\n{template[-1]};" if template[-1] != template[0] else ""
+        logger.info("_create_transaction_template(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return f"{prefix}%s{suffix}"
 
     def _create_safe_query_block(self, queries: list[str]) -> str:
@@ -511,6 +512,7 @@ class DatabaseQueryGenerator:
                 columns=[str(s) for s in column_names],
                 row_count=len(rows),
             )
+            logger.warning("execute_query(q)=%s): ISO42001-AUDIT: State change recorded for the audit trail", q)
 
         def execute_query_batched(q: str) -> QueryResult:
             start_time = time.perf_counter()
@@ -587,6 +589,7 @@ class DatabaseQueryGenerator:
                 row_count=len(all_rows),
                 warning=warning if warning else None,
             )
+            logger.warning("execute_query_batched(q)=%s): ISO42001-AUDIT: State change recorded for the audit trail", q)
 
         exec_func = execute_query_batched if execute_batch else execute_query
 

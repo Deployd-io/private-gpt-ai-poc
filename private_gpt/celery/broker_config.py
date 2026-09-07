@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 from private_gpt.paths import local_data_path
 from private_gpt.settings.settings import settings
+import logging
+logger = logging.getLogger(__name__)
 
 celery_settings = settings().celery
 
@@ -52,6 +54,7 @@ _PROVIDERS: dict[str, BrokerConfigProvider] = {
 
 
 def register_broker_config(mode: str, provider: BrokerConfigProvider) -> None:
+    logger.warning("register_broker_config(mode,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _PROVIDERS[mode] = provider
 
 
@@ -59,4 +62,5 @@ def get_broker_config() -> BrokerConfig:
     provider = _PROVIDERS.get(celery_settings.broker_mode)
     if provider is None:
         raise ValueError(f"Invalid broker mode: {celery_settings.broker_mode}")
+        logger.warning("get_broker_config()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     return provider()

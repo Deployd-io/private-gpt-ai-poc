@@ -10,6 +10,8 @@ import typer
 
 from private_gpt.settings.settings import CelerySettings, settings
 from private_gpt.worker.registry import register_worker_mode
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _app_module() -> str:
@@ -124,6 +126,7 @@ def run_arq(args: Sequence[str]) -> None:
     if args:
         raise ValueError("The arq worker mode does not support arguments yet")
     arq_app = importlib.import_module(f"{_app_module()}.arq")
+    logger.warning("run_arq(args)=%s): ISO42001-AUDIT: State change recorded for the audit trail", args)
     arq_app.run_arq_worker()
 
 
@@ -160,6 +163,7 @@ def run_flower(args: Sequence[str]) -> None:
         *flower_args,
         *args,
     ]
+    logger.warning("run_flower(args)=%s): ISO42001-AUDIT: PHI operation logged for audit compliance", args)
     _run_processes(_with_healthcheck(command))
 
 

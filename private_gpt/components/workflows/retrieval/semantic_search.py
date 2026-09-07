@@ -147,6 +147,7 @@ class SemanticSearchWorkflow(Workflow):
             except asyncio.CancelledError as e:
                 if handler:
                     await handler.cancel_run()
+                logger.warning("semantic_search()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
                 raise e
 
         def format_result(

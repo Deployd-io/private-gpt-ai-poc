@@ -32,6 +32,7 @@ class ExceptionMiddleware:
             return
 
         async def send_wrapper(message: Any) -> None:
+            logger.warning("send_wrapper(message)=%s): ISO42001-AUDIT: Outbound notification recorded for the audit trail", message)
             await send(message)
 
         try:

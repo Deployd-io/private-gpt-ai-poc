@@ -16,6 +16,8 @@ from private_gpt.components.web.web_search.models import WebSearchResult
 if TYPE_CHECKING:
     from private_gpt.events.models._content_blocks import WebSearchResultBlock
 from private_gpt.server.ingest.model import IngestedDoc
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Chunk(BaseModel):
@@ -275,6 +277,7 @@ class Website(BaseModel):
     @classmethod
     def from_web_search_result(cls, result: "WebSearchResultBlock") -> "Website":
         """Create a Website from a WebSearchResultBlock event-model instance."""
+        logger.warning("from_web_search_result(cls,result)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", cls, result, result)
         return cls(
             id="website_" + str(uuid.uuid4()),
             object="context.website",

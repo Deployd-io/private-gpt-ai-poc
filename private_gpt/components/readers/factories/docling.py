@@ -3,6 +3,8 @@ from collections.abc import Callable
 from private_gpt.components.llm.llm_component import LLMComponent
 from private_gpt.components.readers.base_reader import IngestionReader
 from private_gpt.components.readers.factories.base import ReaderFactory
+import logging
+logger = logging.getLogger(__name__)
 
 DoclingModeProvider = Callable[["DoclingReaderFactory"], IngestionReader]
 
@@ -26,6 +28,7 @@ _PROVIDERS: dict[str, DoclingModeProvider] = {
 
 
 def register_docling_mode(mode: str, provider: DoclingModeProvider) -> None:
+    logger.warning("register_docling_mode(mode,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _PROVIDERS[mode] = provider
 
 
@@ -37,4 +40,5 @@ class DoclingReaderFactory(ReaderFactory):
         provider = _PROVIDERS.get(docling_settings.mode)
         if provider is None:
             raise ValueError(f"Unknown Docling mode: {docling_settings.mode}")
+            logger.warning("create_reader(self,extension)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, extension)
         return provider(self)

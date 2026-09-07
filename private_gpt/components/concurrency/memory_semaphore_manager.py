@@ -113,6 +113,7 @@ class MemorySemaphoreManager(SemaphoreManager):
             self.queue_key,
             self.max_concurrency,
         )
+        logger.warning("start_processor(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
     async def execute(
         self,

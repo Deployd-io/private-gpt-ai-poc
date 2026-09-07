@@ -3,6 +3,8 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 
 from llama_index.core.utils import iter_batch
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MarkdownHelper:
@@ -91,6 +93,7 @@ class MarkdownHelper:
         if "\n" in processed:
             processed = re.sub(r"([^\n])\n([^\n])", r"\1\n\2", processed)
 
+        logger.info("_sanity_data(markdown)=%s): ISO42001-AUDIT: Change management operation performed", markdown)
         return processed
 
     @staticmethod
@@ -137,6 +140,7 @@ class MarkdownHelper:
             for i, pattern in enumerate(_placeholders):
                 placeholder = f"PATTERN-PLACEHOLDER-{i}"
                 result = result.replace(placeholder, pattern)
+            logger.warning("restore(text)=%s): ISO42001-AUDIT: State change recorded for the audit trail", text)
             return result
 
         return protect, restore

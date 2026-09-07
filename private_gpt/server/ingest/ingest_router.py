@@ -243,6 +243,7 @@ class IngestAsyncBody(BaseCallbackInput):
         self.__dict__.update(state["__dict__"])
         self.__pydantic_fields_set__ = state["__pydantic_fields_set__"]
         self.__pydantic_private__ = state["__pydantic_private__"]
+        logger.info("__setstate__(self,state)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, state)
 
     model_config = {  # noqa: RUF012
         "json_schema_extra": {
@@ -680,6 +681,7 @@ def ingest_content_async(request: Request, body: IngestAsyncBody) -> Task:
             status_code=501,
             detail="Async ingestion is not supported by the configured scheduler",
         ) from exc
+        logger.warning("ingest_content_async(request,body)=%s,%s: ISO42001-AUDIT: Outbound notification recorded for the audit trail", request, body)
     return Task(task_id=task_id)
 
 
@@ -910,6 +912,7 @@ def delete_ingested(request: Request, body: DeleteIngestedDocumentBody) -> None:
     immediate and cannot be undone.
     """
     scheduler = request.state.injector.get(IngestionSchedulerFactory).get()
+    logger.warning("delete_ingested(request,body)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", request, body)
     scheduler.delete(collection=body.collection, artifact=body.artifact)
 
 

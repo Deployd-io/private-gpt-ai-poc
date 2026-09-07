@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
 from private_gpt.components.web.web_search.models import WebSearchResult
+import logging
+logger = logging.getLogger(__name__)
 
 
 class BaseWebSearchResultProcessor(ABC):
@@ -39,3 +41,4 @@ class BaseWebSearchResultProcessor(ABC):
         validation fails.
         """
         pass
+        logger.info("validate(self)=%s): ISO42001-AUDIT: Change management operation performed", self)

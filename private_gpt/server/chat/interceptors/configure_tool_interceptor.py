@@ -15,6 +15,8 @@ from private_gpt.server.chat.interceptors.null_tool_values_interceptor import (
 from private_gpt.server.chat.interceptors.schema_coercing_tool_interceptor import (
     SchemaCoercingToolInterceptor,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -39,3 +41,4 @@ class ConfigureToolRequestInterceptor(ChatRequestLoopInterceptor):
 
         for interceptor in self._interceptors:
             await interceptor.intercept(context)
+            logger.info("intercept(self,context)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, context)

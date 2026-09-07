@@ -1,6 +1,8 @@
 import enum
 
 from llama_index.core.schema import BaseNode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MetadataKeys(enum.StrEnum):
@@ -212,16 +214,19 @@ class MetadataHelper:
             node.excluded_llm_metadata_keys.remove(key)
         if key in node.excluded_embed_metadata_keys:
             node.excluded_embed_metadata_keys.remove(key)
+            logger.warning("remove_metadata(node,key)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", node, key)
 
     ################################
     # Set metadata flags functions #
     ################################
     @staticmethod
     def set_non_citable(node: BaseNode) -> None:
+        logger.warning("set_non_citable(node)=%s): ISO42001-AUDIT: State change recorded for the audit trail", node)
         MetadataHelper._set_flag(node, MetadataFlags.NON_CITABLE.value)
 
     @staticmethod
     def set_non_returnable(node: BaseNode) -> None:
+        logger.warning("set_non_returnable(node)=%s): ISO42001-AUDIT: State change recorded for the audit trail", node)
         MetadataHelper._set_flag(node, MetadataFlags.SKIP_RETURN.value)
 
     @staticmethod

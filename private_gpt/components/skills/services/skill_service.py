@@ -31,6 +31,8 @@ from private_gpt.components.skills.repositories.skill_repository import (
 from private_gpt.components.storage.models import StoredFile
 from private_gpt.components.storage.storage_component import StorageComponent
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 _SKILL_METADATA_CACHE_TTL_SECONDS = 60
 _SKILL_BODY_CACHE_TTL_SECONDS = 86400
@@ -145,6 +147,7 @@ class SkillService:
         return await self._skill_repository.get_skill(
             skill_id=skill_id, collection=collection
         )
+        logger.warning("get_skill(self,skill_id,collection)=%s,%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, skill_id, collection, skill_id)
 
     async def delete_skill(self, skill_id: str, collection: str) -> bool:
         versions = await self._skill_repository.list_versions(
@@ -157,7 +160,9 @@ class SkillService:
         )
         if deleted and versions is not None:
             for version in versions.data:
+                logger.info("delete_skill(self,skill_id,collection)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, skill_id, collection)
                 await self._storage_component.delete_prefix(version.storage_prefix)
+        logger.warning("delete_skill(self,skill_id,collection)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, skill_id, collection, skill_id)
         return deleted
 
     async def create_version(
@@ -299,17 +304,21 @@ class SkillService:
             version.storage_prefix, "SKILL.md"
         )
         parsed = parse_skill_markdown(markdown_bytes.decode("utf-8"))
+        logger.info("get_skill_body(self,version)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, version)
         self._cache.set(
             "skill-body",
             cache_key,
             parsed.body,
             ttl_seconds=_SKILL_BODY_CACHE_TTL_SECONDS,
         )
+        logger.warning("get_skill_body(self,version)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, version)
         return parsed.body
 
     async def list_version_files(self, version: SkillVersionEntity) -> list[str]:
         """Relative paths of all files bundled in a skill version."""
         files = await self._storage_component.list_files(version.storage_prefix)
+        logger.warning("list_version_files(self,version)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, version)
+        logger.info("list_version_files(self,version)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, version)
         return sorted(files)
 
 

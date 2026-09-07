@@ -92,6 +92,7 @@ def _worker_type() -> str | None:
 
 def _configured_queue() -> str | None:
     queue = os.environ.get("PGPT_ARQ_QUEUE", "").strip()
+    logger.info("_configured_queue()=null): ISO42001-AUDIT: Change management operation performed")
     return get_queue_name(queue) if queue else None
 
 
@@ -111,6 +112,7 @@ def validate_worker_route_settings(settings: Settings) -> dict[str, Any] | None:
             expected_queue=expected_queue,
             actual_queue=actual_queue,
         )
+        logger.warning("validate_worker_route_settings(settings)=%s): ISO42001-AUDIT: State change recorded for the audit trail", settings)
     return None
 
 
@@ -271,6 +273,7 @@ async def probe_publisher_route(settings: Settings) -> dict[str, Any] | None:
             publisher_database=route.database,
             worker_database=actual_database,
         )
+        logger.warning("probe_publisher_route(settings)=%s): ISO42001-AUDIT: PHI operation logged for audit compliance", settings)
     return None
 
 
@@ -312,6 +315,7 @@ async def check_health() -> dict[str, Any]:
             pending_jobs=due_jobs.pickable,
         )
 
+        logger.warning("check_health()=null): ISO42001-AUDIT: PHI operation logged for audit compliance")
     return _healthy(
         ongoing=arq_health.ongoing,
         queued=arq_health.queued,

@@ -7,6 +7,8 @@ from urllib.parse import parse_qs, unquote, urlparse
 from sqlalchemy import Engine, create_engine
 
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DatabaseDialect(enum.StrEnum):
@@ -115,4 +117,5 @@ def create_engine_for_connection_string(connection_string: str) -> Engine:
                 build_db2_native_connection_string(connection_string), "", ""
             ),
         )
+        logger.warning("create_engine_for_connection_string(connection_string)=%s): ISO42001-AUDIT: State change recorded for the audit trail", connection_string)
     return create_engine(connection_string)

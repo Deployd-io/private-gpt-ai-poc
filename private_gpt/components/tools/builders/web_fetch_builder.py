@@ -15,6 +15,8 @@ from private_gpt.events.models import (
     ResultContentBlockType,
     WebFetchResultBlock,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -52,6 +54,7 @@ class WebFetchToolBuilder:
                     markdown=result.markdown_content or NO_TOOL_CONTENT,
                 )
             ]
+            logger.warning("run_tool(url)=%s): ISO42001-AUDIT: State change recorded for the audit trail", url)
 
         return ToolSpec.from_defaults(
             name=name,
@@ -74,4 +77,5 @@ class WebFetchToolBuilder:
 
 def rebuild_web_fetch_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(WebFetchToolBuilder)
+    logger.warning("rebuild_web_fetch_tool()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     return builder.build_tool(**cast(Any, kwargs))

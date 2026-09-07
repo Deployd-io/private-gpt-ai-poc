@@ -268,6 +268,7 @@ class SagemakerLLM(CustomLLM):
                             first_token = False
                         text += delta
                         yield CompletionResponse(delta=delta, text=text, raw=data)
+                        logger.warning("get_stream()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
 
         return get_stream()
 

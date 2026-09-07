@@ -51,6 +51,8 @@ from private_gpt.events.models._tool_result_blocks import Renderable
 from private_gpt.server.ingest.uri_loader import load_file_from_uri
 from private_gpt.server.utils.artifact_input import ArtifactType
 from private_gpt.settings.settings import settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def to_camel(string: str) -> str:
@@ -159,6 +161,7 @@ class System(BaseModel):
                 DeprecationWarning,
                 stacklevel=2,
             )
+            logger.info("_warn_use_default_prompt(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return self
 
 
@@ -754,6 +757,7 @@ class MessageInput(BaseModel):
                 if id(msg) not in result_ids:
                     result.append(msg)
                     result_ids.add(id(msg))
+                    logger.warning("add_by_id(msgs)=%s): ISO42001-AUDIT: State change recorded for the audit trail", msgs)
 
         for block in user_blocks:
             if not block:

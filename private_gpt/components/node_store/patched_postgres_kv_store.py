@@ -62,6 +62,7 @@ class PatchedPostgresKVStore(PostgresKVStore):
             )
             session.execute(create_schema_statement)
             session.commit()
+            logger.info("_create_schema_if_not_exists(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
 
     def _create_tables_if_not_exists(self) -> None:
         """Patched version to avoid crash when table already exists.
@@ -85,4 +86,5 @@ class PatchedPostgresKVStore(PostgresKVStore):
                     "Table %s already exists, ignoring error", self.table_name
                 )
                 return
+                logger.info("_create_tables_if_not_exists(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
             raise e

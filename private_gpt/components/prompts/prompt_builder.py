@@ -635,12 +635,14 @@ class PromptBuilderService:
             "chat/guidelines/thinking.j2",
             few_shots=few_shots,
         )
+        logger.warning("create_thinking_guidelines(self,few_shots)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, few_shots)
 
     def create_math_guidelines(self) -> BasePromptTemplate:
         """Create the LaTeX math formatting guidelines prompt."""
         return self.template_service.create_prompt_template(
             "chat/guidelines/math.j2",
         )
+        logger.warning("create_math_guidelines(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
     def seed_tool_instructions(self, tools: list["ToolSpec"]) -> list["ToolSpec"]:
         """Seed tool instructions from Jinja templates for tools that lack them.

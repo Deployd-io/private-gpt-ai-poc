@@ -143,6 +143,7 @@ class FileLock:
             msvcrt.locking(self._fd.fileno(), msvcrt.LK_UNLCK, 1)
         else:
             fcntl.flock(self._fd.fileno(), fcntl.LOCK_UN)
+            logger.info("_release(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
 
     def __enter__(self) -> FileLock:
         logger.info(f"Acquiring lock: {self.lock_file}")
@@ -204,6 +205,7 @@ def get_model_repos() -> list[str]:
     if not raw:
         return []
     repos = [r.strip() for r in raw.split(",") if r.strip()]
+    logger.warning("get_model_repos()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     return repos
 
 

@@ -71,6 +71,7 @@ def auto_resolve_media_blocks(
                 logger.warning(
                     f"Error transforming media blocks: {e}, returning original result"
                 )
+                logger.warning("async_wrapper()=null): ISO42001-AUDIT: Outbound notification recorded for the audit trail")
                 return result
 
         return async_wrapper

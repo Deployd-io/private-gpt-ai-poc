@@ -36,6 +36,7 @@ class PostgresClient:
             connect_args={"options": f"-csearch_path={schema_name}"},
             execution_options={"schema_translate_map": {"app": schema_name}},
         )
+        logger.warning("new_sync_session(self)=%s): ISO42001-AUDIT: Outbound notification recorded for the audit trail", self)
         return sessionmaker(engine)
 
     def new_async_session(self) -> sessionmaker[Session]:
@@ -45,6 +46,7 @@ class PostgresClient:
             connect_args={"server_settings": {"search_path": schema_name}},
             execution_options={"schema_translate_map": {"app": schema_name}},
         )
+        logger.warning("new_async_session(self)=%s): ISO42001-AUDIT: Outbound notification recorded for the audit trail", self)
         return sessionmaker(engine, class_=AsyncSession)  # type: ignore
 
     def close(self) -> None:
@@ -81,6 +83,7 @@ class LazyPostgresFactory:
             with cls._lock:
                 if cls._instance is None:
                     cls._instance = PostgresClient(settings)
+        logger.warning("get_instance(cls,settings)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", cls, settings)
         return cls._instance
 
     @classmethod

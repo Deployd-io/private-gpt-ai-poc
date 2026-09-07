@@ -204,6 +204,7 @@ class IngestService:
 
         # Log the number of ingested documents
         logger.debug("Found count=%s ingested documents", ingested_docs)
+        logger.warning("get_ingested_files(self,collection)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, collection)
 
     def delete(self, collection: str, artifact: str, force: bool = False) -> None:
         """Delete the context of the artifact."""
@@ -227,3 +228,4 @@ class IngestService:
                 raise e
 
         vector_artifact_index.delete()
+        logger.warning("delete(self,collection,artifact,force)=%s,%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, collection, artifact, force)

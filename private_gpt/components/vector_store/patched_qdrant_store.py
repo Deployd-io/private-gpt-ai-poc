@@ -479,6 +479,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
             ids.append(point_id)
             similarities.append(similarity)
 
+        logger.warning("parse_to_query_result(self,response)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, response)
         return VectorStoreQueryResult(nodes=nodes, similarities=similarities, ids=ids)
 
     async def aparse_to_query_result(
@@ -867,6 +868,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
             else None
         )
         batches = list(iter_batch(points, self.batch_size))
+        logger.warning("add(self,nodes)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, nodes)
 
         def upload(batch: list[Any]) -> None:
             self._client.upload_points(
@@ -880,6 +882,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
                 wait=True,
                 shard_key_selector=shard_key_selector,
             )
+            logger.warning("upload(batch)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", batch)
 
         executor = self.executor(max_workers=min(self.parallel, len(batches)))
         if executor is None:
@@ -917,6 +920,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
         queue = asyncio.Queue[list[Any] | None]()
         batches = list(iter_batch(points, self.batch_size))
         num_consumers = min(self.parallel, len(batches))
+        logger.warning("async_add(self,nodes)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, nodes)
 
         async def consumer() -> None:
             while True:
@@ -1164,6 +1168,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
             return VectorStoreQueryResult(nodes=[], similarities=[], ids=[])
 
         parent: VectorStoreQueryResult = self._query(query, **kwargs)
+        logger.warning("query(self,query)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, query)
         return parent
 
     async def _aquery(

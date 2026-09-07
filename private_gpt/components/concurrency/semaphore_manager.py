@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class QueueShutdownError(Exception):
@@ -26,6 +28,7 @@ class SemaphoreManager(ABC):
 
     @abstractmethod
     async def start_processor(self) -> None:
+        logger.warning("start_processor(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         raise NotImplementedError
 
     @abstractmethod

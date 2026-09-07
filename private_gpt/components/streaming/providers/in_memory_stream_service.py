@@ -12,6 +12,8 @@ from private_gpt.components.streaming.providers.stream_service import (
     Event,
     StreamService,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class InMemoryStreamService(StreamService):
@@ -94,6 +96,7 @@ class InMemoryStreamService(StreamService):
     async def get_stream_metadata(self, correlation_id: str) -> StreamMetadata | None:
         """Get stream metadata by correlation ID."""
         async with self._lock:
+            logger.warning("get_stream_metadata(self,correlation_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
             return self._metadata.get(correlation_id)
 
     async def push_event(self, correlation_id: str, event_data: str) -> str:
@@ -207,6 +210,7 @@ class InMemoryStreamService(StreamService):
             del self._event_counters[correlation_id]
             for waiter in self._waiters.pop(correlation_id, set()):
                 waiter.set()
+                logger.warning("delete_stream(self,correlation_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     async def list_streams(
         self,
@@ -241,6 +245,7 @@ class InMemoryStreamService(StreamService):
     async def set_cancel_flag(self, correlation_id: str) -> None:
         """Set a cancellation flag for the stream."""
         self._cancel_flags.add(correlation_id)
+        logger.warning("set_cancel_flag(self,correlation_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     async def is_cancelled(self, correlation_id: str) -> bool:
         """Check whether the cancellation flag has been set."""

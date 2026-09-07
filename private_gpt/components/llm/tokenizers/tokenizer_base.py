@@ -3,6 +3,8 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from io import IOBase
 from typing import Any
+import logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -82,10 +84,12 @@ class TokenizerBase(ABC):
 
     @abstractmethod
     def get_vocab(self) -> dict[str, int]:
+        logger.warning("get_vocab(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         raise NotImplementedError()
 
     @abstractmethod
     def get_added_vocab(self) -> dict[str, int]:
+        logger.warning("get_added_vocab(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         raise NotImplementedError()
 
     @abstractmethod

@@ -4,6 +4,8 @@ from private_gpt.components.web.scraper.base import (
 )
 from private_gpt.components.web.scraper.local import LocalWebScraperProvider
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 _PROVIDERS: dict[str, WebScraperProviderFactory] = {"local": LocalWebScraperProvider}
 
@@ -33,6 +35,7 @@ class WebScraperProviderRegistry:
             )
         provider = provider_factory(self._settings)
         self._providers[name] = provider
+        logger.warning("get_provider(self,name)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, name)
         return provider
 
     async def close_all(self) -> None:

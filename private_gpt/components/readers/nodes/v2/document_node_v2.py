@@ -4,11 +4,14 @@ from typing import Any
 
 from private_gpt.components.readers.nodes import DocumentRootNode, TreeNode
 from private_gpt.components.readers.nodes.partial_node import PartialNode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DocumentRootNodeV2(DocumentRootNode):
     @classmethod
     def version(cls) -> str:
+        logger.info("version(cls)=%s): ISO42001-AUDIT: Change management operation performed", cls)
         return "v2"
 
     def to_tree_serialization(self) -> str:
@@ -34,6 +37,7 @@ class DocumentRootNodeV2(DocumentRootNode):
                     "token_count": node.token_count,
                 },
             }
+            logger.info("serialization(node)=%s): ISO42001-AUDIT: Change management operation performed", node)
 
         flatten_tree = [
             serialization(node) for node in self.flatten() if node.id_ != self.id_

@@ -113,6 +113,7 @@ class EmbeddingComponent:
                 f"Embedding model '{target_model}' not found. Available: {available}"
             )
 
+        logger.warning("get_embed(self,model_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
         return embed
 
     def get_alias(self, model_id: str | None = None) -> str | None:
@@ -120,6 +121,7 @@ class EmbeddingComponent:
         if not target_model:
             return None
         aliases = self.registry.get_aliases(target_model)
+        logger.warning("get_alias(self,model_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
         return aliases.pop() if aliases else None
 
     def get_config(self, model_id: str | None = None) -> EmbeddingModelConfig:
@@ -137,6 +139,7 @@ class EmbeddingComponent:
                 f"Embedding model config '{target_model}' not found. Available: {available}"
             )
 
+        logger.warning("get_config(self,model_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
         return model_config
 
     @property

@@ -6,6 +6,8 @@ from llama_index.core.base.llms.generic_utils import prompt_to_messages
 from llama_index.core.llms import ChatMessage
 from llama_index.core.prompts.base import BasePromptTemplate
 from llama_index.core.types import BaseOutputParser
+import logging
+logger = logging.getLogger(__name__)
 
 
 class RichPromptTemplate(BasePromptTemplate):
@@ -50,6 +52,7 @@ class RichPromptTemplate(BasePromptTemplate):
         prompt.output_parser = output_parser
         self.output_parser = output_parser
 
+        logger.warning("partial_format(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         return prompt
 
     def format(
@@ -79,4 +82,5 @@ class RichPromptTemplate(BasePromptTemplate):
 
     def get_template(self, llm: BaseLLM | None = None) -> str:
         """Return the template string."""
+        logger.warning("get_template(self,llm)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, llm)
         return self._template_source

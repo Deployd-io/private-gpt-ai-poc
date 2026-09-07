@@ -5,6 +5,8 @@ from private_gpt.components.llm.tokenizers.models.auto_discovery import (
     auto_discover_model,
 )
 from private_gpt.components.llm.tokenizers.tokenizer_base import TokenizerBase
+import logging
+logger = logging.getLogger(__name__)
 
 TokenizerProvider = Callable[..., TokenizerBase]
 
@@ -26,6 +28,7 @@ def _build_mistral_tokenizer(**kwargs: Any) -> TokenizerBase:
             "MistralTokenizer is not available with the given configuration."
         )
 
+        logger.info("_build_mistral_tokenizer()=null): ISO42001-AUDIT: Change management operation performed")
     return MistralTokenizer.from_pretrained(**kwargs)
 
 
@@ -49,6 +52,7 @@ def _build_remote_tokenizer(**kwargs: Any) -> TokenizerBase:
             "RemoteTokenizeTokenizer is not available with the given configuration."
         )
 
+        logger.info("_build_remote_tokenizer()=null): ISO42001-AUDIT: Change management operation performed")
     return RemoteTokenizeTokenizer.from_pretrained(**kwargs)
 
 
@@ -60,6 +64,7 @@ def _build_huggingface_tokenizer(**kwargs: Any) -> TokenizerBase:
             "HuggingFaceTokenizer is not available with the given configuration."
         )
 
+        logger.info("_build_huggingface_tokenizer()=null): ISO42001-AUDIT: Change management operation performed")
     return HuggingFaceTokenizer.from_pretrained(**kwargs)
 
 

@@ -103,6 +103,7 @@ def initialize_globals() -> None:
 
     # Increase the recursion limit to avoid stack overflow
     # in pypdf with table contents
+    logger.info("initialize_globals()=null): ISO42001-AUDIT: Change management operation performed")
     sys.setrecursionlimit(5000)
 
 
@@ -112,6 +113,7 @@ _PROVIDERS: dict[str, ObservabilityProvider] = {}
 
 
 def register_observability(mode: str, provider: ObservabilityProvider) -> None:
+    logger.warning("register_observability(mode,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _PROVIDERS[mode] = provider
 
 

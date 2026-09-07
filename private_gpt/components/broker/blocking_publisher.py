@@ -109,11 +109,13 @@ class BlockingPublisher(threading.Thread):
         except Exception as e:
             logger.error(f"Error while closing connection: {e}")
             self._publish_queue.queue.clear()
+            logger.warning("run(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
     def publish(self, exchange: str, routing_key: str, body: bytes) -> None:
         if self.is_running:
             job = PublishJob(exchange, routing_key, body)
             self._publish_queue.put(job)
+            logger.warning("publish(self,exchange,routing_key,body)=%s,%s,%s,%s: ISO42001-AUDIT: Outbound notification recorded for the audit trail", self, exchange, routing_key, body)
 
     def drain(self) -> None:
         """Wait for all queued messages to be published without stopping the thread."""

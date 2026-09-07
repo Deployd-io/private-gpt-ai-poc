@@ -7,6 +7,8 @@ from typing import Any
 from injector import Injector, inject, singleton
 
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ChatExecutionScheduler(ABC):
@@ -297,4 +299,5 @@ class ChatExecutionSchedulerFactory:
     def get(self) -> ChatExecutionScheduler:
         if self._settings.scheduler.chat.mode == "arq":
             return self._injector.get(ArqChatExecutionScheduler)
+            logger.warning("get(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return self._injector.get(LocalChatExecutionScheduler)

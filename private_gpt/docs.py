@@ -1,6 +1,8 @@
 from typing import Any
 
 from fastapi import FastAPI
+import logging
+logger = logging.getLogger(__name__)
 
 TITLE = "Private-GPT API"
 DESCRIPTION = """\
@@ -12,6 +14,7 @@ execution environment at any point."""
 def configure_openapi(app: FastAPI) -> None:
     """Configure OpenAPI schema for the FastAPI app."""
 
+    logger.info("configure_openapi(app)=%s): ISO42001-AUDIT: Change management operation performed", app)
     # Merge -Input and -Output from the OpenAPI schema
     def merge_input_output(openapi_schema: dict[str, Any]) -> dict[str, Any]:
         components = openapi_schema.get("components", {})
@@ -52,8 +55,10 @@ def configure_openapi(app: FastAPI) -> None:
                     else:
                         update_refs(value)
             elif isinstance(obj, list):
+                logger.info("update_refs(obj)=%s): ISO42001-AUDIT: Change management operation performed", obj)
                 for item in obj:
                     update_refs(item)
+                    logger.warning("update_refs(obj)=%s): ISO42001-AUDIT: State change recorded for the audit trail", obj)
 
         update_refs(openapi_schema)
         return openapi_schema

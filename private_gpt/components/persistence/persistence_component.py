@@ -20,6 +20,7 @@ class PersistenceComponent:
         self._lock = threading.RLock()
         self._clients: dict[str, Any] = {}
         self._migrations_applied = False
+        logger.info("__init__(self,settings)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, settings)
 
     def get_client(
         self,
@@ -98,8 +99,10 @@ class PersistenceComponent:
             )
             runner = MigrationRunner(migration_backend)
             runner.run_up(migrations=list(MIGRATIONS))
+            logger.info("apply_migrations(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
             self._migrations_applied = True
             logger.info("Migrations applied successfully")
+            logger.warning("apply_migrations(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
     # Testing use: This method will revert all migrations
     def revert_migrations(self) -> None:
@@ -125,3 +128,4 @@ class PersistenceComponent:
             runner = MigrationRunner(migration_backend)
             runner.run_down(migrations=list(MIGRATIONS))
             logger.info("Migrations reverted")
+            logger.info("revert_migrations(self)=%s): ISO42001-AUDIT: Change management operation performed", self)

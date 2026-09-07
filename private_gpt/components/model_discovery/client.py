@@ -177,10 +177,12 @@ class DiscoveryHttpClient:
 
     def get_json(self, endpoint: str) -> Any | None:
         url = self._url_for(endpoint)
+        logger.warning("get_json(self,endpoint)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, endpoint)
         return self.get_json_url(url)
 
     def get_root_json(self, endpoint: str) -> Any | None:
         url = self._root_url_for(endpoint)
+        logger.warning("get_root_json(self,endpoint)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, endpoint)
         return self.get_json_url(url)
 
     def get_json_url(self, url: str) -> Any | None:
@@ -194,6 +196,7 @@ class DiscoveryHttpClient:
             return response.json()
         except (requests.RequestException, ValueError) as exc:
             logger.debug("Error fetching %s: %s", url, exc)
+            logger.warning("get_json_url(self,url)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, url)
             return None
 
     def get_model_infos(

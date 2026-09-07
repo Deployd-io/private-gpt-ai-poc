@@ -141,6 +141,7 @@ class BaseArtifactIndex(abc.ABC):
         index.summary = ArtifactIndexStatus.INITIALIZED.value
         # TODO take this to the node store component
         index.storage_context.persist(persist_dir=local_data_path / self.collection)
+        logger.warning("delete(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
     def status(self) -> ArtifactIndexStatus:
         """Gets the status of the Index."""

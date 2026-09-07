@@ -27,6 +27,8 @@ from private_gpt.server.chat.interceptors.skills_loop_interceptor import (
     find_skill_filter,
     partition_skill_entries,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -98,6 +100,7 @@ class SkillToolVisibilityInterceptor(ChatRequestLoopInterceptor):
             )
         state.input.context_stack = stack
         context.set_state(state)
+        logger.info("intercept(self,context)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, context)
 
     @staticmethod
     def _with_loaded_names(tool: ToolSpec, loaded_names: list[str]) -> ToolSpec:

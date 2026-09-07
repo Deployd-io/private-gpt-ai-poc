@@ -279,6 +279,7 @@ class StreamReader:
                         break
                     for event in events:
                         yield event
+                        logger.warning("get()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
 
         return get()
 
@@ -378,6 +379,7 @@ class StreamMultiplexer:
 
         if broadcast_to_close is not None:
             broadcast_to_close.close()
+            logger.warning("remove_consumer(self,consumer)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, consumer)
 
     async def _run_worker(self) -> None:
         try:
@@ -453,6 +455,7 @@ class StreamMultiplexer:
 
         except Exception as e:
             logger.error(f"Error processing {correlation_id}: {e}", exc_info=True)
+            logger.info("_process_stream(self,correlation_id)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, correlation_id)
 
     async def _dispatch(
         self,

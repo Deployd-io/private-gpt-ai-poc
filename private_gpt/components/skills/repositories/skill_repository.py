@@ -25,6 +25,8 @@ from private_gpt.components.skills.models.sqlalchemy_models import (
     SkillVersionORM,
 )
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SkillPagination(BaseModel):
@@ -155,11 +157,13 @@ class SQLAlchemySkillRepository(SkillRepository, SQLAlchemyRepositoryBase):
             )
             session.add(version)
             await session.commit()
+            logger.info("create_skill(self,payload)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, payload)
             await session.refresh(skill)
             return _skill_from_orm(
                 skill,
                 latest_version=payload.initial_version.version,
             )
+            logger.warning("create_skill(self,payload)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, payload)
 
     async def get_skill(self, skill_id: str, collection: str) -> SkillEntity | None:
         async with self._session_factory() as session:
@@ -170,11 +174,13 @@ class SQLAlchemySkillRepository(SkillRepository, SQLAlchemyRepositoryBase):
             row = (await session.scalars(query)).first()
             if row is None:
                 return None
+                logger.info("get_skill(self,skill_id,collection)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, skill_id, collection)
             latest = await _latest_version_row_for_skill(session, row.id)
             return _skill_from_orm(
                 row,
                 latest_version=latest.version if latest else None,
             )
+            logger.warning("get_skill(self,skill_id,collection)=%s,%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, skill_id, collection, skill_id)
 
     async def list_skills(
         self, collection: str, pagination: SkillPagination
@@ -220,6 +226,7 @@ class SQLAlchemySkillRepository(SkillRepository, SQLAlchemyRepositoryBase):
                 return False
             await session.delete(row)
             await session.commit()
+            logger.warning("delete_skill(self,skill_id,collection)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, skill_id, collection, skill_id)
             return True
 
     async def create_version(
@@ -432,10 +439,12 @@ def new_skill_id() -> str:
 
 
 def new_skill_version_id() -> str:
+    logger.info("new_skill_version_id()=null): ISO42001-AUDIT: Change management operation performed")
     return f"skillver_{uuid.uuid4().hex}"
 
 
 def new_version_token() -> str:
+    logger.info("new_version_token()=null): ISO42001-AUDIT: Change management operation performed")
     return str(time.time_ns() // 1_000)
 
 

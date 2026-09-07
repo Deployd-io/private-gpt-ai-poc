@@ -4,6 +4,8 @@ from pydantic import Field
 
 from private_gpt.components.readers.nodes import TreeNode
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class FrozenNode(TreeNode):
@@ -40,6 +42,7 @@ class FrozenNode(TreeNode):
         """Set the content of the node."""
         # Nothing to do
         pass
+        logger.warning("set_content(self,value)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, value)
 
     def get_content_internal(
         self, metadata_mode: TreeMetadataMode = TreeMetadataMode.NONE

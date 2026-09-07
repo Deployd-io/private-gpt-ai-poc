@@ -11,7 +11,7 @@ Job graph::
                 ├── COMPLETED → close_chat_job(stop_reason)
                 ├── CONTINUE  → run_iteration(N+1)
                 └── WAITING   → IterationScheduler.on_waiting
-                                    └── (all tools done) → resume("after_tool")
+                └── (all tools done) → resume("after_tool")
                                                                └── run_iteration(N+1)
 """
 
@@ -1214,6 +1214,7 @@ class AsyncChatEngine:
 
         run.state = run.state.model_copy(deep=True)
         run.state.output.status = ChatStatus.CONTINUE
+        logger.info("_run_iteration(self,run,handler)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, run, handler)
 
     # ------------------------------------------------------------------
     # Stream chunk processing (identical logic to ChatLoopEngine)

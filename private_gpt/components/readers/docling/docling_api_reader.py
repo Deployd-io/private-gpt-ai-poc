@@ -132,6 +132,7 @@ class DoclingApiReader(IngestionReader):
             result = result.replace(DEFAULT_IMAGE_PLACEHOLDER, IMAGE_PLACEHOLDER)
 
             # Split pages into contents
+            logger.warning("post_process_content(c)=%s): ISO42001-AUDIT: State change recorded for the audit trail", c)
             return result.split(PAGE_PLACEHOLDER)
 
         content = (

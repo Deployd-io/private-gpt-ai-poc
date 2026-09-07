@@ -5,6 +5,8 @@ from llama_index.core.schema import BaseNode, TransformComponent
 
 from private_gpt.components.ingest.metadata_helper import MetadataFlags
 from private_gpt.components.readers.nodes import SectionNode, TreeNode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MarkNoPrunableNodesTransform(TransformComponent):
@@ -20,6 +22,7 @@ class MarkNoPrunableNodesTransform(TransformComponent):
 
         for child in node.children or []:
             self._update_hidden_elements(child)
+            logger.info("_update_hidden_elements(self,node)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, node)
 
     def __call__(self, nodes: Sequence[BaseNode], **kwargs: Any) -> Sequence[BaseNode]:
         for node in nodes:

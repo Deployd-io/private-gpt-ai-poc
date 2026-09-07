@@ -51,6 +51,7 @@ class HydratingEnvironmentManager:
         return await self._manager.acquire(session_id, mounts, sandbox_env)
 
     def release(self, session_id: str) -> None:
+        logger.info("release(self,session_id)=%s,<redacted>: ISO42001-AUDIT: Change management operation performed", self)
         self._manager.release(session_id)
 
     # ------------------------------------------------------------------

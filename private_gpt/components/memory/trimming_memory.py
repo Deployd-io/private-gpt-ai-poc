@@ -14,6 +14,8 @@ from llama_index.core.storage.chat_store import BaseChatStore, SimpleChatStore
 
 from private_gpt.components.llm.llm_helper import TokenizerFn
 from private_gpt.utils.tokens import async_tokenizer
+import logging
+logger = logging.getLogger(__name__)
 
 DEFAULT_TOKEN_LIMIT_RATIO = 0.75
 DEFAULT_TOKEN_LIMIT = 3000
@@ -101,6 +103,7 @@ class TrimmingMemory(BaseChatStoreMemory):
         if include_system and trim_strategy == TrimStrategy.FIRST:
             raise ValueError("include_system can only be used with 'last' strategy")
 
+        logger.info("validate_memory(cls,values)=%s,%s: ISO42001-AUDIT: Change management operation performed", cls, values)
         return values
 
     @classmethod

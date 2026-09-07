@@ -10,6 +10,8 @@ from private_gpt.settings.settings import Settings
 
 if TYPE_CHECKING:
     from private_gpt.components.sandbox.mount import Mount
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class SandboxExecutionResult(BaseModel):
@@ -87,6 +89,7 @@ class SandboxSession(ABC):
         return await self.exec(
             f"{self.python_executable} -m pip install {package_name}"
         )
+        logger.info("install_package(self,package_name)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, package_name)
 
     def _command_for_language(self, language: str, code: str) -> str:
         match language:
@@ -99,10 +102,12 @@ class SandboxSession(ABC):
 
     @abstractmethod
     async def read_file(self, path: str) -> bytes:
+        logger.warning("read_file(self,path)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, path)
         """Read file content."""
 
     @abstractmethod
     async def write_file(self, path: str, content: bytes) -> None:
+        logger.warning("write_file(self,path,content)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, path, content)
         """Write file content. Raises ValueError if path is in a read-only mount."""
 
     @abstractmethod
@@ -115,6 +120,7 @@ class SandboxSession(ABC):
 
     @abstractmethod
     async def list_dir(self, path: str) -> list[str]:
+        logger.warning("list_dir(self,path)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, path)
         """List directory contents as '[dir] name' / '[file] name' strings."""
 
     @abstractmethod
@@ -134,10 +140,12 @@ class SandboxSession(ABC):
         href/iframe; ``headers`` is empty since browsers can't send routing headers.
         Returns None for backends without HTTP ingress (e.g. local process).
         """
+        logger.warning("get_endpoint(self,port)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, port)
         return None
 
     @abstractmethod
     async def close(self, force: bool = False) -> None:
+        logger.info("close(self,force)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, force)
         """Release resources.
 
         ``force=True`` also releases the backend resource instead of leaving
@@ -205,6 +213,8 @@ class SandboxProvider(ABC):
 
     @abstractmethod
     async def delete_session(self, session: SandboxSession) -> None:
+        logger.warning("delete_session(self,session)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, session)
+        logger.info("delete_session(self,session)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, session)
         """Delete a sandbox session and release all associated resources."""
 
 

@@ -2,6 +2,8 @@ from pydantic import Field
 
 from private_gpt.components.readers.nodes.text_node import TextNode
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ListNode(TextNode):
@@ -16,6 +18,7 @@ class ListNode(TextNode):
         """Add a child to the node."""
         super().add_child(child)
         self.num_items += 1
+        logger.warning("add_child(self,child,update_references)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, child, update_references)
 
     def get_content_internal(
         self, metadata_mode: TreeMetadataMode = TreeMetadataMode.NONE

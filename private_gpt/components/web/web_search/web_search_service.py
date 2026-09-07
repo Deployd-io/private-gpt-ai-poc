@@ -77,6 +77,7 @@ class WebSearchService:
 
         await self._provider.validate()
         await self._processor.validate()
+        logger.info("validate(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
 
     async def close(self) -> None:
         await self._provider.close()

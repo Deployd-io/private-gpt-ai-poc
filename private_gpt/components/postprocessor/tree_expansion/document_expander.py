@@ -20,6 +20,7 @@ class ExpansionResult(Enum):
         return self in [ExpansionResult.CONTINUE]
 
     def is_failure(self) -> bool:
+        logger.info("is_failure(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return self in [ExpansionResult.STOP, ExpansionResult.ROLLBACK]
 
 
@@ -109,6 +110,7 @@ class DocumentTreeExpander:
 
         # Return the IDs of the expanded nodes
         logger.debug(f"Expanded nodes: {self.result_nodes_ids}")
+        logger.info("fill_window(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return self.result_nodes_ids, token_count
 
     def _get_token_count_by_id(self, node_id: str) -> int | None:

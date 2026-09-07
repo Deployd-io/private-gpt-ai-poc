@@ -6,6 +6,8 @@ from pydantic import Field
 from private_gpt.components.ingest.metadata_helper import MetadataFlags
 from private_gpt.components.readers.nodes.image_node import IMAGE_PLACEHOLDER
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
+import logging
+logger = logging.getLogger(__name__)
 
 DEFAULT_TEXT_NODE_TMPL = "{metadata_str}{separator}{content}"
 
@@ -69,6 +71,7 @@ class TextNode(TreeNode):
     def set_content(self, value: str) -> None:
         """Set the content of the node."""
         self.text = value
+        logger.warning("set_content(self,value)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, value)
 
     def prune(
         self,
