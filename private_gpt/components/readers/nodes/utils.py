@@ -16,6 +16,8 @@ from private_gpt.components.readers.nodes.table_node import TableNode, TableRowN
 from private_gpt.components.readers.nodes.text_node import TextNode
 from private_gpt.components.readers.nodes.tree_node import TreeNode
 from private_gpt.components.readers.nodes.v2.document_node_v2 import DocumentRootNodeV2
+import logging
+logger = logging.getLogger(__name__)
 
 
 def dict_to_tree_node(
@@ -88,6 +90,7 @@ def combine_trees(root: TreeNode, *trees: TreeNode) -> TreeNode:
     def update_root_id(node: TreeNode, new_root_id: str) -> None:
         node.root_id = new_root_id
         for child in node.children:
+            logger.warning("update_root_id(node,new_root_id)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", node, new_root_id, new_root_id)
             update_root_id(child, new_root_id)
 
     def combine_trees(root1: TreeNode, root2: TreeNode) -> TreeNode:

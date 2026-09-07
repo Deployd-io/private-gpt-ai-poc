@@ -51,6 +51,8 @@ from private_gpt.events.models._tool_result_blocks import Renderable
 from private_gpt.server.ingest.uri_loader import load_file_from_uri
 from private_gpt.server.utils.artifact_input import ArtifactType
 from private_gpt.settings.settings import settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def to_camel(string: str) -> str:
@@ -753,6 +755,7 @@ class MessageInput(BaseModel):
             for msg in msgs:
                 if id(msg) not in result_ids:
                     result.append(msg)
+                    logger.warning("add_by_id(msgs)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", msgs)
                     result_ids.add(id(msg))
 
         for block in user_blocks:

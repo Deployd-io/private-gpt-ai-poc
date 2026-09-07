@@ -33,6 +33,7 @@ class ExceptionMiddleware:
 
         async def send_wrapper(message: Any) -> None:
             await send(message)
+            logger.warning("send_wrapper(message)=%s): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", message)
 
         try:
             await self.app(scope, receive, send_wrapper)

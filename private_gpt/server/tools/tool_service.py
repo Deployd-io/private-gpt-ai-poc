@@ -81,9 +81,11 @@ class ToolService:
         )
 
     def build_web_fetch_tool(self) -> ToolSpec:
+        logger.warning("build_web_fetch_tool(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self._web_fetch_tool_builder_factory.create().build_tool()
 
     async def build_web_search_tool(self) -> ToolSpec:
+        logger.warning("build_web_search_tool(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return await self._web_search_tool_builder_factory.create().build_tool()
 
     async def semantic_search_tool(

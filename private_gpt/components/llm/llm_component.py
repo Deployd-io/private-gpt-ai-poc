@@ -136,6 +136,7 @@ class LLMComponent:
                 f"Model '{target_model}' not found. Available: {available}"
             )
 
+            logger.warning("get_llm(self,model_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
         return llm_instance.llm
 
     def get_alias(self, model_id: str | None = None) -> str | None:
@@ -143,6 +144,7 @@ class LLMComponent:
         if not target_model:
             return None
         aliases = self.registry.get_aliases(target_model)
+        logger.warning("get_alias(self,model_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
         return aliases.pop() if aliases else None
 
     def get_config(self, model_id: str | None = None) -> LLMModelConfig:
@@ -163,6 +165,7 @@ class LLMComponent:
                 f"Model config '{target_model}' not found. Available: {available}"
             )
 
+            logger.warning("get_config(self,model_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
         return model_config
 
     def get_tokenizer(self, model_id: str | None = None) -> TokenizerBase | None:
@@ -179,6 +182,7 @@ class LLMComponent:
             )
 
         tokenizer = llm_instance.tokenizer
+        logger.warning("get_tokenizer(self,model_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
         return tokenizer
 
     def filter(

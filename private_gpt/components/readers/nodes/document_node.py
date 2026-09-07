@@ -5,6 +5,8 @@ from typing import Any, Self
 
 from private_gpt.components.readers.nodes.partial_node import PartialNode
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DocumentRootNode(TreeNode):
@@ -30,6 +32,7 @@ class DocumentRootNode(TreeNode):
 
     def set_content(self, value: Any) -> None:
         """Set the content of the node."""
+        logger.warning("set_content(self,value)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, value)
         raise NotImplementedError("Cannot set content for DocumentRoot node.")
 
     @property
@@ -141,6 +144,7 @@ class DocumentRootNode(TreeNode):
 
             # Process all children
             node.children = [process_subtree(child) for child in node.children]
+            logger.warning("process_subtree(node)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", node)
             return node
 
         # Process the entire tree starting from root

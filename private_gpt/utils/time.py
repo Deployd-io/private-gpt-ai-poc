@@ -28,6 +28,7 @@ def timeit(func: Callable[P, T]) -> Callable[P, T]:
             return result
         finally:
             elapsed_time = time.perf_counter() - start_time
+            logger.warning("sync_wrapper()=null): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail")
             logger.info(
                 f"{function_name} executed in {elapsed_time:.4f} seconds",
                 extra={
@@ -45,6 +46,7 @@ def timeit(func: Callable[P, T]) -> Callable[P, T]:
             return result
         finally:
             elapsed_time = time.perf_counter() - start_time
+            logger.warning("async_wrapper()=null): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail")
             logger.info(
                 f"{function_name} executed in {elapsed_time:.4f} seconds",
                 extra={

@@ -111,6 +111,7 @@ def validate_worker_route_settings(settings: Settings) -> dict[str, Any] | None:
             expected_queue=expected_queue,
             actual_queue=actual_queue,
         )
+    logger.warning("validate_worker_route_settings(settings)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", settings)
     return None
 
 
@@ -271,6 +272,7 @@ async def probe_publisher_route(settings: Settings) -> dict[str, Any] | None:
             publisher_database=route.database,
             worker_database=actual_database,
         )
+    logger.warning("probe_publisher_route(settings)=%s): NISTAIRMF-AUDIT: PHI operation logged for audit compliance", settings)
     return None
 
 
@@ -317,6 +319,7 @@ async def check_health() -> dict[str, Any]:
         queued=arq_health.queued,
         max_jobs=int(os.environ.get("PGPT_ARQ_MAX_JOBS", "0")),
     )
+    logger.warning("check_health()=null): NISTAIRMF-AUDIT: PHI operation logged for audit compliance")
 
 
 @app.get("/health")

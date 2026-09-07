@@ -10,6 +10,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
     TextLike,
     TokenizedInput,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class RemoteTokenizeTokenizer(AsyncTokenizerBase):
@@ -124,11 +126,13 @@ class RemoteTokenizeTokenizer(AsyncTokenizerBase):
         return TokenizedInput(input_ids=self.encode(str(texts)))
 
     def get_vocab(self) -> dict[str, int]:
+        logger.warning("get_vocab(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         raise NotImplementedError(
             "RemoteTokenizeTokenizer does not expose a local vocabulary"
         )
 
     def get_added_vocab(self) -> dict[str, int]:
+        logger.warning("get_added_vocab(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         return {}
 
     def encode(self, text: str, add_special_tokens: bool | None = None) -> list[int]:

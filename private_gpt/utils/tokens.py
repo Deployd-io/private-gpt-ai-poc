@@ -22,6 +22,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
     TextLike,
     TokenizedInput,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 AsyncTokenizerFn = Callable[..., TokenizedInput | Awaitable[TokenizedInput]]
 FullAsyncTokenizerFn = Callable[..., Awaitable[TokenizedInput]]
@@ -100,6 +102,7 @@ async def estimate_token_count(
                     li_tools.append(tool)
                 elif isinstance(tool, ToolSpec):
                     li_tools.append(tool.to_function_tool())
+                    logger.warning("get_tools()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
         return li_tools if li_tools else None
 
     def to_prompt_or_token_ids() -> str | list[int]:

@@ -63,6 +63,7 @@ class MockSearchProvider(BaseWebSearchProvider):
         return results
 
     def get_rate_limit_info(self) -> dict[str, Any]:
+        logger.warning("get_rate_limit_info(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return {
             "provider": "mock",
             "requests_made": self._requests_count,

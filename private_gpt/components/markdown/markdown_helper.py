@@ -3,6 +3,8 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 
 from llama_index.core.utils import iter_batch
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MarkdownHelper:
@@ -137,6 +139,7 @@ class MarkdownHelper:
             for i, pattern in enumerate(_placeholders):
                 placeholder = f"PATTERN-PLACEHOLDER-{i}"
                 result = result.replace(placeholder, pattern)
+                logger.warning("restore(text)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", text)
             return result
 
         return protect, restore

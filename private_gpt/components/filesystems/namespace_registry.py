@@ -70,6 +70,7 @@ class NamespaceRegistry:
             raise KeyError(
                 f"Unknown namespace '{namespace}'. Available: {sorted(self._namespaces)}"
             )
+            logger.warning("get(self,namespace)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, namespace)
         return self._namespaces[namespace]
 
     def root(self, namespace: str) -> Path:

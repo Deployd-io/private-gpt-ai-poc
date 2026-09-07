@@ -38,6 +38,8 @@ from private_gpt.components.workflows.others.tree_summarize_synthesizer import (
 from private_gpt.utils.concurrency import (
     map_elements_in_parallel,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SummaryQueryEngine(BaseQueryEngine):
@@ -166,6 +168,7 @@ class SummaryQueryEngine(BaseQueryEngine):
                     ):
                         if node:
                             results.append(node)
+                            logger.warning("aprocess_nodes()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
                     return results
 
                 # Run async code in sync context

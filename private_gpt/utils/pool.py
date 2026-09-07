@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 from typing import Any, Generic, TypeVar
+import logging
+logger = logging.getLogger(__name__)
 
 _T = TypeVar("_T", bound=Any)
 
@@ -32,6 +34,7 @@ class SimplePool(ABC, Generic[_T]):
     def create(self) -> _T:
         """Create a new object to be pooled."""
         pass
+        logger.warning("create(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
 
     def destroy(self, obj: _T) -> None:
         """Destroy an object. Override for custom cleanup."""

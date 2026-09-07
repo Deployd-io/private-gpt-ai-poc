@@ -9,6 +9,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
     TokenizerBase,
 )
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 _DEFAULT_TIKTOKEN_ENCODING = "cl100k_base"
 
@@ -122,11 +124,13 @@ class TikTokenTokenizer(TokenizerBase):
         return TokenizedInput(input_ids=self._encoding.encode(str(texts)))
 
     def get_vocab(self) -> dict[str, int]:
+        logger.warning("get_vocab(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         raise NotImplementedError(
             "TikTokenTokenizer does not expose a local vocabulary"
         )
 
     def get_added_vocab(self) -> dict[str, int]:
+        logger.warning("get_added_vocab(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         return {}
 
     def encode(self, text: str, add_special_tokens: bool | None = None) -> list[int]:

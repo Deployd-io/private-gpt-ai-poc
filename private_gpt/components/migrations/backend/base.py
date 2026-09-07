@@ -5,6 +5,8 @@ from private_gpt.components.migrations.models import AppliedMigration
 
 if TYPE_CHECKING:
     from private_gpt.components.migrations.models import Migration
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class MigrationBackend(ABC):
@@ -16,6 +18,7 @@ class MigrationBackend(ABC):
 
     @abstractmethod
     def apply(self, migration: "Migration") -> None: ...
+    logger.warning("apply(self,migration)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, migration)
 
     @abstractmethod
     def revert(self, migration: "Migration") -> None: ...

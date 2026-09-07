@@ -267,6 +267,7 @@ class SagemakerLLM(CustomLLM):
                             delta = delta.lstrip()
                             first_token = False
                         text += delta
+                        logger.warning("get_stream()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
                         yield CompletionResponse(delta=delta, text=text, raw=data)
 
         return get_stream()

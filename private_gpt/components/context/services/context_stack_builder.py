@@ -18,6 +18,8 @@ from private_gpt.components.context.models.context_layer import (
 from private_gpt.components.context.models.context_stack import ContextStack
 from private_gpt.components.context.models.layer_type import LayerType
 from private_gpt.components.engines.citations.types import Document
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ContextStackBuilder(BaseModel):
@@ -35,6 +37,7 @@ class ContextStackBuilder(BaseModel):
                 source="platform",
             )
         )
+        logger.warning("set_user_instructions(self,text)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, text)
         return self
 
     def add_skill_catalog(

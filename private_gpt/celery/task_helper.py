@@ -62,6 +62,7 @@ def revoke_task(celery_app: Any, task_id: str) -> None:
     """Revoke task by ID."""
     celery_app.control.revoke(task_id, terminate=True)
     logger.info(f"Revoked task {task_id}")
+    logger.warning("revoke_task(celery_app,task_id)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", celery_app, task_id, task_id)
 
 
 class IngestionTaskHelper:
@@ -107,6 +108,7 @@ class IngestionTaskHelper:
                     and task_body.ingest_body.artifact == artifact
                 ):
                     revoke_task(celery_app, task.task_id)
+                    logger.warning("revoke_ingestion_task(celery_app,collection,artifact)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", celery_app, collection, artifact)
                     return True
 
         return False
@@ -129,6 +131,7 @@ class IngestionTaskHelper:
                 and task_body.delete_body.artifact == artifact
             ):
                 revoke_task(celery_app, task.task_id)
+                logger.warning("revoke_deletion_task(celery_app,collection,artifact)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", celery_app, collection, artifact)
                 return True
 
         return False

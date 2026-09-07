@@ -4,6 +4,8 @@ from collections.abc import Callable
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 VectorStoreProvider = (
     type["VectorStoreFactory"] | Callable[[Settings, int | None], "VectorStoreFactory"]
@@ -14,6 +16,7 @@ _PROVIDERS: dict[str, VectorStoreProvider] = {}
 
 def register_vector_store(database: str, provider: VectorStoreProvider) -> None:
     _PROVIDERS[database] = provider
+    logger.warning("register_vector_store(database,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", database, provider, provider)
 
 
 class VectorStoreFactory(ABC):
@@ -26,3 +29,4 @@ class VectorStoreFactory(ABC):
 
     @abstractmethod
     def vector_store(self, collection: str) -> BasePydanticVectorStore: ...
+    logger.warning("vector_store(self,collection)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, collection)

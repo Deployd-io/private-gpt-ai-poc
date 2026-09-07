@@ -6,6 +6,8 @@ from typing import Literal
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, model_validator
+import logging
+logger = logging.getLogger(__name__)
 
 AccessMode = Literal["rw", "ro"]
 
@@ -35,6 +37,7 @@ def _fetch_from_uri(
         local_path = (
             Path(urlparse(uri).path) if uri.startswith("file://") else Path(uri)
         )
+        logger.warning("fetch()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
         if local_path.is_dir():
 
             def read_directory() -> list[MountFile]:
@@ -49,6 +52,7 @@ def _fetch_from_uri(
                             permissions=0o444,
                         )
                     )
+                    logger.warning("read_directory()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
                 return files
 
             return await asyncio.to_thread(read_directory)

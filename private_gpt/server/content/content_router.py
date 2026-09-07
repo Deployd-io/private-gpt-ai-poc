@@ -23,6 +23,8 @@ from private_gpt.server.content.content_service import (
 )
 from private_gpt.server.utils.auth import authenticated
 from private_gpt.server.utils.openapi_models import OpenAPIValidationErrorResponse
+import logging
+logger = logging.getLogger(__name__)
 
 NodeTypeName = Literal[
     "ImageNode",
@@ -157,12 +159,14 @@ class ContentFilter(BaseModel):
         """Convert node type names to actual type classes for include filter."""
         if self.include is None:
             return None
+            logger.warning("get_include_types(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return [NODE_TYPE_MAPPING[name] for name in self.include]
 
     def get_exclude_types(self) -> list[type[NodeType]] | None:
         """Convert node type names to actual type classes for exclude filter."""
         if self.exclude is None:
             return None
+        logger.warning("get_exclude_types(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return [NODE_TYPE_MAPPING[name] for name in self.exclude]
 
 

@@ -12,6 +12,8 @@ from pydantic import (
 )
 
 from private_gpt.settings.settings_loader import load_active_settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 class CorsSettings(BaseModel):
@@ -1976,6 +1978,7 @@ class CodeExecutionSettings(BaseModel):
             return [item.strip() for item in value.split(",") if item.strip()]
         if isinstance(value, list):
             return value
+        logger.warning("split_comma_separated_lists(cls,value)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", cls, value)
         raise ValueError("must be a list or comma-separated string")
 
 
@@ -2015,9 +2018,11 @@ class VisionSettings(ReaderSettings):
 
     @property
     def is_enabled(self) -> bool:
+        logger.warning("is_enabled(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         return self.mode != "none"
 
     def get_vision_mode(self, vllm_enabled: bool = False) -> str:
+        logger.warning("get_vision_mode(self,vllm_enabled)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, vllm_enabled)
         return self.mode if vllm_enabled else "none"
 
     @property
@@ -2208,4 +2213,5 @@ def settings() -> Settings:
     """
     from private_gpt.di import get_global_injector
 
+    logger.warning("settings()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
     return get_global_injector().get(Settings)

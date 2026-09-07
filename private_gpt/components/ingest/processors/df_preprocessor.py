@@ -8,6 +8,8 @@ import pandas as pd
 
 if TYPE_CHECKING:
     from pandas import Series
+    import logging
+logger = logging.getLogger(__name__)
 
 
 VALID_DATETIME_FORMATS = [
@@ -269,4 +271,5 @@ class DataFramePreprocessor:
         # Convert columns to string
         df.columns = pd.Index(self._convert_into_str(list(df.columns)))
 
+        logger.warning("preprocess_table(self,df)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, df)
         return df

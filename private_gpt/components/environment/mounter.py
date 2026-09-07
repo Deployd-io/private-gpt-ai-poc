@@ -11,6 +11,8 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from private_gpt.components.environment.layout import SessionMountDef
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class LayoutMounter(ABC):
@@ -34,10 +36,12 @@ class LayoutMounter(ABC):
     @property
     def workspace_target(self) -> str:
         """Canonical working directory: the first writable layout entry."""
+        logger.warning("workspace_target(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return next(m.target for m in self._layout if m.access == "rw")
 
     def ensure_ready(self) -> None:  # noqa: B027 — optional hook, default no-op
         """One-time idempotent setup of backing storage."""
+        logger.warning("ensure_ready(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
 
     @abstractmethod
     def session_volumes(self, session_id: str) -> list[Mount] | None:
@@ -90,6 +94,7 @@ class LocalDirMounter(LayoutMounter):
         self._base.mkdir(parents=True, exist_ok=True)
 
     def uploads_path(self, session_id: str) -> Path:
+        logger.warning("uploads_path(self,session_id)=%s,<redacted>: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, session_id)
         return self._base / "uploads" / session_id
 
     def outputs_path(self, session_id: str) -> Path:

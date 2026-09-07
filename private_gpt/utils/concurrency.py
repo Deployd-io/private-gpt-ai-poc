@@ -44,6 +44,7 @@ async def bounded_concurrent_execute(
                 delay = min_delay + random.random() * (max_delay - min_delay)
                 logger.debug(f"Delaying task by {delay:.2f} seconds")
                 await asyncio.sleep(delay)
+                logger.warning("execute_with_control(coro)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", coro)
             return await coro
 
     try:
@@ -76,6 +77,7 @@ async def map_elements_in_parallel(
 
         async def sem_processor(item: T) -> R:
             async with semaphore:
+                logger.warning("sem_processor(item)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", item)
                 return await processor(item)
 
         async for item in items:

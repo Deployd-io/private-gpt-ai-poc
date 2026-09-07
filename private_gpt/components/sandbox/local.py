@@ -23,6 +23,8 @@ if TYPE_CHECKING:
         SandboxExecOptions,
     )
     from private_gpt.settings.settings import Settings
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class BashExecutorSandbox(SandboxSession):
@@ -71,6 +73,7 @@ class BashExecutorSandbox(SandboxSession):
 
     async def read_file(self, path: str) -> bytes:
         real = self._translator.to_real(path)
+        logger.warning("read_file(self,path)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, path)
         return await anyio.to_thread.run_sync(real.read_bytes)
 
     async def write_file(self, path: str, content: bytes) -> None:
@@ -79,6 +82,7 @@ class BashExecutorSandbox(SandboxSession):
         await anyio.to_thread.run_sync(
             lambda: real.parent.mkdir(parents=True, exist_ok=True)
         )
+        logger.warning("write_file(self,path,content)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, path, content)
         await anyio.to_thread.run_sync(lambda: real.write_bytes(content))
 
     async def path_exists(self, path: str) -> bool:
@@ -97,6 +101,7 @@ class BashExecutorSandbox(SandboxSession):
                 for e in sorted(real.iterdir(), key=lambda e: e.name)
             ]
         )
+        logger.warning("list_dir(self,path)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, path)
         return [f"[dir] {name}" if is_d else f"[file] {name}" for name, is_d in entries]
 
     async def make_dir(
@@ -178,4 +183,5 @@ class LocalSandboxProvider(SandboxProvider):
         if isinstance(session, BashExecutorSandbox):
             await session.close()
         else:
+            logger.warning("delete_session(self,session)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, session)
             raise TypeError("Expected a BashExecutorSandbox session instance.")

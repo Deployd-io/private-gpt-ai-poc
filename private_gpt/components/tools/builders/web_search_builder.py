@@ -15,6 +15,8 @@ from private_gpt.events.models import (
     ResultContentBlockType,
     WebSearchResultBlock,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -46,6 +48,7 @@ class WebSearchToolBuilder:
     ) -> ToolSpec:
         async def validate_search() -> None:
             await self.web_search_service.validate()
+            logger.warning("validate_search()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
 
         async def run_tool(query: str) -> list[ResultContentBlockType]:
             if validate == ToolValidationMode.LAZY:
@@ -54,6 +57,7 @@ class WebSearchToolBuilder:
                 pass
 
             results = await self.web_search_service.search(query, model_id=model_id)
+            logger.warning("run_tool(query)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail")
             return [WebSearchResultBlock.from_web_search_result(r) for r in results]
 
         if validate == ToolValidationMode.EAGER:
@@ -84,4 +88,5 @@ class WebSearchToolBuilder:
 
 async def rebuild_web_search_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(WebSearchToolBuilder)
+    logger.warning("rebuild_web_search_tool()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
     return await builder.build_tool(**cast(Any, kwargs))

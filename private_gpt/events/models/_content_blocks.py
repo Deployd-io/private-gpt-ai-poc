@@ -38,6 +38,8 @@ if TYPE_CHECKING:
     from llama_index.core.schema import NodeWithScore
     from PIL.Image import Image
     from pydantic_core.core_schema import SerializerFunctionWrapHandler
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class DocumentConverter(Protocol):
@@ -81,9 +83,11 @@ class URLSource(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     def get_data(self) -> str:
+        logger.warning("get_data(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self.url
 
     def get_media_type(self) -> str | None:
+        logger.warning("get_media_type(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return None
 
 

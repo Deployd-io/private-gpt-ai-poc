@@ -133,6 +133,7 @@ class EmailContent(BaseModel):
             "cc": [email.address for email in self.cc],
             "bcc": [email.address for email in self.bcc],
         }
+        logger.warning("get_extracted_emails(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
 
 
 class EmailTextReader(TextReader):

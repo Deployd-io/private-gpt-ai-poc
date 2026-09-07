@@ -7,6 +7,8 @@ from private_gpt.components.toolsets.models.tool_set import ToolSet
 from private_gpt.components.toolsets.repositories.toolset_repository import (
     ToolSetRepository,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ToolSetService(BaseModel):
@@ -23,16 +25,20 @@ class ToolSetService(BaseModel):
             raise InvalidToolSetError(
                 f"ToolSet '{toolset.name}' has duplicate tool names"
             )
+            logger.warning("register(self,toolset)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, toolset)
         return self.repository.save(toolset)
 
     def get(self, name: str) -> ToolSet | None:
         """Return one toolset by name when it exists."""
+        logger.warning("get(self,name)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, name)
         return self.repository.get_by_name(name)
 
     def list(self) -> list[ToolSet]:
         """Return all registered toolsets."""
+        logger.warning("list(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self.repository.list()
 
     def delete(self, name: str) -> bool:
         """Delete one toolset by name."""
+        logger.warning("delete(self,name)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, name)
         return self.repository.delete(name)

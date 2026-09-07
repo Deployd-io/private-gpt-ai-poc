@@ -1,6 +1,8 @@
 from private_gpt.components.readers.base_reader import IngestionReader
 from private_gpt.components.readers.factories.base import ReaderFactory
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 
 class HybridPdfReaderFactory(ReaderFactory):
@@ -24,6 +26,7 @@ class HybridPdfReaderFactory(ReaderFactory):
         )
         from private_gpt.components.readers.registry import ReaderRegistry
 
+        logger.warning("create_reader(self,extension)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, extension)
         return HybridPdfReader(
             pdf_inspector_settings=self.settings.pdf_inspector,
             reader_settings=self.settings.transformation.docling,

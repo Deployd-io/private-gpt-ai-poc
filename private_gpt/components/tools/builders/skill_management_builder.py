@@ -19,6 +19,8 @@ from private_gpt.components.tools.tool_names import (
 )
 from private_gpt.di import get_global_injector
 from private_gpt.events.models import ResultContentBlockType, TextBlock
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _ok(data: Any) -> list[ResultContentBlockType]:
@@ -66,6 +68,7 @@ class SkillManagementToolBuilder:
                         payload[
                             "instructions"
                         ] = await self._skill_service.get_skill_body(version)
+                    logger.warning("load_skill(name)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", name)
                     return _ok(payload)
             return _error(f"Skill '{name}' not found in current skill_filter")
 
@@ -93,6 +96,7 @@ class SkillManagementToolBuilder:
         type: str = SKILL_UNLOAD_TOOL_NAME + "_v1",
     ) -> ToolSpec:
         async def unload_skill(name: str) -> list[ResultContentBlockType]:
+            logger.warning("unload_skill(name)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", name)
             return _ok({"name": name, "unloaded": True})
 
         return ToolSpec.from_defaults(

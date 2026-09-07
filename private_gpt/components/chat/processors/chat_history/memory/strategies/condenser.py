@@ -40,6 +40,8 @@ from private_gpt.utils.tokens import (
 
 if TYPE_CHECKING:
     from collections.abc import Coroutine
+    import logging
+logger = logging.getLogger(__name__)
 
 
 MAX_CONDENSE_ITERATIONS = 2
@@ -171,6 +173,7 @@ class CondenserContextMemoryStrategy(BaseMemoryStrategy):
         async def async_chat_generator() -> AsyncIterator[ChatMessage]:
             nonlocal chat_history
             for message in chat_history:
+                logger.warning("async_chat_generator()=null): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail")
                 yield message
 
         async def token_stop_condition(batch: list[ChatMessage]) -> bool:

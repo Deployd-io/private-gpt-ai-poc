@@ -99,6 +99,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 ),
                 values,
             )
+            logger.warning("apply(self,migration)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, migration)
             logger.debug("Migration tracked: version=%s", migration.version)
 
     def revert(self, migration: "Migration") -> None:
@@ -115,6 +116,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 ),
                 {"version": migration.version},
             )
+            logger.warning("revert(self,migration)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, migration)
             logger.debug("Migration untracked: version=%s", migration.version)
 
     def is_applied(self, version: str) -> bool:
@@ -128,6 +130,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 ),
                 {"version": version},
             ).first()
+            logger.warning("is_applied(self,version)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, version)
         return row is not None
 
     def _is_postgres(self) -> bool:

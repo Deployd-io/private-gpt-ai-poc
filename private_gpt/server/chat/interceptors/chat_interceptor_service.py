@@ -72,6 +72,8 @@ from private_gpt.server.chat.interceptors.validator_request_interceptor import (
     ValidatorRequestInterceptor,
 )
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -223,4 +225,5 @@ class ChatInterceptorService:
         Each call produces a fresh clone whose state is isolated from all
         other clones, while the underlying interceptor instances are shared.
         """
+        logger.warning("get_chain(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self._chain.clone()

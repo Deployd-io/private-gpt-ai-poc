@@ -16,6 +16,8 @@ from private_gpt.components.web.web_search.models import WebSearchResult
 if TYPE_CHECKING:
     from private_gpt.events.models._content_blocks import WebSearchResultBlock
 from private_gpt.server.ingest.model import IngestedDoc
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Chunk(BaseModel):
@@ -284,6 +286,7 @@ class Website(BaseModel):
             description=result.description,
             content=result.content,
         )
+        logger.warning("from_web_search_result(cls,result)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", cls, result, result)
 
 
 SourceType = Chunk | Website

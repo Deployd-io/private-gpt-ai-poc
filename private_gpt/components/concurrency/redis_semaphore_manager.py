@@ -189,6 +189,7 @@ class RedisSemaphoreManager(SemaphoreManager):
         self._shutdown.clear()
 
         self._worker = asyncio.create_task(self._worker_loop())
+        logger.warning("start_processor(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         logger.info(
             "Started worker for queue %s (semaphore max=%d)",
             self.queue_key,

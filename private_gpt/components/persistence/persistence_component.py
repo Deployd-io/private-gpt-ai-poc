@@ -99,6 +99,7 @@ class PersistenceComponent:
             runner = MigrationRunner(migration_backend)
             runner.run_up(migrations=list(MIGRATIONS))
             self._migrations_applied = True
+            logger.warning("apply_migrations(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
             logger.info("Migrations applied successfully")
 
     # Testing use: This method will revert all migrations

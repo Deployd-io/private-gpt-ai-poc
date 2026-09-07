@@ -23,6 +23,8 @@ from private_gpt.di import (
     get_global_injector,
     set_global_injector,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 logger = get_task_logger(__name__)
 logger.setLevel("DEBUG")
@@ -67,6 +69,7 @@ class RedisFailureRetryTracker:
         key = self._get_key(task_id)
         backend = current_app.backend
         assert isinstance(backend, RedisBackend)
+        logger.warning("get(self,task_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, task_id, task_id)
         return int(backend.client.get(key) or 0)
 
     def increment(self, task_id: str) -> int:
@@ -99,6 +102,7 @@ class RedisFailureRetryTracker:
         key = self._get_key(task_id)
         backend = current_app.backend
         assert isinstance(backend, RedisBackend)
+        logger.warning("cleanup(self,task_id)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", self, task_id, task_id)
         backend.delete(key)
 
     def _get_key(self, task_id: str) -> str:
@@ -115,6 +119,7 @@ def create_failure_retry_tracker() -> RedisFailureRetryTracker | None:
         "redis": RedisFailureRetryTracker,
     }
     provider = providers.get(celery_settings.backend_mode)
+    logger.warning("create_failure_retry_tracker()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
     return provider() if provider else None
 
 
@@ -149,6 +154,7 @@ class _BackgroundTask(Task):
 
     def get_task_id(self) -> str | None:
         """Get current task ID if available."""
+        logger.warning("get_task_id(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self.request.id if hasattr(self, "request") else None
 
     def is_controlled_retry(self) -> bool:
@@ -157,11 +163,13 @@ class _BackgroundTask(Task):
 
     def get_controlled_retry_count(self) -> int:
         """Get number of controlled retries."""
+        logger.warning("get_controlled_retry_count(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return getattr(self.request, "retries", 0)
 
     def get_failure_retry_count(self) -> int:
         """Get number of failure retries."""
         task_id = self.get_task_id()
+        logger.warning("get_failure_retry_count(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return (
             self._retry_tracker.get(task_id) if self._retry_tracker and task_id else 1
         )
@@ -332,6 +340,7 @@ class StatefulBackgroundTask(_BackgroundTask):
         cls._thread = None
         cls._lock = threading.RLock()
         cls._warmed = False
+        logger.warning("reset_after_fork(cls)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", cls)
         discard_inherited_injectors(inherited_loop)
 
     @classmethod
@@ -346,6 +355,7 @@ class StatefulBackgroundTask(_BackgroundTask):
 
             def run_loop() -> None:
                 asyncio.set_event_loop(loop)
+                logger.warning("run_loop()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
                 loop.run_forever()
 
             thread = threading.Thread(
@@ -363,6 +373,7 @@ class StatefulBackgroundTask(_BackgroundTask):
     def run_coroutine(cls, coro: Any) -> Any:
         loop = cls._ensure_runtime()
         future = asyncio.run_coroutine_threadsafe(coro, loop)
+        logger.warning("run_coroutine(cls,coro)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", cls, coro)
         return future.result()
 
     @classmethod
@@ -441,6 +452,7 @@ class StatefulBackgroundTask(_BackgroundTask):
 
         with contextlib.suppress(RuntimeError):
             loop.close()
+            logger.warning("shutdown_runtime(cls)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", cls)
         logger.info("%s runtime shut down", cls.__name__)
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:

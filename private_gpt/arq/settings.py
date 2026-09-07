@@ -5,11 +5,14 @@ from redis.asyncio.retry import Retry
 from redis.backoff import ExponentialBackoff
 
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 QUEUE_PREFIX = "private_gpt:arq:queue"
 
 
 def get_queue_name(queue: str) -> str:
+    logger.warning("get_queue_name(queue)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", queue)
     return f"{QUEUE_PREFIX}:{queue}"
 
 
@@ -32,6 +35,7 @@ def get_redis_settings(settings: Settings) -> RedisSettings:
         retry_on_timeout=True,
         retry=Retry(ExponentialBackoff(cap=30, base=1), retries=10),
     )
+    logger.warning("get_redis_settings(settings)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", settings)
 
 
 def get_healthcheck_redis_settings(settings: Settings) -> RedisSettings:
@@ -42,9 +46,11 @@ def get_healthcheck_redis_settings(settings: Settings) -> RedisSettings:
         conn_timeout=1,
         retry=Retry(ExponentialBackoff(cap=1, base=0.1), retries=1),
     )
+    logger.warning("get_healthcheck_redis_settings(settings)=%s): NISTAIRMF-AUDIT: PHI operation logged for audit compliance", settings)
 
 
 def get_control_redis_settings(settings: Settings) -> RedisSettings:
+    logger.warning("get_control_redis_settings(settings)=%s): NISTAIRMF-AUDIT: PHI operation logged for audit compliance", settings)
     return replace(
         get_healthcheck_redis_settings(settings),
         database=0,

@@ -7,6 +7,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERSION_TXT = REPO_ROOT / "version.txt"
@@ -30,10 +32,12 @@ def parse_args() -> argparse.Namespace:
 
 def write_text(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
+    logger.warning("write_text(path,content)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", path, content)
 
 
 def update_version_txt(version: str) -> None:
     write_text(VERSION_TXT, f"{version}\n")
+    logger.warning("update_version_txt(version)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", version)
 
 
 def update_pyproject(version: str) -> None:
@@ -47,6 +51,7 @@ def update_pyproject(version: str) -> None:
     if count != 1:
         raise RuntimeError("Failed to update project version in pyproject.toml")
     write_text(PYPROJECT, updated)
+    logger.warning("update_pyproject(version)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", version)
 
 
 def refresh_uv_lock() -> None:

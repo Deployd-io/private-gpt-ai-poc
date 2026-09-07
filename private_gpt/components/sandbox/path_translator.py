@@ -7,6 +7,8 @@ from private_gpt.components.sandbox.mount import Mount
 
 if TYPE_CHECKING:
     from pathlib import Path
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class PathTranslator:
@@ -49,11 +51,13 @@ class PathTranslator:
             )
         )
         self._mounts.sort(key=lambda m: len(m.target), reverse=True)
+        logger.warning("register(self,canonical,host_path,writable)=%s,%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, canonical, host_path, writable)
         self._rebuild_regex()
 
     def unregister(self, canonical: str) -> None:
         """Remove a mount mapping and rebuild the internal regex."""
         self._mounts = [m for m in self._mounts if m.target != canonical]
+        logger.warning("unregister(self,canonical)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, canonical)
         self._rebuild_regex()
 
     # ------------------------------------------------------------------
@@ -103,6 +107,7 @@ class PathTranslator:
     def rewrite_command(self, command: str) -> str:
         """Replace all canonical path prefixes in a command string with real paths."""
         if not self._mounts:
+            logger.warning("rewrite_command(self,command)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, command)
             return command
 
         def _replace(match: re.Match[str]) -> str:

@@ -50,6 +50,7 @@ def clean_traceback_string(tb_string: str) -> str:
 
 
 def get_clean_exception_info(exc: Exception) -> str:
+    logger.warning("get_clean_exception_info(exc)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", exc)
     return f"{type(exc).__name__}: {clean_exception_text(str(exc))}"
 
 

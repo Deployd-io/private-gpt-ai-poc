@@ -13,6 +13,8 @@ from private_gpt.events.models._deltas import ContentBlockDeltaType
 from private_gpt.events.models._errors import FatalError
 from private_gpt.events.models._message import Message, MessageOutputDelta, Usage
 from private_gpt.events.models._tool_result_blocks import ContentBlockType
+import logging
+logger = logging.getLogger(__name__)
 
 
 class RawContentBlockStartEvent(BaseContentBlock, StandardContentProtocol):
@@ -113,6 +115,7 @@ class RawMessageDeltaEvent(BaseContentBlock, StandardContentProtocol):
 
     def update(self, delta: RawContentBlockDeltaEvent) -> None:
         pass
+        logger.warning("update(self,delta)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, delta)
 
 
 class RawMessageStopEvent(BaseContentBlock, StandardContentProtocol):
