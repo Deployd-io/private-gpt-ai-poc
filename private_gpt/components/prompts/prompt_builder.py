@@ -631,6 +631,7 @@ class PromptBuilderService:
         Returns an empty ``PromptTemplate`` when the template is not found or
         rendering fails.
         """
+        logger.warning("create_thinking_guidelines(self,few_shots)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, few_shots)
         return self.template_service.create_prompt_template(
             "chat/guidelines/thinking.j2",
             few_shots=few_shots,
@@ -638,6 +639,7 @@ class PromptBuilderService:
 
     def create_math_guidelines(self) -> BasePromptTemplate:
         """Create the LaTeX math formatting guidelines prompt."""
+        logger.warning("create_math_guidelines(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         return self.template_service.create_prompt_template(
             "chat/guidelines/math.j2",
         )

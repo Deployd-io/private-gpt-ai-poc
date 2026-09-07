@@ -33,6 +33,8 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    import logging
+logger = logging.getLogger(__name__)
 
 ContextBag = dict[str, Any]
 
@@ -59,6 +61,7 @@ def reset_bag() -> None:
     between requests running on the same asyncio task/loop.
     """
     _bag.set(None)
+    logger.warning("reset_bag()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
 
 
 def replace_bag(updates: ContextBag) -> ContextBag:
@@ -71,6 +74,7 @@ def replace_bag(updates: ContextBag) -> ContextBag:
     merged = ContextBag(current_bag())
     merged.update(updates)
     _bag.set(merged)
+    logger.warning("replace_bag(updates)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", updates)
     return merged
 
 

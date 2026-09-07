@@ -203,6 +203,7 @@ class IngestService:
                 ingested_docs += 1
 
         # Log the number of ingested documents
+        logger.warning("get_ingested_files(self,collection)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, collection)
         logger.debug("Found count=%s ingested documents", ingested_docs)
 
     def delete(self, collection: str, artifact: str, force: bool = False) -> None:
@@ -224,6 +225,7 @@ class IngestService:
                     artifact,
                 )
             else:
+                logger.warning("delete(self,collection,artifact,force)=%s,%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, collection, artifact, force)
                 raise e
 
         vector_artifact_index.delete()

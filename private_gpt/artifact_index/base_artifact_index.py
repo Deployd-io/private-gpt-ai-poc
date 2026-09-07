@@ -140,6 +140,7 @@ class BaseArtifactIndex(abc.ABC):
         # Revert status to initialized
         index.summary = ArtifactIndexStatus.INITIALIZED.value
         # TODO take this to the node store component
+        logger.warning("delete(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         index.storage_context.persist(persist_dir=local_data_path / self.collection)
 
     def status(self) -> ArtifactIndexStatus:

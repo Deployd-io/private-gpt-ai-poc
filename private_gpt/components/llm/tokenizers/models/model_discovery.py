@@ -204,6 +204,7 @@ def get_model_repos() -> list[str]:
     if not raw:
         return []
     repos = [r.strip() for r in raw.split(",") if r.strip()]
+    logger.warning("get_model_repos()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
     return repos
 
 

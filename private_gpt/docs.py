@@ -1,6 +1,8 @@
 from typing import Any
 
 from fastapi import FastAPI
+import logging
+logger = logging.getLogger(__name__)
 
 TITLE = "Private-GPT API"
 DESCRIPTION = """\
@@ -53,6 +55,7 @@ def configure_openapi(app: FastAPI) -> None:
                         update_refs(value)
             elif isinstance(obj, list):
                 for item in obj:
+                    logger.warning("update_refs(obj)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", obj)
                     update_refs(item)
 
         update_refs(openapi_schema)

@@ -1,6 +1,8 @@
 from private_gpt.components.readers.base_reader import IngestionReader
 from private_gpt.components.readers.factories.base import ReaderFactory
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 
 class PdfInspectorReaderFactory(ReaderFactory):
@@ -19,4 +21,5 @@ class PdfInspectorReaderFactory(ReaderFactory):
                 )
             ) from e
 
+            logger.warning("create_reader(self,extension)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, extension)
         return PdfInspectorReader()

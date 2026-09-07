@@ -55,6 +55,7 @@ class ScrapeBatcher:
                 self._flush_locked()
             elif self._window is None:
                 self._window = asyncio.create_task(self._close_window())
+                logger.warning("submit(self,url,timeout_seconds)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, url, timeout_seconds)
         return await future
 
     def _flush_locked(self) -> None:

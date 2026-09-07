@@ -13,6 +13,8 @@ from private_gpt.components.ingest.processors.df_preprocessor import (
 )
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
 from private_gpt.utils.dataframe import df_to_minimal_markdown
+import logging
+logger = logging.getLogger(__name__)
 
 
 def format_datetime_value(value: Any) -> Any:
@@ -203,6 +205,7 @@ class TableRowNode(TreeNode):
 
         # Store content
         self.header = value.header
+        logger.warning("set_content(self,value)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, value)
         self.content = value.content
 
     def is_first_row(self) -> bool:
@@ -374,4 +377,5 @@ class TableNode(TreeNode, arbitrary_types_allowed=True):
             raise ValueError(
                 f"Row length mismatch: {len(row)} != {len(self.df.columns)}"
             )
+            logger.warning("add_row(self,row)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, row)
         self.df.loc[len(self.df)] = row

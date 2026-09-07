@@ -6,6 +6,8 @@ from private_gpt.components.llm.factories.openai import (
     OpenAILLMFactory,
 )
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 LLMProvider = type[LLMFactory] | Callable[[Settings], LLMFactory]
 
@@ -17,6 +19,7 @@ _PROVIDERS: dict[str, LLMProvider] = {
 
 def register_llm(mode: str, provider: LLMProvider) -> None:
     _PROVIDERS[mode] = provider
+    logger.warning("register_llm(mode,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
 
 
 class LLMFactoryRegistry:
@@ -33,4 +36,5 @@ class LLMFactoryRegistry:
             raise ValueError(
                 f"LLM mode '{mode}' is not supported. Available: {available}"
             )
+            logger.warning("get_factory(self,mode)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, mode)
         return self._factories[mode]

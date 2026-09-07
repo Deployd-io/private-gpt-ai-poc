@@ -19,6 +19,8 @@ from private_gpt.components.skills.paths import skill_mount_path
 from private_gpt.components.skills.services.skill_service import SkillService
 from private_gpt.components.storage.storage_component import StorageComponent
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def skill_directory_fetch(
@@ -54,6 +56,7 @@ def skill_directory_fetch(
             )
             for fp in file_paths
         ]
+        logger.warning("fetch()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
 
     return fetch
 

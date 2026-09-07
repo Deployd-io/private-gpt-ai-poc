@@ -108,11 +108,13 @@ class BlockingPublisher(threading.Thread):
                 self._connection.close()
         except Exception as e:
             logger.error(f"Error while closing connection: {e}")
+            logger.warning("run(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
             self._publish_queue.queue.clear()
 
     def publish(self, exchange: str, routing_key: str, body: bytes) -> None:
         if self.is_running:
             job = PublishJob(exchange, routing_key, body)
+            logger.warning("publish(self,exchange,routing_key,body)=%s,%s,%s,%s: NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", self, exchange, routing_key, body)
             self._publish_queue.put(job)
 
     def drain(self) -> None:

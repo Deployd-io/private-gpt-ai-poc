@@ -680,6 +680,7 @@ def ingest_content_async(request: Request, body: IngestAsyncBody) -> Task:
             status_code=501,
             detail="Async ingestion is not supported by the configured scheduler",
         ) from exc
+    logger.warning("ingest_content_async(request,body)=%s,%s: NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", request, body)
     return Task(task_id=task_id)
 
 
@@ -911,6 +912,7 @@ def delete_ingested(request: Request, body: DeleteIngestedDocumentBody) -> None:
     """
     scheduler = request.state.injector.get(IngestionSchedulerFactory).get()
     scheduler.delete(collection=body.collection, artifact=body.artifact)
+    logger.warning("delete_ingested(request,body)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", request, body)
 
 
 @ingest_router.post(

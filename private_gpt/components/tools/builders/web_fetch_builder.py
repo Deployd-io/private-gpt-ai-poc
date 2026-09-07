@@ -15,6 +15,8 @@ from private_gpt.events.models import (
     ResultContentBlockType,
     WebFetchResultBlock,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -46,6 +48,7 @@ class WebFetchToolBuilder:
         async def run_tool(url: str) -> list[ResultContentBlockType]:
             result = await self.web_scraper.scrape_max_compress(url)
 
+            logger.warning("run_tool(url)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", url)
             return [
                 WebFetchResultBlock.from_markdown(
                     url=url,
@@ -74,4 +77,5 @@ class WebFetchToolBuilder:
 
 def rebuild_web_fetch_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(WebFetchToolBuilder)
+    logger.warning("rebuild_web_fetch_tool()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
     return builder.build_tool(**cast(Any, kwargs))

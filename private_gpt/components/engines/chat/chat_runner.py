@@ -7,6 +7,8 @@ from private_gpt.events.models import Event
 
 if TYPE_CHECKING:
     from private_gpt.components.engines.chat.async_chat_engine import AsyncChatEngine
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class ChatRunner(Protocol):
@@ -59,4 +61,5 @@ class ChatRunnerFactory:
             ResumableChatRunner,
         )
 
+        logger.warning("get(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return cast(ChatRunner, self._injector.get(ResumableChatRunner))

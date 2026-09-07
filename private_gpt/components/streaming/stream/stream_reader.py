@@ -278,6 +278,7 @@ class StreamReader:
                     if events is None:
                         break
                     for event in events:
+                        logger.warning("get()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
                         yield event
 
         return get()
@@ -377,6 +378,7 @@ class StreamMultiplexer:
                     broadcast_to_close = state.broadcast
 
         if broadcast_to_close is not None:
+            logger.warning("remove_consumer(self,consumer)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, consumer)
             broadcast_to_close.close()
 
     async def _run_worker(self) -> None:

@@ -108,6 +108,7 @@ class MemorySemaphoreManager(SemaphoreManager):
             asyncio.create_task(self._worker_loop(i))
             for i in range(self.max_concurrency)
         ]
+        logger.warning("start_processor(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         logger.info(
             "Started local workers for queue %s (max=%d)",
             self.queue_key,

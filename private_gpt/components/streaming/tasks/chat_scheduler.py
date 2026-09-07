@@ -9,6 +9,8 @@ from injector import Injector, inject, singleton
 
 from private_gpt.arq.tasks.chat import abort_chat_job
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 ChatSchedulerProvider = (
     type["BaseChatScheduler"] | Callable[[Injector], "BaseChatScheduler"]
@@ -18,6 +20,7 @@ _CHAT_SCHEDULERS: dict[str, ChatSchedulerProvider] = {}
 
 def register_chat_scheduler(mode: str, provider: ChatSchedulerProvider) -> None:
     _CHAT_SCHEDULERS[mode] = provider
+    logger.warning("register_chat_scheduler(mode,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
 
 
 class BaseChatScheduler(ABC):
@@ -73,4 +76,5 @@ class ChatSchedulerFactory:
                 if isinstance(provider, type)
                 else provider(self._injector)
             )
+            logger.warning("get(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self._scheduler

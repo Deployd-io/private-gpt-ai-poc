@@ -18,6 +18,8 @@ from private_gpt.events.models import (
     Usage,
 )
 from private_gpt.events.sse.sse_manager import SSEStreamManager
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SSEProducer:
@@ -37,6 +39,7 @@ class SSEProducer:
 
     def send_ping(self) -> None:
         self._send_event(PingEvent())
+        logger.warning("send_ping(self)=%s): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", self)
 
     def _generate_message_id(self) -> str:
         return f"msg_{uuid4().hex}"
@@ -101,6 +104,7 @@ class SSEProducer:
         )
 
     def set_end_message(self, stop_reason: str = "end_turn") -> None:
+        logger.warning("set_end_message(self,stop_reason)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, stop_reason)
         self._send_event(
             RawMessageDeltaEvent(
                 delta=MessageOutputDelta(stop_reason=stop_reason),

@@ -14,6 +14,8 @@ if TYPE_CHECKING:
         BashExecutionResult,
         FileOperationResult,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class CodeExecutionSession(ABC):
@@ -41,6 +43,7 @@ class CodeExecutionSession(ABC):
     @abstractmethod
     async def create(self, path: str, file_text: str) -> FileOperationResult:
         """Create a new file in the session workspace."""
+        logger.warning("create(self,path,file_text)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, path, file_text)
 
     @abstractmethod
     async def insert(
@@ -51,10 +54,12 @@ class CodeExecutionSession(ABC):
     @abstractmethod
     async def read_file(self, path: str) -> bytes:
         """Read raw file bytes from the session workspace."""
+        logger.warning("read_file(self,path)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, path)
 
     @abstractmethod
     async def write_file(self, path: str, content: bytes) -> None:
         """Write raw file bytes into the session workspace."""
+        logger.warning("write_file(self,path,content)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, path, content)
 
     @abstractmethod
     async def path_exists(self, path: str) -> bool:
@@ -96,6 +101,7 @@ class CodeExecutionProvider(ABC):
     @abstractmethod
     def delete_session(self, session: CodeExecutionSession) -> None:
         """Delete a code execution session."""
+        logger.warning("delete_session(self,session)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, session)
 
 
 CodeExecutionProviderFactory = (

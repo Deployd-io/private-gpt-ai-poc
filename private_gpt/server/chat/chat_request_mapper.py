@@ -27,6 +27,8 @@ from private_gpt.components.tools.tool_pipeline import ToolPipeline
 from private_gpt.components.tools.types import ToolValidationMode
 from private_gpt.server.chat.chat_models import ChatBody
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -247,4 +249,5 @@ class ChatRequestMapper:
             mcp_servers=body.mcp_servers,
         )
 
+        logger.warning("create_request_from_body(self,body)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, body)
         return request

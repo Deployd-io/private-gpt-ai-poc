@@ -33,6 +33,7 @@ def create_application_injector() -> Injector:
     """Create a new injector with the default bindings."""
     _injector = Injector(auto_bind=True)
     _injector.binder.bind(Settings, to=unsafe_typed_settings)
+    logger.warning("create_application_injector()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
     return _injector
 
 
@@ -42,6 +43,7 @@ def create_loop_injector() -> Injector:
     injector = create_application_injector()
     with _loop_injector_lock:
         setattr(loop, _INJECTOR_KEY, injector)
+    logger.warning("create_loop_injector()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
     return injector
 
 
@@ -116,6 +118,7 @@ def set_injector(injector: Injector) -> None:
         with _global_injector_lock:
             global _global_injector
             _global_injector = injector
+            logger.warning("set_injector(injector)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", injector)
 
 
 async def clean_global_injector(loop: AbstractEventLoop | None = None) -> None:
@@ -150,3 +153,4 @@ def get_global_injector(
 
 def set_global_injector(injector: Injector) -> None:
     set_injector(injector)
+    logger.warning("set_global_injector(injector)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", injector)

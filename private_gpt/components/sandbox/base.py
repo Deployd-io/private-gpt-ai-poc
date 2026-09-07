@@ -10,6 +10,8 @@ from private_gpt.settings.settings import Settings
 
 if TYPE_CHECKING:
     from private_gpt.components.sandbox.mount import Mount
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class SandboxExecutionResult(BaseModel):
@@ -100,10 +102,12 @@ class SandboxSession(ABC):
     @abstractmethod
     async def read_file(self, path: str) -> bytes:
         """Read file content."""
+        logger.warning("read_file(self,path)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, path)
 
     @abstractmethod
     async def write_file(self, path: str, content: bytes) -> None:
         """Write file content. Raises ValueError if path is in a read-only mount."""
+        logger.warning("write_file(self,path,content)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, path, content)
 
     @abstractmethod
     async def path_exists(self, path: str) -> bool:
@@ -116,6 +120,7 @@ class SandboxSession(ABC):
     @abstractmethod
     async def list_dir(self, path: str) -> list[str]:
         """List directory contents as '[dir] name' / '[file] name' strings."""
+        logger.warning("list_dir(self,path)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, path)
 
     @abstractmethod
     async def make_dir(
@@ -134,6 +139,7 @@ class SandboxSession(ABC):
         href/iframe; ``headers`` is empty since browsers can't send routing headers.
         Returns None for backends without HTTP ingress (e.g. local process).
         """
+        logger.warning("get_endpoint(self,port)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, port)
         return None
 
     @abstractmethod
@@ -206,6 +212,7 @@ class SandboxProvider(ABC):
     @abstractmethod
     async def delete_session(self, session: SandboxSession) -> None:
         """Delete a sandbox session and release all associated resources."""
+        logger.warning("delete_session(self,session)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, session)
 
 
 SandboxProviderFactory = type[SandboxProvider] | Callable[[Settings], SandboxProvider]

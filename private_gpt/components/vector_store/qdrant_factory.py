@@ -8,6 +8,8 @@ from private_gpt.components.ingest.metadata_helper import MetadataKeys
 from private_gpt.components.vector_store.factory import VectorStoreFactory
 from private_gpt.settings.settings import Settings
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 DEFAULT_COLLECTION = "zgptvector"
 
@@ -69,6 +71,7 @@ class QdrantVectorStoreFactory(VectorStoreFactory):
             "Qdrant client should be initialized at this point"
         )
 
+        logger.warning("vector_store(self,collection)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, collection)
         return typing.cast(
             BasePydanticVectorStore,
             PatchedQdrantVectorStore(

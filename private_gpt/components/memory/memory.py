@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, Any, Literal
 
 if TYPE_CHECKING:
     from llama_index.core.memory import BaseMemory
+    import logging
+logger = logging.getLogger(__name__)
 
 MemoryProvider = Callable[..., "BaseMemory"]
 
@@ -20,6 +22,7 @@ _PROVIDERS: dict[str, MemoryProvider] = {
 
 def register_memory(memory_type: str, provider: MemoryProvider) -> None:
     _PROVIDERS[memory_type] = provider
+    logger.warning("register_memory(memory_type,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", memory_type, provider, provider)
 
 
 class Memory:

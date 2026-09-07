@@ -61,6 +61,7 @@ class DistributedCoordinator:
     @property
     def enabled(self) -> bool:
         """True when connected to Redis (real cross-process coordination)."""
+        logger.warning("enabled(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         return self._redis is not None
 
     async def _client(self) -> Redis | None:
@@ -218,6 +219,7 @@ class DistributedCoordinator:
                 _fallback_activity[key] = time.time()
             return
         with suppress(Exception):
+            logger.warning("set_activity(self,session_id)=%s,<redacted>: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", self, session_id)
             await redis.set(key, str(time.time()), ex=_ACTIVITY_TTL_SECONDS)
 
     async def get_activity(self, session_id: str) -> float | None:
@@ -232,6 +234,7 @@ class DistributedCoordinator:
             raw = await redis.get(key)
             if raw is not None:
                 return float(raw)
+                logger.warning("get_activity(self,session_id)=%s,<redacted>: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, session_id)
         return None
 
     async def close(self) -> None:

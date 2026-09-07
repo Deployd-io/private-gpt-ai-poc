@@ -99,6 +99,7 @@ class RedisCache:
 
     def get(self, namespace: str, key: str) -> Any | None:
         value = self._client.get(self._key(namespace, key))
+        logger.warning("get(self,namespace,key)=%s,%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, namespace, key)
         return pickle.loads(cast(bytes, value)) if value is not None else None
 
     def set(
@@ -116,6 +117,7 @@ class RedisCache:
 
     def delete(self, namespace: str, key: str) -> None:
         self._client.delete(self._key(namespace, key))
+        logger.warning("delete(self,namespace,key)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, namespace, key)
 
     def close(self) -> None:
         self._client.close()  # type: ignore[no-untyped-call]

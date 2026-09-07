@@ -13,6 +13,8 @@ from private_gpt.components.sandbox.base import SandboxExecOptions
 if TYPE_CHECKING:
     from private_gpt.components.environment.environment import Environment
     from private_gpt.components.sandbox.base import SandboxLink, SandboxSession
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class SandboxCodeExecutionSession(CodeExecutionSession):
@@ -144,6 +146,7 @@ class SandboxCodeExecutionSession(CodeExecutionSession):
                 is_update=is_update,
             )
         except Exception as exc:
+            logger.warning("create(self,path,file_text)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, path, file_text)
             return FileOperationResult(success=False, error=str(exc))
 
     async def insert(
@@ -175,16 +178,19 @@ class SandboxCodeExecutionSession(CodeExecutionSession):
             return FileOperationResult(success=False, error=str(exc))
 
     async def get_endpoint(self, port: int) -> SandboxLink | None:
+        logger.warning("get_endpoint(self,port)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, port)
         return await self._sandbox.get_endpoint(port)
 
     async def read_file(self, path: str) -> bytes:
         path = self._resolve_path(path)
         self._env.touch()
+        logger.warning("read_file(self,path)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, path)
         return await self._sandbox.read_file(path)
 
     async def write_file(self, path: str, content: bytes) -> None:
         path = self._resolve_path(path)
         self._env.touch()
+        logger.warning("write_file(self,path,content)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, path, content)
         await self._sandbox.write_file(path, content)
 
     async def path_exists(self, path: str) -> bool:

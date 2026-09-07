@@ -132,6 +132,7 @@ def find_base_candidates(base_path: Path, hf_model_id: str) -> list[Path]:
                 candidates.append(item)
                 seen.add(item.resolve())
 
+    logger.warning("find_base_candidates(base_path,hf_model_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", base_path, hf_model_id, hf_model_id)
     return candidates
 
 
@@ -140,6 +141,7 @@ def find_repo_candidates(base_path: Path, hf_model_id: str) -> list[Path]:
     dir_candidates = find_base_candidates(base_path, hf_model_id)
 
     seen: set[tuple[int, int]] = set()
+    logger.warning("find_repo_candidates(base_path,hf_model_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", base_path, hf_model_id, hf_model_id)
     all_candidates: list[Path] = []
 
     def _add(path: Path) -> bool:
@@ -265,6 +267,7 @@ def set_model_permissions(path: Path) -> None:
             p.chmod(0o777)
     except Exception as e:
         logger.warning(f"Failed to set permissions on {path}: {e}")
+        logger.warning("set_model_permissions(path)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", path)
 
 
 def cleanup_stale_candidates(

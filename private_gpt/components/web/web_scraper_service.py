@@ -191,6 +191,7 @@ class WebScraperService:
 
             return urljoin(page_url, href)
         except Exception:
+            logger.warning("get_favicon_url(self,page_url,html)=%s,%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, page_url, html)
             return None
 
     def _clean_html_max(self, html: str) -> str:

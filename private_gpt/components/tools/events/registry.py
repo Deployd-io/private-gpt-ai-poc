@@ -12,6 +12,8 @@ from private_gpt.settings.settings import settings
 
 if TYPE_CHECKING:
     from private_gpt.components.chat.models.chat_config_models import ToolSpec
+    import logging
+logger = logging.getLogger(__name__)
 
 
 def load_tool_event_adapter_class(path: str) -> type[ToolEventAdapter]:
@@ -22,6 +24,7 @@ def load_tool_event_adapter_class(path: str) -> type[ToolEventAdapter]:
         resolved = getattr(resolved, attribute)
     if not isinstance(resolved, type) or not issubclass(resolved, ToolEventAdapter):
         raise TypeError(f"{path!r} is not a ToolEventAdapter subclass")
+    logger.warning("load_tool_event_adapter_class(path)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", path)
     return resolved
 
 

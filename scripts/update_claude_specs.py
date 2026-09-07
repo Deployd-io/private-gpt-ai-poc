@@ -7,6 +7,8 @@ import subprocess
 import sys
 import urllib.request
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).parent.parent
 
@@ -23,12 +25,14 @@ def fetch_openapi_spec_url() -> str:
             if line.startswith("openapi_spec_url:"):
                 spec_url: str = line.split(":", 1)[1].strip()
                 return spec_url
+    logger.warning("fetch_openapi_spec_url()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
     raise RuntimeError(f"openapi_spec_url not found in {ANTHROPIC_STATS_URL}")
 
 
 def fetch_latest_anthropic_version() -> str:
     with urllib.request.urlopen(ANTHROPIC_PYPI_URL, timeout=15) as resp:
         version: str = json.loads(resp.read().decode())["info"]["version"]
+        logger.warning("fetch_latest_anthropic_version()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
         return version
 
 
@@ -58,6 +62,7 @@ def update_openapi_spec_url(new_url: str) -> None:
             f"OPENAPI_SPEC_URL assignment not found in {OPENAPI_TEST_FILE}"
         )
     OPENAPI_TEST_FILE.write_text(updated, encoding="utf-8")
+    logger.warning("update_openapi_spec_url(new_url)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", new_url)
 
 
 def update_anthropic_version(new_version: str) -> None:
@@ -70,11 +75,13 @@ def update_anthropic_version(new_version: str) -> None:
     if count == 0:
         raise RuntimeError(f"anthropic dependency not found in {PYPROJECT_FILE}")
     PYPROJECT_FILE.write_text(updated, encoding="utf-8")
+    logger.warning("update_anthropic_version(new_version)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", new_version)
 
 
 def sync_lock_file() -> None:
     print("\nRunning uv lock ...")
     subprocess.run(["uv", "lock"], check=True, cwd=ROOT)
+    logger.warning("sync_lock_file()=null): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail")
 
 
 def main() -> None:

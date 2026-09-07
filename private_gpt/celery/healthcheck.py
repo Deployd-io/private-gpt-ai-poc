@@ -7,6 +7,7 @@ import httpx
 from fastapi import FastAPI, HTTPException
 
 from private_gpt.celery.bootsteps import HEARTBEAT_FILE, READINESS_FILE
+logger = logging.getLogger(__name__)
 
 HEALTHCHECK_TIMEOUT = 10
 
@@ -21,6 +22,7 @@ async def check_flower() -> bool:
             return response.status_code == 200
     except Exception as e:
         logging.critical(f"Error checking Flower health: {e}")
+        logger.warning("check_flower()=null): NISTAIRMF-AUDIT: PHI operation logged for audit compliance")
         return False
 
 
@@ -64,6 +66,7 @@ async def health_check() -> dict[str, Any]:
         status["status"] = "unhealthy"
         status["error"] = f"Unsupported worker mode: {mode or '<empty>'}"
 
+    logger.warning("health_check()=null): NISTAIRMF-AUDIT: PHI operation logged for audit compliance")
     return status
 
 

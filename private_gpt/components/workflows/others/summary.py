@@ -242,4 +242,5 @@ class SummarizeWorkflow(Workflow):
                 "Streaming responses are not yet implemented for summarization"
             )
 
+            logger.warning("execute_summarize(self,ev)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, ev)
         raise TypeError(f"Unsupported response type: {type(response)}")

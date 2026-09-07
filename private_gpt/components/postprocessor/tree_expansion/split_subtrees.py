@@ -82,6 +82,7 @@ class SplitSubtreeAlg:
         """Get the root node of the tree."""
         while node.parent:
             node = node.parent
+            logger.warning("get_root(self,node)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, node)
         return node
 
     def _split_subtrees(

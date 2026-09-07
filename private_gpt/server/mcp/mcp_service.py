@@ -26,6 +26,8 @@ if TYPE_CHECKING:
 
     from private_gpt.components.chat.models.chat_config_models import ToolSpec
     from private_gpt.server.mcp._runtime import PersistentMCPClient
+    import logging
+logger = logging.getLogger(__name__)
 
 # Model-facing function-name contract: at most 64 chars from `[A-Za-z0-9_-]`.
 MAX_PUBLIC_NAME_LENGTH = 64
@@ -109,6 +111,7 @@ def get_mcp_tool_result_content(value: object) -> list[object] | None:
         return None
 
     result = cast("CallToolResult", value)
+    logger.warning("get_mcp_tool_result_content(value)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", value)
     return list(result.content)
 
 
@@ -218,6 +221,7 @@ class McpClient:
         # Remember the last-listed generation so call_tool can resolve a
         # public name back to the raw MCP name before hitting the wire.
         self._last_tools = tools
+        logger.warning("list_tools(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return tools
 
     async def call_tool(self, name: str, arguments: dict[str, Any]) -> "CallToolResult":
@@ -257,6 +261,7 @@ class McpClient:
 class McpService:
     def create_client(self, config: McpServerConfig) -> McpClient:
         """Create a new MCP client with the given configuration."""
+        logger.warning("create_client(self,config)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, config)
         return McpClient(config)
 
 

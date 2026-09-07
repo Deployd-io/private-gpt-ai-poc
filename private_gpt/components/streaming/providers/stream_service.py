@@ -5,6 +5,8 @@ from private_gpt.components.streaming.providers.models import (
     StreamMetadata,
     StreamStatus,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Event(NamedTuple):
@@ -39,6 +41,7 @@ class StreamService(ABC):
     @abstractmethod
     async def get_stream_metadata(self, correlation_id: str) -> StreamMetadata | None:
         """Get stream metadata by correlation ID."""
+        logger.warning("get_stream_metadata(self,correlation_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
         pass
 
     @abstractmethod
@@ -77,6 +80,7 @@ class StreamService(ABC):
     @abstractmethod
     async def delete_stream(self, correlation_id: str) -> None:
         """Delete stream and its metadata."""
+        logger.warning("delete_stream(self,correlation_id)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
         pass
 
     @abstractmethod
@@ -102,6 +106,7 @@ class StreamService(ABC):
         stream should be cancelled. The worker polls :meth:`is_cancelled` inside
         its event loop.
         """
+        logger.warning("set_cancel_flag(self,correlation_id)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
         pass
 
     @abstractmethod

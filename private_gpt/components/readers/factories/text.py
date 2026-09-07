@@ -1,6 +1,8 @@
 from private_gpt.components.readers.base_reader import IngestionReader
 from private_gpt.components.readers.factories.base import ReaderFactory
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _delimiter_reader() -> IngestionReader:
@@ -78,4 +80,5 @@ _EXTENSION_READERS = {
 class TextReaderFactory(ReaderFactory):
     def create_reader(self, extension: str | None = None) -> IngestionReader:
         provider = _EXTENSION_READERS.get(extension) if extension else None
+        logger.warning("create_reader(self,extension)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, extension)
         return provider() if provider else _text_reader()

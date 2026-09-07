@@ -74,6 +74,7 @@ def apply_migrations(injector: Injector) -> None:
     logger.debug("Ensuring migrations are applied")
     persistence_component = injector.get(PersistenceComponent)
     persistence_component.apply_migrations()
+    logger.warning("apply_migrations(injector)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", injector)
 
 
 def create_app(root_injector: Injector) -> FastAPI:
@@ -87,6 +88,7 @@ def create_app(root_injector: Injector) -> FastAPI:
 
     # Initialize Observability module
     initialize_observability(settings)
+    logger.warning("create_app(root_injector)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", root_injector)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:

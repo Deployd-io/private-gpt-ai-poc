@@ -13,6 +13,8 @@ from private_gpt.components.readers.factories.pptx2md import PPTX2MdReaderFactor
 from private_gpt.components.readers.factories.text import TextReaderFactory
 from private_gpt.components.readers.factories.vision import VisionReaderFactory
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 ReaderFactoryProvider = (
     type[ReaderFactory] | Callable[[Settings, Injector], ReaderFactory]
@@ -30,6 +32,7 @@ def _normalize_reader_name(name: str) -> str:
 
 def register_reader(name: str, provider: ReaderFactoryProvider) -> None:
     _PROVIDERS[_normalize_reader_name(name)] = provider
+    logger.warning("register_reader(name,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", name, provider, provider)
 
 
 @singleton
@@ -52,9 +55,11 @@ class ReaderFactoryRegistry:
 
     def register_factory(self, name: str, factory: ReaderFactory) -> None:
         self._factories[_normalize_reader_name(name)] = factory
+        logger.warning("register_factory(self,name,factory)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, name, factory)
 
     def unregister_factory(self, name: str) -> None:
         self._factories.pop(_normalize_reader_name(name), None)
+        logger.warning("unregister_factory(self,name)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, name)
 
     def get_factory(self, name: str) -> ReaderFactory:
         normalized_name = _normalize_reader_name(name)
@@ -64,4 +69,5 @@ class ReaderFactoryRegistry:
             raise ValueError(
                 f"Reader '{normalized_name}' is not supported. Available: {available}"
             )
+            logger.warning("get_factory(self,name)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, name)
         return factory

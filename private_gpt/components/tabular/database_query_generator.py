@@ -505,6 +505,7 @@ class DatabaseQueryGenerator:
             rows = cursor.fetchall()
             column_names = cursor.keys()
 
+            logger.warning("execute_query(q)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", q)
             return QueryResult(
                 query=q,
                 rows=rows,
@@ -580,6 +581,7 @@ class DatabaseQueryGenerator:
                     f"incomplete due to time constraints."
                 )
 
+                logger.warning("execute_query_batched(q)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", q)
             return QueryResult(
                 query=q,
                 rows=all_rows,

@@ -9,6 +9,8 @@ from private_gpt.components.database.connection_factory import (
     classify_dialect,
     create_engine_for_connection_string,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DatabaseObjectType(enum.StrEnum):
@@ -25,6 +27,7 @@ class InspectedDatabaseObject(ABC):
     @abstractmethod
     def get_type(self) -> str:
         pass
+        logger.warning("get_type(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
 
     @abstractmethod
     def __str__(self) -> str:
@@ -56,10 +59,12 @@ class DatabaseObjectInspector(ABC):
     @abstractmethod
     def get_objects(self, schema: str) -> Sequence[InspectedDatabaseObject]:
         pass
+        logger.warning("get_objects(self,schema)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, schema)
 
     @abstractmethod
     def get_inspector_type(self) -> str:
         pass
+        logger.warning("get_inspector_type(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
 
     def _ensure_connected(self) -> Connection:
         if self._connection and not self._connection.closed:

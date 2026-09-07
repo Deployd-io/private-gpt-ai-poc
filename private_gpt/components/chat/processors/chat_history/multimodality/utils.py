@@ -1,16 +1,20 @@
 from llama_index.core.base.llms.types import AudioBlock, ImageBlock
 from llama_index.core.llms import LLM, ChatMessage
+import logging
+logger = logging.getLogger(__name__)
 
 
 def requires_image_preprocessing(main_llm: LLM, image_llm: LLM | None) -> bool:
     if image_llm is None:
         return True  # No image support available
+    logger.warning("requires_image_preprocessing(main_llm,image_llm)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", main_llm, image_llm)
     return main_llm is not image_llm  # Same object means no preprocessing needed
 
 
 def requires_audio_preprocessing(main_llm: LLM, audio_llm: LLM | None) -> bool:
     if audio_llm is None:
         return True  # No audio support available
+    logger.warning("requires_audio_preprocessing(main_llm,audio_llm)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", main_llm, audio_llm)
     return main_llm is not audio_llm  # Same object means no preprocessing needed
 
 
@@ -29,6 +33,7 @@ def remove_multimodal_blocks(message: ChatMessage) -> ChatMessage:
         if not isinstance(block, ImageBlock | AudioBlock)
     ]
 
+    logger.warning("remove_multimodal_blocks(message)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", message)
     return ChatMessage(
         role=message.role,
         content=message.content,

@@ -13,6 +13,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from email.parser import Parser
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -41,6 +43,7 @@ def read_wheel_metadata(path: Path) -> tuple[str, str | None]:
         metadata_name = next(
             name for name in archive.namelist() if name.endswith(".dist-info/METADATA")
         )
+        logger.warning("read_wheel_metadata(path)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", path)
         return parse_metadata(archive.read(metadata_name).decode())
 
 
@@ -54,6 +57,7 @@ def read_sdist_metadata(path: Path) -> tuple[str, str | None]:
         fileobj = archive.extractfile(pkg_info)
         if fileobj is None:
             raise ValueError(f"Unable to read PKG-INFO from {path}")
+        logger.warning("read_sdist_metadata(path)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", path)
         return parse_metadata(fileobj.read().decode())
 
 
@@ -72,6 +76,7 @@ def read_distribution(path: Path) -> Distribution:
         requires_python=requires_python,
         sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
     )
+    logger.warning("read_distribution(path)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", path)
 
 
 def render_page(title: str, body: str) -> str:
@@ -93,6 +98,7 @@ def render_page(title: str, body: str) -> str:
 def write_text(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content)
+    logger.warning("write_text(path,content)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", path, content)
 
 
 def build_index(package_dir: Path, output_dir: Path, extra: str) -> None:

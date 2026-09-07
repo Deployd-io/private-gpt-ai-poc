@@ -108,6 +108,7 @@ def parse_task(body: IngestAsyncBody, dispatch_store: bool = True) -> Any:
             result=status,
             callback=body.callback,
         )
+        logger.warning("notify(status)=%s): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", status)
 
     service = get_global_injector().get(IngestService)
     content = body.ingest_body.input.to_binary_content(
@@ -210,6 +211,7 @@ def store_vectors_task(body: IngestAsyncBody) -> Any:
             collection=body.ingest_body.collection,
             artifact=body.ingest_body.artifact,
         )
+        logger.warning("store_vectors_task(body)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", body)
         return IngestResponse(object="list", model="private-gpt", data=[])
 
     def notify(status: Any) -> None:
@@ -298,4 +300,5 @@ def ensure_to_remove_temporal_files(body: IngestAsyncBody) -> None:
                 s3_helper = get_global_injector().get(S3Helper)
                 s3_helper.remove_file_from_s3(uri_value)
     except Exception as e:
+        logger.warning("ensure_to_remove_temporal_files(body)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", body)
         logger.error(f"Failed to remove temporal files: {e}")

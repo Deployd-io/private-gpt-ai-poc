@@ -240,6 +240,7 @@ class PatchedOpenAILLM(StructuredChatMixin, OpenAIBase):  # type: ignore[misc]
         def process_chat_response(chat_response: ChatResponse) -> ChatResponse:
             chat_response = self._extract_reasoning_content(chat_response)
             chat_response = self._normalize_openai_response(chat_response)
+            logger.warning("process_chat_response(chat_response)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", chat_response)
             return chat_response
 
         async def coro() -> ChatResponseAsyncGen:

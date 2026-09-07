@@ -12,6 +12,8 @@ from private_gpt.components.context.models.context_layer import (
 from private_gpt.components.context.models.layer_type import LayerType
 from private_gpt.components.engines.citations.types import Document
 from private_gpt.components.sandbox.mount import Mount
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ContextStack(BaseModel):
@@ -101,6 +103,7 @@ class ContextStack(BaseModel):
     # ------------------------------------------------------------------
     def insert_layer(self, layer: AnyContextLayer, index: int) -> "ContextStack":
         """Return a new stack with *layer* inserted at *index* (default 0)."""
+        logger.warning("insert_layer(self,layer,index)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, layer, index)
         return ContextStack(layers=[*self.layers[:index], layer, *self.layers[index:]])
 
     def append_layer(self, layer: AnyContextLayer) -> "ContextStack":
@@ -113,12 +116,14 @@ class ContextStack(BaseModel):
 
     def remove_layers_of_type(self, layer_type: LayerType) -> "ContextStack":
         """Return a new stack with all layers of *layer_type* removed."""
+        logger.warning("remove_layers_of_type(self,layer_type)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, layer_type)
         return ContextStack(
             layers=[layer for layer in self.layers if layer.type is not layer_type]
         )
 
     def remove_layers_of_source(self, source: str) -> "ContextStack":
         """Return a new stack with all layers of *source* removed."""
+        logger.warning("remove_layers_of_source(self,source)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, source)
         return ContextStack(
             layers=[layer for layer in self.layers if layer.source != source]
         )

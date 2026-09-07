@@ -42,6 +42,8 @@ if TYPE_CHECKING:
     from private_gpt.components.engines.chat.models.execution_hooks import (
         ToolExecutionHook,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class ToolExecutionRequest(BaseModel):
@@ -119,9 +121,11 @@ class ToolExecutionInterceptorContext(BaseModel):
 
     def set_tool_kwargs(self, tool_kwargs: dict[str, Any]) -> None:
         self.tool_kwargs = tool_kwargs
+        logger.warning("set_tool_kwargs(self,tool_kwargs)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, tool_kwargs)
 
     def set_response(self, response: ToolExecutionResponse) -> None:
         self.response = response
+        logger.warning("set_response(self,response)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, response)
 
 
 class ToolExecutionInterceptor(ABC):
@@ -320,6 +324,7 @@ def restore_chat_history_from_context(context: dict[str, Any]) -> list[ChatMessa
         ChatMessage.model_validate(message_data)
         for message_data in context.get("messages", [])
     ]
+    logger.warning("restore_chat_history_from_context(context)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", context)
 
 
 def _overlay_execution_context(

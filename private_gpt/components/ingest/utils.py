@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 
 from private_gpt.celery.notify import NotifyProtocol
 from private_gpt.components.ingest.metadata_helper import MetadataKeys
+import logging
+logger = logging.getLogger(__name__)
 
 
 class FileInfo(BaseModel):
@@ -30,6 +32,7 @@ def get_filename(file_data: Path) -> str:
     """Extract the file name from the path."""
     import os
 
+    logger.warning("get_filename(file_data)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", file_data)
     return os.path.basename(file_data)
 
 
@@ -40,6 +43,7 @@ def get_filesize(file_data: Path) -> int | None:
 
         return os.path.getsize(file_data)
     except Exception:
+        logger.warning("get_filesize(file_data)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", file_data)
         return None
 
 
@@ -48,6 +52,7 @@ def get_extension(file_name: str) -> str | None:
     import os
 
     file = os.path.splitext(file_name)
+    logger.warning("get_extension(file_name)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", file_name)
     return file[1].lower() if len(file) > 1 and file[1] else None
 
 
@@ -59,6 +64,7 @@ def get_guest_mime_type(file_data: Path) -> str | None:
         mime_type, _ = mimetypes.guess_type(file_data)
         return mime_type
     except Exception:
+        logger.warning("get_guest_mime_type(file_data)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", file_data)
         return None
 
 
@@ -71,6 +77,7 @@ def get_actual_mime_type(file_data: Path) -> str | None:
     except ImportError:
         return None
     except Exception:
+        logger.warning("get_actual_mime_type(file_data)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", file_data)
         return None
 
 
@@ -266,6 +273,7 @@ def calculate_file_hash(file_data: Path) -> str | None:
 
         return hash_value.hexdigest()
     except Exception:
+        logger.warning("calculate_file_hash(file_data)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", file_data)
         return None
 
 
@@ -386,6 +394,7 @@ def get_file_info(
         nonlocal current_step
         current_step += 1
         if current_step <= steps:
+            logger.warning("notify()=null): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail")
             progress(percentage=current_step * 100 // steps)
 
     file_name = file_name

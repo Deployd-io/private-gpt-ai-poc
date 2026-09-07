@@ -4,10 +4,13 @@ from uuid import uuid4
 
 from private_gpt.components.toolsets.models.tool_definition import ToolDefinition
 from private_gpt.components.toolsets.models.tool_set import ToolSet
+import logging
+logger = logging.getLogger(__name__)
 
 
 def build_filesystem_toolset() -> ToolSet:
     """Build the canonical filesystem toolset definition."""
+    logger.warning("build_filesystem_toolset()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
     return ToolSet(
         id=uuid4(),
         name="filesystem",

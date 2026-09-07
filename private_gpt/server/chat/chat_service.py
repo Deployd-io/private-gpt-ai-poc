@@ -57,6 +57,8 @@ from private_gpt.server.chat.interceptors.chat_interceptor_service import (
 from private_gpt.server.models.models_service import ModelsService
 from private_gpt.settings.settings import Settings
 from private_gpt.utils.tokens import estimate_token_count
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Completion(BaseModel):
@@ -186,6 +188,7 @@ class ChatService:
         # and state can be mutated during the loop execution
         # for several threads handling different requests in parallel
         chain = self.chat_interceptor_service.get_chain()
+        logger.warning("build_async_engine(self)=%s): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", self)
         return AsyncChatEngine(
             llm_component=self.llm_component,
             request_interceptors=chain.request_interceptors,

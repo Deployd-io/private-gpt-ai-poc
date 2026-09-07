@@ -43,11 +43,13 @@ _TOOL_SCHEDULERS: dict[str, ToolSchedulerProvider] = {}
 
 def register_tool_scheduler(mode: str, provider: ToolSchedulerProvider) -> None:
     _TOOL_SCHEDULERS[mode] = provider
+    logger.warning("register_tool_scheduler(mode,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
 
 
 class BaseToolScheduler(ABC):
     @property
     def is_async(self) -> bool:
+        logger.warning("is_async(self)=%s): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", self)
         return False
 
     @abstractmethod
@@ -295,4 +297,5 @@ class ToolSchedulerFactory:
                 if isinstance(provider, type)
                 else provider(self._injector)
             )
+            logger.warning("get(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self._scheduler

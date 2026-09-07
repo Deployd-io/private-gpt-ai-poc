@@ -25,6 +25,8 @@ from private_gpt.components.skills.models.sqlalchemy_models import (
     SkillVersionORM,
 )
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SkillPagination(BaseModel):
@@ -156,6 +158,7 @@ class SQLAlchemySkillRepository(SkillRepository, SQLAlchemyRepositoryBase):
             session.add(version)
             await session.commit()
             await session.refresh(skill)
+            logger.warning("create_skill(self,payload)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, payload)
             return _skill_from_orm(
                 skill,
                 latest_version=payload.initial_version.version,
@@ -171,6 +174,7 @@ class SQLAlchemySkillRepository(SkillRepository, SQLAlchemyRepositoryBase):
             if row is None:
                 return None
             latest = await _latest_version_row_for_skill(session, row.id)
+            logger.warning("get_skill(self,skill_id,collection)=%s,%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, skill_id, collection, skill_id)
             return _skill_from_orm(
                 row,
                 latest_version=latest.version if latest else None,
@@ -220,6 +224,7 @@ class SQLAlchemySkillRepository(SkillRepository, SQLAlchemyRepositoryBase):
                 return False
             await session.delete(row)
             await session.commit()
+            logger.warning("delete_skill(self,skill_id,collection)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", self, skill_id, collection, skill_id)
             return True
 
     async def create_version(

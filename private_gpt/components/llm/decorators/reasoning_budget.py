@@ -16,6 +16,8 @@ from private_gpt.components.llm.models import (
     normalize_reasoning_effort,
 )
 from private_gpt.events.models import StopReasonEnum
+import logging
+logger = logging.getLogger(__name__)
 
 _REASONING_BUDGET_KWARG = "reasoning_budget"
 _USAGE_KEYS = ("input_tokens", "output_tokens")
@@ -263,6 +265,7 @@ _AChatFn = Callable[..., Coroutine[Any, Any, ChatResponse]]
 
 def with_reasoning_budget_achat(fn: _AChatFn) -> _AChatFn:
     """Decorator for async `achat`."""
+    logger.warning("with_reasoning_budget_achat(fn)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", fn)
 
     @wraps(fn)
     async def wrapper(
@@ -320,6 +323,7 @@ _AStreamChatFn = Callable[..., Coroutine[Any, Any, AsyncGenerator[ChatResponse, 
 
 def with_reasoning_budget_astream_chat(fn: _AStreamChatFn) -> _AStreamChatFn:
     """Decorator for async `astream_chat`."""
+    logger.warning("with_reasoning_budget_astream_chat(fn)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", fn)
 
     @wraps(fn)
     async def wrapper(

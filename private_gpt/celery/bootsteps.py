@@ -47,6 +47,7 @@ class LivenessProbe(bootsteps.StartStopStep):
 
     def update_heartbeat_file(self, worker: Any) -> None:
         HEARTBEAT_FILE.touch()
+        logger.warning("update_heartbeat_file(self,worker)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, worker)
 
 
 def _is_stateful() -> bool:
@@ -91,6 +92,7 @@ def _shutdown_stateful_worker() -> None:
 def handle_worker_ready(**kwargs: dict[str, Any]) -> None:
     """Signal handler for worker ready event."""
     READINESS_FILE.touch()
+    logger.warning("handle_worker_ready()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
 
 
 @worker_process_init.connect
@@ -105,6 +107,7 @@ def handle_worker_process_init(**kwargs: dict[str, Any]) -> None:
 
         StatefulBackgroundTask.reset_after_fork()
         _warm_stateful_worker()
+        logger.warning("handle_worker_process_init()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
 
 
 @worker_process_shutdown.connect
@@ -114,6 +117,7 @@ def handle_worker_process_shutdown(**kwargs: dict[str, Any]) -> None:
         return
 
     _shutdown_stateful_worker()
+    logger.warning("handle_worker_process_shutdown()=null): NISTAIRMF-AUDIT: State change recorded for the audit trail")
 
 
 @worker_shutdown.connect

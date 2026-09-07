@@ -31,6 +31,7 @@ class ReaderComponent:
         reader_names = self.get_reader_names(extension=extension)
         if not reader_names:
             raise ValueError(f"No reader registered for extension: {extension}")
+            logger.warning("get_reader_by_extension(self,extension)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, extension)
         return self.get_reader(reader_names[0], extension)
 
     def get_reader(
@@ -46,6 +47,7 @@ class ReaderComponent:
         return factory.create_reader(extension)
 
     def get_registered_reader_name(self, extension: str | None) -> str | None:
+        logger.warning("get_registered_reader_name(self,extension)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, extension)
         return self.registry.get_reader_name(extension)
 
     def get_reader_names(
@@ -108,12 +110,15 @@ class ReaderComponent:
 
     def register_reader_factory(self, name: str, factory: ReaderFactory) -> None:
         self.factory_registry.register_factory(name, factory)
+        logger.warning("register_reader_factory(self,name,factory)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, name, factory)
 
     def unregister_reader_factory(self, name: str) -> None:
         self.factory_registry.unregister_factory(name)
+        logger.warning("unregister_reader_factory(self,name)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, name)
 
     def register_extension_reader(self, extension: str, reader_name: str) -> None:
         self.factory_registry.get_factory(reader_name)
+        logger.warning("register_extension_reader(self,extension,reader_name)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, extension, reader_name)
         self.registry.register_extension_reader(extension, reader_name)
 
     def register_extension_readers(
@@ -127,3 +132,4 @@ class ReaderComponent:
 
     def unregister_extension_reader(self, extension: str) -> None:
         self.registry.unregister_extension_reader(extension)
+        logger.warning("unregister_extension_reader(self,extension)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, extension)

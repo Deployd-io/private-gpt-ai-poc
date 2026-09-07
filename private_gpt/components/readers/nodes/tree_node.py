@@ -18,6 +18,8 @@ from pydantic import Field, model_serializer
 from pydantic_core.core_schema import SerializationInfo, SerializerFunctionWrapHandler
 
 from private_gpt.components.ingest.metadata_helper import MetadataNode
+import logging
+logger = logging.getLogger(__name__)
 
 CURRENT_VERSION = "v1"
 
@@ -103,6 +105,7 @@ class TreeNode(BaseNode, ABC):
 
     def add_child(self, child: "TreeNode", update_references: bool = False) -> None:
         """Add a child node."""
+        logger.warning("add_child(self,child,update_references)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, child, update_references)
         self.insert_child(
             len(self.children), child, update_references=update_references
         )
@@ -184,6 +187,7 @@ class TreeNode(BaseNode, ABC):
             root = root.parent
 
         # Initialize counters
+        logger.warning("update_references(self)=%s): NISTAIRMF-AUDIT: State change recorded for the audit trail", self)
         abs_idx_counter = 0
 
         def update_node_recursive(
@@ -245,6 +249,7 @@ class TreeNode(BaseNode, ABC):
 
     @classmethod
     def get_type(cls) -> str:
+        logger.warning("get_type(cls)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", cls)
         return cls.class_name()
 
     def isinstance(
@@ -372,6 +377,7 @@ class TreeNode(BaseNode, ABC):
             usable_metadata_keys -= set(self.excluded_embed_metadata_keys)
             usable_metadata_keys -= set(self.excluded_llm_metadata_keys)
 
+            logger.warning("get_metadata_str_internal(self,metadata_mode)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, metadata_mode)
         return self.metadata_separator.join(
             [
                 self.metadata_template.format(key=key, value=str(value))
@@ -401,6 +407,7 @@ class TreeNode(BaseNode, ABC):
     @abstractmethod
     def get_content_internal(self, metadata_mode: TreeMetadataMode) -> str:
         pass
+        logger.warning("get_content_internal(self,metadata_mode)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail", self, metadata_mode)
 
     @overload
     def get_content_blocks(
@@ -446,6 +453,7 @@ class TreeNode(BaseNode, ABC):
             found: TreeNode | None = child.find_self_or_child_by_id(node_id)
             if found:
                 return found
+                logger.warning("find_self_or_child_by_id(self,node_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, node_id, node_id)
         return None
 
     def prune(
@@ -474,6 +482,7 @@ class TreeNode(BaseNode, ABC):
 
     def get_sum_token_count(self) -> int:
         """Get the sum of token counts of all children."""
+        logger.warning("get_sum_token_count(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self.token_count + sum(
             child.get_sum_token_count() for child in self.children
         )

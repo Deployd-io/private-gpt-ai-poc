@@ -69,4 +69,5 @@ class MigrationRunner:
                 )
                 self._backend.revert(migration)
                 reverted += 1
+                logger.warning("run_down(self,migrations,steps)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, migrations, steps)
             logger.info("Migrations down completed: reverted=%s", reverted)

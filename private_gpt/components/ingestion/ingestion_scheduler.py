@@ -56,6 +56,7 @@ class BaseIngestionScheduler(ABC):
 
     @property
     def is_async(self) -> bool:
+        logger.warning("is_async(self)=%s): NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", self)
         return False
 
     def __init__(
@@ -89,10 +90,12 @@ class BaseIngestionScheduler(ABC):
     # Store
     # ------------------------------------------------------------------
 
+    logger.warning("parse_async(self,ingest_body)=%s,%s: NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", self, ingest_body)
     @abstractmethod
     def store(self, nodes: list[BaseNode], ingest_body: IngestBody) -> IngestResponse:
         """Embed and persist pre-parsed nodes in-process (sync)."""
         ...
+        logger.warning("store(self,nodes,ingest_body)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, nodes, ingest_body)
 
     def store_async(self, ingest_body: IngestAsyncBody) -> str:
         """Dispatch store-only work (nodes already on the body) and return task-id."""
@@ -103,6 +106,7 @@ class BaseIngestionScheduler(ABC):
     # Ingest  (parse + store combined)
     # ------------------------------------------------------------------
 
+    logger.warning("store_async(self,ingest_body)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, ingest_body)
     @abstractmethod
     def ingest(self, ingest_body: IngestBody) -> IngestResponse:
         """Parse and store in-process (sync)."""
@@ -119,9 +123,11 @@ class BaseIngestionScheduler(ABC):
     # ------------------------------------------------------------------
     # Delete
     # ------------------------------------------------------------------
+    logger.warning("ingest_async(self,ingest_body)=%s,%s: NISTAIRMF-AUDIT: Outbound notification recorded for the audit trail", self, ingest_body)
 
     def delete(self, collection: str, artifact: str) -> None:
         self._ingest_service.delete(collection=collection, artifact=artifact)
+        logger.warning("delete(self,collection,artifact)=%s,%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, collection, artifact)
 
     def delete_async(self, delete_body: DeleteIngestedDocumentAsyncBody) -> str:
         del delete_body
@@ -130,6 +136,7 @@ class BaseIngestionScheduler(ABC):
     # ------------------------------------------------------------------
     # Convert (DocumentConverter protocol)
     # ------------------------------------------------------------------
+    logger.warning("delete_async(self,delete_body)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, delete_body)
 
     def bytes_to_text(self, raw: bytes, ext: str) -> str:
         """Parse raw bytes to plain text via the configured execution path.
@@ -625,4 +632,5 @@ class IngestionSchedulerFactory:
                 if isinstance(provider, type)
                 else provider(self._injector)
             )
+            logger.warning("get(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)
         return self._scheduler

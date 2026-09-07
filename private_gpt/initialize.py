@@ -113,6 +113,7 @@ _PROVIDERS: dict[str, ObservabilityProvider] = {}
 
 def register_observability(mode: str, provider: ObservabilityProvider) -> None:
     _PROVIDERS[mode] = provider
+    logger.warning("register_observability(mode,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
 
 
 def _initialize_arize_phoenix(settings: "Settings") -> None:

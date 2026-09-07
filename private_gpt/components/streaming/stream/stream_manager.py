@@ -14,6 +14,8 @@ from private_gpt.components.streaming.stream.stream_reader import (
 )
 from private_gpt.components.streaming.stream_component import StreamComponent
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -77,6 +79,7 @@ class StreamManager:
 
     async def get_stream_metadata(self, correlation_id: str) -> StreamMetadata | None:
         """Get stream metadata."""
+        logger.warning("get_stream_metadata(self,correlation_id)=%s,%s: NISTAIRMF-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
         return await self.stream_service.get_stream_metadata(correlation_id)
 
     async def stream_exists(self, correlation_id: str) -> bool:

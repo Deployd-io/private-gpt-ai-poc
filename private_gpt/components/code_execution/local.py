@@ -21,6 +21,8 @@ if TYPE_CHECKING:
         CodeExecutionSessionConfig,
     )
     from private_gpt.components.environment.mounter import LayoutMounter
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class LocalCodeExecutionProvider(CodeExecutionProvider):
@@ -74,4 +76,5 @@ class LocalCodeExecutionProvider(CodeExecutionProvider):
 
     def delete_session(self, session: CodeExecutionSession) -> None:
         if isinstance(session, SandboxCodeExecutionSession):
+            logger.warning("delete_session(self,session)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail", self, session)
             self._manager.release(session._id)

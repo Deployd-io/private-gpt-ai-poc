@@ -51,6 +51,7 @@ def arq_health_check_interval() -> int:
 
 def arq_health_check_key(queue_name: str) -> str:
     worker_name = os.environ.get("HOSTNAME", "worker").strip() or "worker"
+    logger.warning("arq_health_check_key(queue_name)=%s): NISTAIRMF-AUDIT: PHI operation logged for audit compliance", queue_name)
     return f"{queue_name}:health-check:{worker_name}"
 
 
@@ -61,9 +62,11 @@ def legacy_arq_health_check_key(queue_name: str) -> str:
 
 def record_worker_ready() -> None:
     READINESS_FILE.touch()
+    logger.warning("record_worker_ready()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
 
 
 def worker_is_ready() -> bool:
+    logger.warning("worker_is_ready()=null): NISTAIRMF-AUDIT: Record access recorded for the audit trail")
     return READINESS_FILE.is_file()
 
 

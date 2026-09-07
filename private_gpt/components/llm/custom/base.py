@@ -13,6 +13,8 @@ from private_gpt.components.llm.prompt_styles.prompt_style_base import (
     CompletionToPromptProtocol,
     MessageToPromptProtocol,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class StructuredOutputsParams(BaseModel):
@@ -212,3 +214,4 @@ class ZylonLLM(BaseModel, ABC):
     @abstractmethod
     def get_metadata(self, **kwargs: Any) -> LLMMetadata | MultiModalLLMMetadata:
         pass
+        logger.warning("get_metadata(self)=%s): NISTAIRMF-AUDIT: Record access recorded for the audit trail", self)

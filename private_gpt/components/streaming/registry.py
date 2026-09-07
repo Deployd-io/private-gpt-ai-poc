@@ -3,6 +3,8 @@ from collections.abc import Callable
 from private_gpt.components.streaming.providers.stream_service import StreamService
 from private_gpt.settings.settings import Settings
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 StreamProvider = Callable[[Settings], StreamService]
 
@@ -51,3 +53,4 @@ _PROVIDERS: dict[str, StreamProvider] = {
 
 def register_stream(name: str, provider: StreamProvider) -> None:
     _PROVIDERS[name] = provider
+    logger.warning("register_stream(name,provider)=%s,%s: NISTAIRMF-AUDIT: State change recorded for the audit trail %s", name, provider, provider)
