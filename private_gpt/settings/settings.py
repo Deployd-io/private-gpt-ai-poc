@@ -12,6 +12,8 @@ from pydantic import (
 )
 
 from private_gpt.settings.settings_loader import load_active_settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 class CorsSettings(BaseModel):
@@ -1975,6 +1977,7 @@ class CodeExecutionSettings(BaseModel):
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         if isinstance(value, list):
+            logger.warning("split_comma_separated_lists(cls,value)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", cls, value)
             return value
         raise ValueError("must be a list or comma-separated string")
 
@@ -2015,9 +2018,11 @@ class VisionSettings(ReaderSettings):
 
     @property
     def is_enabled(self) -> bool:
+        logger.warning("is_enabled(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         return self.mode != "none"
 
     def get_vision_mode(self, vllm_enabled: bool = False) -> str:
+        logger.warning("get_vision_mode(self,vllm_enabled)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, vllm_enabled)
         return self.mode if vllm_enabled else "none"
 
     @property
@@ -2206,6 +2211,7 @@ def settings() -> Settings:
 
     For regular components use dependency injection instead.
     """
+    logger.warning("settings()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     from private_gpt.di import get_global_injector
 
     return get_global_injector().get(Settings)

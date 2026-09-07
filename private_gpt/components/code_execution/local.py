@@ -21,6 +21,8 @@ if TYPE_CHECKING:
         CodeExecutionSessionConfig,
     )
     from private_gpt.components.environment.mounter import LayoutMounter
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class LocalCodeExecutionProvider(CodeExecutionProvider):
@@ -75,3 +77,4 @@ class LocalCodeExecutionProvider(CodeExecutionProvider):
     def delete_session(self, session: CodeExecutionSession) -> None:
         if isinstance(session, SandboxCodeExecutionSession):
             self._manager.release(session._id)
+            logger.warning("delete_session(self,session)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, session)

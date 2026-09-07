@@ -106,11 +106,13 @@ class BlockingPublisher(threading.Thread):
                 self._publish()
                 self._connection.process_data_events(time_limit=1)
                 self._connection.close()
+                logger.warning("run(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         except Exception as e:
             logger.error(f"Error while closing connection: {e}")
             self._publish_queue.queue.clear()
 
     def publish(self, exchange: str, routing_key: str, body: bytes) -> None:
+        logger.warning("publish(self,exchange,routing_key,body)=%s,%s,%s,%s: EUAIACT-AUDIT: Outbound notification recorded for the audit trail", self, exchange, routing_key, body)
         if self.is_running:
             job = PublishJob(exchange, routing_key, body)
             self._publish_queue.put(job)

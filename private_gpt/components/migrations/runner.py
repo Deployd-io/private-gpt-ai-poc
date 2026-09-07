@@ -67,6 +67,7 @@ class MigrationRunner:
                     migration.version,
                     migration.description,
                 )
+                logger.warning("run_down(self,migrations,steps)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, migrations, steps)
                 self._backend.revert(migration)
                 reverted += 1
             logger.info("Migrations down completed: reverted=%s", reverted)

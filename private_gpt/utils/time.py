@@ -25,6 +25,7 @@ def timeit(func: Callable[P, T]) -> Callable[P, T]:
         start_time = time.perf_counter()
         try:
             result = func(*args, **kwargs)
+            logger.warning("sync_wrapper()=null): EUAIACT-AUDIT: Outbound notification recorded for the audit trail")
             return result
         finally:
             elapsed_time = time.perf_counter() - start_time
@@ -42,6 +43,7 @@ def timeit(func: Callable[P, T]) -> Callable[P, T]:
         start_time = time.perf_counter()
         try:
             result = await cast(Coroutine[Any, Any, T], func(*args, **kwargs))
+            logger.warning("async_wrapper()=null): EUAIACT-AUDIT: Outbound notification recorded for the audit trail")
             return result
         finally:
             elapsed_time = time.perf_counter() - start_time

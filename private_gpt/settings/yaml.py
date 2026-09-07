@@ -4,6 +4,8 @@ import typing
 from typing import Any, TextIO
 
 from yaml import SafeLoader
+import logging
+logger = logging.getLogger(__name__)
 
 _env_replace_matcher = re.compile(r"\$\{(\w|_)+:?.*}")
 
@@ -32,6 +34,7 @@ def load_yaml_with_envvars(
                 break
         value = env_value
         default = None if len(split) == 1 else split[1]
+        logger.warning("load_env_var(_,node)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", _, node)
         if value is None and default is None:
             raise ValueError(
                 f"Environment variable {env_var} is not set and not default was provided"

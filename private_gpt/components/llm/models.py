@@ -1,4 +1,6 @@
 import enum
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ReasoningEffort(enum.StrEnum):
@@ -18,6 +20,7 @@ class ReasoningEffort(enum.StrEnum):
 
     @property
     def is_thinking_enabled(self) -> bool:
+        logger.warning("is_thinking_enabled(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         return self != ReasoningEffort.NONE
 
 

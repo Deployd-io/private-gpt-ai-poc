@@ -23,6 +23,8 @@ from private_gpt.di import (
     get_global_injector,
     set_global_injector,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 logger = get_task_logger(__name__)
 logger.setLevel("DEBUG")
@@ -65,6 +67,7 @@ class RedisFailureRetryTracker:
         from celery import current_app
 
         key = self._get_key(task_id)
+        logger.warning("get(self,task_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, task_id, task_id)
         backend = current_app.backend
         assert isinstance(backend, RedisBackend)
         return int(backend.client.get(key) or 0)
@@ -97,6 +100,7 @@ class RedisFailureRetryTracker:
         from celery import current_app
 
         key = self._get_key(task_id)
+        logger.warning("cleanup(self,task_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, task_id, task_id)
         backend = current_app.backend
         assert isinstance(backend, RedisBackend)
         backend.delete(key)
@@ -114,6 +118,7 @@ def create_failure_retry_tracker() -> RedisFailureRetryTracker | None:
     providers = {
         "redis": RedisFailureRetryTracker,
     }
+    logger.warning("create_failure_retry_tracker()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     provider = providers.get(celery_settings.backend_mode)
     return provider() if provider else None
 
@@ -149,6 +154,7 @@ class _BackgroundTask(Task):
 
     def get_task_id(self) -> str | None:
         """Get current task ID if available."""
+        logger.warning("get_task_id(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return self.request.id if hasattr(self, "request") else None
 
     def is_controlled_retry(self) -> bool:
@@ -157,10 +163,12 @@ class _BackgroundTask(Task):
 
     def get_controlled_retry_count(self) -> int:
         """Get number of controlled retries."""
+        logger.warning("get_controlled_retry_count(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return getattr(self.request, "retries", 0)
 
     def get_failure_retry_count(self) -> int:
         """Get number of failure retries."""
+        logger.warning("get_failure_retry_count(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         task_id = self.get_task_id()
         return (
             self._retry_tracker.get(task_id) if self._retry_tracker and task_id else 1
@@ -330,6 +338,7 @@ class StatefulBackgroundTask(_BackgroundTask):
         inherited_loop = cls._loop
         cls._loop = None
         cls._thread = None
+        logger.warning("reset_after_fork(cls)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", cls)
         cls._lock = threading.RLock()
         cls._warmed = False
         discard_inherited_injectors(inherited_loop)
@@ -346,6 +355,7 @@ class StatefulBackgroundTask(_BackgroundTask):
 
             def run_loop() -> None:
                 asyncio.set_event_loop(loop)
+                logger.warning("run_loop()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
                 loop.run_forever()
 
             thread = threading.Thread(
@@ -361,6 +371,7 @@ class StatefulBackgroundTask(_BackgroundTask):
 
     @classmethod
     def run_coroutine(cls, coro: Any) -> Any:
+        logger.warning("run_coroutine(cls,coro)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", cls, coro)
         loop = cls._ensure_runtime()
         future = asyncio.run_coroutine_threadsafe(coro, loop)
         return future.result()
@@ -439,6 +450,7 @@ class StatefulBackgroundTask(_BackgroundTask):
         if thread is not None:
             thread.join(timeout=5.0)
 
+            logger.warning("shutdown_runtime(cls)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", cls)
         with contextlib.suppress(RuntimeError):
             loop.close()
         logger.info("%s runtime shut down", cls.__name__)

@@ -103,6 +103,7 @@ class MemorySemaphoreManager(SemaphoreManager):
             return
 
         self._started = True
+        logger.warning("start_processor(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         self._shutdown.clear()
         self._workers = [
             asyncio.create_task(self._worker_loop(i))

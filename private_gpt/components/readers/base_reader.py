@@ -105,6 +105,7 @@ class LlamaIndexReaderAdapter(IngestionReader):
 
     @classmethod
     def from_reader(cls, reader: BaseReader) -> "LlamaIndexReaderAdapter":
+        logger.warning("from_reader(cls,reader)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", cls, reader)
         return cls(reader)
 
     async def lazy_load_data(

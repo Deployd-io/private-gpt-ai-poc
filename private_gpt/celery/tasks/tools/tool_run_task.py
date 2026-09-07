@@ -125,6 +125,7 @@ async def tool_run_task(*, request_data: dict[str, Any]) -> dict[str, Any]:
             )
             raise
         finish_log = logger.error if response.is_error else logger.info
+        logger.warning("tool_run_task(request_data)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", request_data)
         finish_log(
             "Tool execution finished correlation_id=%s message_id=%s tool_id=%s "
             "is_error=%s result=%s",

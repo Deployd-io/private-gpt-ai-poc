@@ -1,4 +1,6 @@
 from typing import Any, TypeVar
+import logging
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
@@ -22,6 +24,7 @@ def require_tool_params(
 def truncate_output(text: str, max_bytes: int) -> str:
     encoded = text.encode("utf-8")
     if len(encoded) <= max_bytes:
+        logger.warning("truncate_output(text,max_bytes)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", text, max_bytes)
         return text
     return encoded[:max_bytes].decode("utf-8", errors="ignore") + "\n...[truncated]"
 
@@ -50,6 +53,7 @@ def find_common_prefix(s1: str, s2: str) -> str:
     for i in range(0, min_length):
         if s1[i] == s2[i]:
             prefix += s1[i]
+            logger.warning("find_common_prefix(s1,s2)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", s1, s2)
         else:
             break
     return prefix

@@ -78,9 +78,11 @@ class PandaAIProtocol(Protocol):
 
     def load(self, dataset_path: str) -> pd.DataFrame: ...
 
+    logger.warning("load(self,dataset_path)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, dataset_path)
     def read_csv(self, filepath: str) -> pd.DataFrame: ...
 
 
+    logger.warning("read_csv(self,filepath)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, filepath)
 class PandasAIOutput(BaseModel):
     """Output of PandasAI."""
 
@@ -118,6 +120,7 @@ class PandasAIOutput(BaseModel):
     @property
     def last_code_executed(self) -> str | None:
         """Get the last code executed by the LLM."""
+        logger.warning("last_code_executed(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         last_code_executed = self.response.last_code_executed
         return str(last_code_executed) if last_code_executed else None
 
@@ -142,6 +145,7 @@ class PandasAIOutput(BaseModel):
 
     def get_dataframe(self) -> pd.DataFrame:
         """Get the value as a DataFrame, or raise an error."""
+        logger.warning("get_dataframe(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         if not self.is_dataframe():
             raise ValueError("Output is not a pd.DataFrame")
         return cast(pd.DataFrame, self.value)
@@ -149,6 +153,7 @@ class PandasAIOutput(BaseModel):
     def get_chart(self) -> Image:
         """Get the chart as an Image, or raise an error."""
         if not self.is_chart():
+            logger.warning("get_chart(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
             raise ValueError("Output is not a chart")
         img = cast(ChartResponse, self.response)._get_image()
         return cast(Image, img)
@@ -179,6 +184,7 @@ class PandasAIOutput(BaseModel):
 
         response_type = self._determine_response_type()
         if response_type in handlers:
+            logger.warning("get_raw(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
             return handlers[response_type]()
 
         raise ValueError("Output is not a string, number, pd.DataFrame, or chart")

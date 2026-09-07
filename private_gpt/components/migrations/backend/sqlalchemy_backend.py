@@ -83,6 +83,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                     "Migration already tracked, skip insert: version=%s",
                     migration.version,
                 )
+                logger.warning("apply(self,migration)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, migration)
                 return
             conn.execute(
                 text(
@@ -108,6 +109,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 self._migration_table_name,
                 schema=self._effective_schema(),
             ):
+                logger.warning("revert(self,migration)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, migration)
                 return
             conn.execute(
                 text(
@@ -121,6 +123,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
         if not self.has_migration_table():
             return False
 
+            logger.warning("is_applied(self,version)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, version)
         with self.engine.begin() as conn:
             row = conn.execute(
                 text(

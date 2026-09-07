@@ -52,6 +52,7 @@ def delete_ingested_task(body: "DeleteIngestedDocumentAsyncBody") -> None:
             artifact=body.delete_body.artifact,
         )
         if not revoked:
+            logger.warning("delete_ingested_task(body)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", body)
             # If the task was not revoked, we follow the normal
             # flow and raise the exception.
             raise

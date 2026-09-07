@@ -10,6 +10,8 @@ from private_gpt.settings.settings import Settings
 
 if TYPE_CHECKING:
     from private_gpt.components.sandbox.mount import Mount
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class SandboxExecutionResult(BaseModel):
@@ -99,10 +101,12 @@ class SandboxSession(ABC):
 
     @abstractmethod
     async def read_file(self, path: str) -> bytes:
+        logger.warning("read_file(self,path)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, path)
         """Read file content."""
 
     @abstractmethod
     async def write_file(self, path: str, content: bytes) -> None:
+        logger.warning("write_file(self,path,content)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, path, content)
         """Write file content. Raises ValueError if path is in a read-only mount."""
 
     @abstractmethod
@@ -115,6 +119,7 @@ class SandboxSession(ABC):
 
     @abstractmethod
     async def list_dir(self, path: str) -> list[str]:
+        logger.warning("list_dir(self,path)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, path)
         """List directory contents as '[dir] name' / '[file] name' strings."""
 
     @abstractmethod
@@ -134,6 +139,7 @@ class SandboxSession(ABC):
         href/iframe; ``headers`` is empty since browsers can't send routing headers.
         Returns None for backends without HTTP ingress (e.g. local process).
         """
+        logger.warning("get_endpoint(self,port)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, port)
         return None
 
     @abstractmethod
@@ -205,6 +211,7 @@ class SandboxProvider(ABC):
 
     @abstractmethod
     async def delete_session(self, session: SandboxSession) -> None:
+        logger.warning("delete_session(self,session)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, session)
         """Delete a sandbox session and release all associated resources."""
 
 

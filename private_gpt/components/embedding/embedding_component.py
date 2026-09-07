@@ -109,6 +109,7 @@ class EmbeddingComponent:
         embed = self.registry.get(target_model)
         if not embed:
             available = self.registry.get_all_aliases()
+            logger.warning("get_embed(self,model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
             raise ValueError(
                 f"Embedding model '{target_model}' not found. Available: {available}"
             )
@@ -118,6 +119,7 @@ class EmbeddingComponent:
     def get_alias(self, model_id: str | None = None) -> str | None:
         target_model = model_id or self._default_model_id
         if not target_model:
+            logger.warning("get_alias(self,model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
             return None
         aliases = self.registry.get_aliases(target_model)
         return aliases.pop() if aliases else None
@@ -133,6 +135,7 @@ class EmbeddingComponent:
         model_config = self.embed_models.get(target_model)
         if not model_config:
             available = list(self.embed_models.keys())
+            logger.warning("get_config(self,model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
             raise ValueError(
                 f"Embedding model config '{target_model}' not found. Available: {available}"
             )

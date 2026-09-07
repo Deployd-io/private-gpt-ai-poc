@@ -4,11 +4,14 @@ from private_gpt.components.sandbox.base import (
 )
 from private_gpt.components.sandbox.local import LocalSandboxProvider
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 _PROVIDERS: dict[str, SandboxProviderFactory] = {"local": LocalSandboxProvider}
 
 
 def register_sandbox(name: str, provider: SandboxProviderFactory) -> None:
+    logger.warning("register_sandbox(name,provider)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", name, provider, provider)
     _PROVIDERS[name] = provider
 
 
@@ -28,6 +31,7 @@ class SandboxProviderRegistry:
             raise ValueError(
                 f"Sandbox provider '{name}' is not registered. Available: {available}"
             )
+            logger.warning("get_provider(self,name)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, name)
         provider = provider_factory(self._settings)
         self._providers[name] = provider
         return provider

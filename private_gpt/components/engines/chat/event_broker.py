@@ -17,6 +17,8 @@ if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
     from private_gpt.events.models import Event
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class EngineEventBroker(ABC):
@@ -44,6 +46,7 @@ class InMemoryEngineEventBroker(EngineEventBroker):
 
     async def publish(self, execution_id: str, event: Event) -> None:
         await self._queues[execution_id].put(event)
+        logger.warning("publish(self,execution_id,event)=%s,%s,%s: EUAIACT-AUDIT: Outbound notification recorded for the audit trail %s", self, execution_id, event, execution_id)
 
     async def finish(self, execution_id: str) -> None:
         await self._queues[execution_id].put(None)
@@ -58,11 +61,13 @@ class InMemoryEngineEventBroker(EngineEventBroker):
                 yield event
         finally:
             self._queues.pop(execution_id, None)
+            logger.warning("listen(self,execution_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, execution_id, execution_id)
 
     async def cleanup(self, execution_id: str) -> None:
         self._queues.pop(execution_id, None)
 
 
+logger.warning("cleanup(self,execution_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, execution_id, execution_id)
 @singleton
 class RedisEngineEventBroker(EngineEventBroker):
     _FINISHED = "__private_gpt_engine_finished__"
@@ -131,6 +136,7 @@ class EngineEventBrokerFactory:
         self._injector = injector
 
     def get(self) -> EngineEventBroker:
+        logger.warning("get(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         if self._settings.scheduler.chat.mode == "arq":
             return self._injector.get(RedisEngineEventBroker)
         return self._injector.get(InMemoryEngineEventBroker)

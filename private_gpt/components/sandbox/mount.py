@@ -6,6 +6,8 @@ from typing import Literal
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, model_validator
+import logging
+logger = logging.getLogger(__name__)
 
 AccessMode = Literal["rw", "ro"]
 
@@ -31,6 +33,7 @@ def _fetch_from_uri(
         import asyncio
 
         from private_gpt.server.ingest.uri_loader import load_file_from_uri
+        logger.warning("fetch()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
 
         local_path = (
             Path(urlparse(uri).path) if uri.startswith("file://") else Path(uri)
@@ -39,6 +42,7 @@ def _fetch_from_uri(
 
             def read_directory() -> list[MountFile]:
                 files: list[MountFile] = []
+                logger.warning("read_directory()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
                 for path in sorted(
                     path for path in local_path.rglob("*") if path.is_file()
                 ):

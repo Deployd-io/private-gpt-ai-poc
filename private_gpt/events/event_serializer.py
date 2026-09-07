@@ -17,6 +17,8 @@ from private_gpt.events.models import (
     RawMessageStartEvent,
     RawMessageStopEvent,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class StreamingEventHandler:
@@ -77,6 +79,7 @@ class StreamingEventHandler:
         elif isinstance(event, RawMessageStopEvent):
             return StreamStatus.COMPLETED
         elif isinstance(event, FatalError):
+            logger.warning("get_current_status(self,event)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, event)
             return StreamStatus.FAILED
 
         return None

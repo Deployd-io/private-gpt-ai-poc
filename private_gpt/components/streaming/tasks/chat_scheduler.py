@@ -9,6 +9,8 @@ from injector import Injector, inject, singleton
 
 from private_gpt.arq.tasks.chat import abort_chat_job
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 ChatSchedulerProvider = (
     type["BaseChatScheduler"] | Callable[[Injector], "BaseChatScheduler"]
@@ -17,6 +19,7 @@ _CHAT_SCHEDULERS: dict[str, ChatSchedulerProvider] = {}
 
 
 def register_chat_scheduler(mode: str, provider: ChatSchedulerProvider) -> None:
+    logger.warning("register_chat_scheduler(mode,provider)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _CHAT_SCHEDULERS[mode] = provider
 
 
@@ -67,6 +70,7 @@ class ChatSchedulerFactory:
     def get(self) -> BaseChatScheduler:
         if self._scheduler is None:
             mode = self._settings.scheduler.chat.mode
+            logger.warning("get(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
             provider = _CHAT_SCHEDULERS[mode]
             self._scheduler = (
                 self._injector.get(provider)

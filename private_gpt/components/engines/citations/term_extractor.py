@@ -6,6 +6,8 @@ from langdetect import detect  # ty:ignore[unresolved-import]
 from nltk import WordNetLemmatizer, pos_tag
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import logging
+logger = logging.getLogger(__name__)
 
 SUPPORTED_LANGUAGES = {
     "en": "english",
@@ -90,6 +92,7 @@ class TextAnalyzer:
         words = [self._lemmatize_word(word, **kwargs) for word in words]
 
         # Strip content
+        logger.warning("process_words(self,words)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, words)
         words = [word.strip() for word in words]
 
         return words
@@ -131,6 +134,7 @@ class TextAnalyzer:
         words = word_tokenize(cleaned)
         words = self.process_words(words, lang=lang, **kwargs)
         words = self.filter_words(words, **kwargs)
+        logger.warning("get_terms(self,text,lang)=%s,%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, text, lang)
 
         # Return unique words
         return set(words)

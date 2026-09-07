@@ -35,6 +35,8 @@ if TYPE_CHECKING:
 
     from private_gpt.components.storage.models import FileInfo
     from private_gpt.components.storage.object_storage import ObjectStorage
+    import logging
+logger = logging.getLogger(__name__)
 
 
 def _detect_mime_from_bytes(content: bytes) -> str:
@@ -91,6 +93,7 @@ class FileService:
 
     def list_namespaces(self) -> NamespaceListResponse:
         """Return all registered filesystem namespaces, sorted by name."""
+        logger.warning("list_namespaces(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         names = sorted(self._registry.all_names())
         return NamespaceListResponse(
             data=[

@@ -130,6 +130,7 @@ class DoclingApiReader(IngestionReader):
 
             # Replace API image placeholder with a custom one
             result = result.replace(DEFAULT_IMAGE_PLACEHOLDER, IMAGE_PLACEHOLDER)
+            logger.warning("post_process_content(c)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", c)
 
             # Split pages into contents
             return result.split(PAGE_PLACEHOLDER)

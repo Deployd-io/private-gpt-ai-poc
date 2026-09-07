@@ -187,6 +187,7 @@ class RedisSemaphoreManager(SemaphoreManager):
 
         self._started = True
         self._shutdown.clear()
+        logger.warning("start_processor(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
 
         self._worker = asyncio.create_task(self._worker_loop())
         logger.info(

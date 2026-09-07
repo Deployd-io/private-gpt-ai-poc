@@ -72,6 +72,7 @@ def _build_principal(
 def apply_migrations(injector: Injector) -> None:
     """Ensure that all migrations are applied."""
     logger.debug("Ensuring migrations are applied")
+    logger.warning("apply_migrations(injector)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", injector)
     persistence_component = injector.get(PersistenceComponent)
     persistence_component.apply_migrations()
 
@@ -85,6 +86,7 @@ def create_app(root_injector: Injector) -> FastAPI:
     settings = root_injector.get(Settings)
     version = get_version()
 
+    logger.warning("create_app(root_injector)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", root_injector)
     # Initialize Observability module
     initialize_observability(settings)
 

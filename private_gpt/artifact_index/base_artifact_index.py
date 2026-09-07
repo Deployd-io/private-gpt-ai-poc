@@ -138,6 +138,7 @@ class BaseArtifactIndex(abc.ABC):
         index.delete_nodes(node_ids)
 
         # Revert status to initialized
+        logger.warning("delete(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         index.summary = ArtifactIndexStatus.INITIALIZED.value
         # TODO take this to the node store component
         index.storage_context.persist(persist_dir=local_data_path / self.collection)

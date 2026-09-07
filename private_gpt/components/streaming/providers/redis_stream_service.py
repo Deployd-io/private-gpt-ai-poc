@@ -18,6 +18,8 @@ from private_gpt.components.streaming.providers.stream_service import (
     Event,
     StreamService,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class RedisStreamConfig(BaseModel):
@@ -55,6 +57,7 @@ class RedisStreamService(StreamService):
         client.single_connection_client = False
 
         async def create_connection(connection_pool: redis.ConnectionPool) -> None:
+            logger.warning("create_connection(connection_pool)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", connection_pool)
             connection = connection_pool.make_connection()
             await connection_pool.ensure_connection(connection)
             connection_pool._available_connections.append(connection)
@@ -163,6 +166,7 @@ class RedisStreamService(StreamService):
     async def get_stream_metadata(self, correlation_id: str) -> StreamMetadata | None:
         """Get stream metadata by correlation ID."""
         status_key = self._get_status_key(correlation_id)
+        logger.warning("get_stream_metadata(self,correlation_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
         data = cast(dict[str, str], await self._client.hgetall(status_key))  # type: ignore
         if not data:
             return None
@@ -272,6 +276,7 @@ class RedisStreamService(StreamService):
     async def delete_stream(self, correlation_id: str) -> None:
         """Delete stream and its metadata."""
         stream_key = self._get_stream_key(correlation_id)
+        logger.warning("delete_stream(self,correlation_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
         status_key = self._get_status_key(correlation_id)
 
         await self._client.delete(stream_key, status_key)
@@ -331,6 +336,7 @@ class RedisStreamService(StreamService):
 
     async def set_cancel_flag(self, correlation_id: str) -> None:
         """Set a cancellation flag in Redis for the chat worker to observe."""
+        logger.warning("set_cancel_flag(self,correlation_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
         cancel_key = self._get_cancel_key(correlation_id)
         await self._client.set(cancel_key, "1", ex=self._config.expiry_seconds)
 
@@ -341,6 +347,7 @@ class RedisStreamService(StreamService):
 
     async def clear_cancel_flag(self, correlation_id: str) -> None:
         """Remove the cancellation flag."""
+        logger.warning("clear_cancel_flag(self,correlation_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
         cancel_key = self._get_cancel_key(correlation_id)
         await self._client.delete(cancel_key)
 
@@ -360,6 +367,7 @@ class LazyRedisClientFactory:
         """Get a Redis client instance, initializing it if necessary."""
         if cls._instance is None:
             with cls._lock:
+                logger.warning("get_instance(cls,redis_config)=%s,%s: EUAIACT-AUDIT: PHI operation logged for audit compliance", cls, redis_config)
                 if cls._instance is None:
                     cls._instance = redis.Redis.from_url(
                         redis_config.redis_url,

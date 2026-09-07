@@ -18,6 +18,8 @@ from private_gpt.components.context.models.context_layer import (
 from private_gpt.components.context.models.context_stack import ContextStack
 from private_gpt.components.context.models.layer_type import LayerType
 from private_gpt.components.engines.citations.types import Document
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ContextStackBuilder(BaseModel):
@@ -28,6 +30,7 @@ class ContextStackBuilder(BaseModel):
 
     def set_user_instructions(self, text: str) -> "ContextStackBuilder":
         """Set user instructions and append the user-instructions layer."""
+        logger.warning("set_user_instructions(self,text)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, text)
         self.user_instructions = text
         self.layers.append(
             UserInstructionsLayer(

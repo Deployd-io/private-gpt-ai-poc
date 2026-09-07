@@ -97,6 +97,7 @@ class PersistenceComponent:
                 client=client,
             )
             runner = MigrationRunner(migration_backend)
+            logger.warning("apply_migrations(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
             runner.run_up(migrations=list(MIGRATIONS))
             self._migrations_applied = True
             logger.info("Migrations applied successfully")

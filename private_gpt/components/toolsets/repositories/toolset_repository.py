@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel, ConfigDict
 
 from private_gpt.components.toolsets.models.tool_set import ToolSet
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ToolSetRepository(BaseModel, ABC):
@@ -14,16 +16,20 @@ class ToolSetRepository(BaseModel, ABC):
 
     @abstractmethod
     def save(self, toolset: ToolSet) -> ToolSet:
+        logger.warning("save(self,toolset)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, toolset)
         """Persist a toolset and return the stored value."""
 
     @abstractmethod
     def get_by_name(self, name: str) -> ToolSet | None:
+        logger.warning("get_by_name(self,name)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, name)
         """Find a toolset by name."""
 
     @abstractmethod
     def list(self) -> list[ToolSet]:
+        logger.warning("list(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         """Return all registered toolsets."""
 
     @abstractmethod
     def delete(self, name: str) -> bool:
         """Delete a toolset by name."""
+        logger.warning("delete(self,name)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, name)

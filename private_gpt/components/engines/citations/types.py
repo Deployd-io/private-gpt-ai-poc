@@ -9,6 +9,8 @@ from private_gpt.components.ingest.metadata_helper import (
     MetadataKeys,
     MetadataNode,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -67,6 +69,7 @@ class Document:
         """Create a Document instance from a node."""
         metadata = node.metadata or {}
         metadata.update(node.metadata)
+        logger.warning("from_node(cls,node)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", cls, node)
         metadata.update(
             {
                 MetadataNode.SCORE.value: node.score,
@@ -147,6 +150,7 @@ class Document:
 
     def update_metadata(self, key: str, value: Any) -> None:
         """Update the metadata of the document."""
+        logger.warning("update_metadata(self,key,value)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, key, value)
         if self._metadata is None:
             self._metadata = {}
         self._metadata[key] = value

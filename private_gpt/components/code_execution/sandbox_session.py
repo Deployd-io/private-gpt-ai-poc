@@ -13,6 +13,8 @@ from private_gpt.components.sandbox.base import SandboxExecOptions
 if TYPE_CHECKING:
     from private_gpt.components.environment.environment import Environment
     from private_gpt.components.sandbox.base import SandboxLink, SandboxSession
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class SandboxCodeExecutionSession(CodeExecutionSession):
@@ -138,6 +140,7 @@ class SandboxCodeExecutionSession(CodeExecutionSession):
         try:
             is_update = await self._sandbox.path_exists(path)
             await self._sandbox.write_file(path, file_text.encode("utf-8"))
+            logger.warning("create(self,path,file_text)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, path, file_text)
             return FileOperationResult(
                 success=True,
                 output=f"{'Updated' if is_update else 'Created'} {path}",
@@ -175,14 +178,17 @@ class SandboxCodeExecutionSession(CodeExecutionSession):
             return FileOperationResult(success=False, error=str(exc))
 
     async def get_endpoint(self, port: int) -> SandboxLink | None:
+        logger.warning("get_endpoint(self,port)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, port)
         return await self._sandbox.get_endpoint(port)
 
     async def read_file(self, path: str) -> bytes:
+        logger.warning("read_file(self,path)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, path)
         path = self._resolve_path(path)
         self._env.touch()
         return await self._sandbox.read_file(path)
 
     async def write_file(self, path: str, content: bytes) -> None:
+        logger.warning("write_file(self,path,content)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, path, content)
         path = self._resolve_path(path)
         self._env.touch()
         await self._sandbox.write_file(path, content)

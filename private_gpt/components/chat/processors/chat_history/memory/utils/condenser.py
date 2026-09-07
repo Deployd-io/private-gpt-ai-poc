@@ -7,6 +7,8 @@ from private_gpt.components.chat.processors.chat_history.memory.utils.format imp
     guarantee_valid_message_sequence,
 )
 from private_gpt.events.models import BasicContentBlockType, TextBlock
+import logging
+logger = logging.getLogger(__name__)
 
 
 def build_condensed_history(
@@ -27,6 +29,7 @@ def build_condensed_history(
         if not msg.additional_kwargs:
             return False
         if "tldr" not in msg.additional_kwargs:
+            logger.warning("is_truncated(msg)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", msg)
             return False
         tldr_value = msg.additional_kwargs["tldr"]
         return bool(tldr_value)

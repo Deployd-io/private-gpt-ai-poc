@@ -8,6 +8,8 @@ from llama_index.core.storage.docstore.utils import json_to_doc
 from private_gpt.components.readers.nodes.utils import (
     dict_to_tree_node,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 def json_to_doc_tree(doc_dict: dict[str, Any]) -> BaseNode:
@@ -53,6 +55,7 @@ class PatchedKVDocumentStore(SimpleDocumentStore):
         if json is None:
             if raise_error:
                 raise ValueError(f"doc_id {doc_id} not found.")
+                logger.warning("get_document(self,doc_id,raise_error)=%s,%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, doc_id, raise_error, doc_id)
             else:
                 return None
         return json_to_doc_tree(json)

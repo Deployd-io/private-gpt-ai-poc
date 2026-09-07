@@ -33,6 +33,7 @@ class LLMFactory(ABC):
 
     def create_llm(self, model_config: LLMModelConfig) -> LLMInstance:
         """Create LLM instance and return the instance and config."""
+        logger.warning("create_llm(self,model_config)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, model_config)
         tokenizer = self.load_tokenizer(model_config, raise_exception=True)
         llm, alias = self._create_llm(model_config, tokenizer=tokenizer)
         return LLMInstance(llm=llm, tokenizer=tokenizer, alias=alias)

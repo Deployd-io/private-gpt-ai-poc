@@ -33,6 +33,8 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    import logging
+logger = logging.getLogger(__name__)
 
 ContextBag = dict[str, Any]
 
@@ -58,6 +60,7 @@ def reset_bag() -> None:
     Called at the start/end of each HTTP request so no stale context leaks
     between requests running on the same asyncio task/loop.
     """
+    logger.warning("reset_bag()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     _bag.set(None)
 
 
@@ -70,6 +73,7 @@ def replace_bag(updates: ContextBag) -> ContextBag:
     """
     merged = ContextBag(current_bag())
     merged.update(updates)
+    logger.warning("replace_bag(updates)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", updates)
     _bag.set(merged)
     return merged
 

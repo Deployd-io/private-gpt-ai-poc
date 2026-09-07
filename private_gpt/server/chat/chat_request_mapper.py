@@ -27,6 +27,8 @@ from private_gpt.components.tools.tool_pipeline import ToolPipeline
 from private_gpt.components.tools.types import ToolValidationMode
 from private_gpt.server.chat.chat_models import ChatBody
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -184,6 +186,7 @@ class ChatRequestMapper:
         output_cls = await self._configure_output_cls_from_json_schema(body)
         sampling_params = await self._collect_sampling_params(body)
 
+        logger.warning("create_request_from_body(self,body)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, body)
         request = ResolvedChatRequest(
             stream=body.stream,
             messages=body.llama_index_messages(),

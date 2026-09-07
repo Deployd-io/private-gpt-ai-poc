@@ -22,6 +22,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
     TextLike,
     TokenizedInput,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 AsyncTokenizerFn = Callable[..., TokenizedInput | Awaitable[TokenizedInput]]
 FullAsyncTokenizerFn = Callable[..., Awaitable[TokenizedInput]]
@@ -98,6 +100,7 @@ async def estimate_token_count(
             for tool in tools:
                 if isinstance(tool, BaseTool):
                     li_tools.append(tool)
+                    logger.warning("get_tools()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
                 elif isinstance(tool, ToolSpec):
                     li_tools.append(tool.to_function_tool())
         return li_tools if li_tools else None

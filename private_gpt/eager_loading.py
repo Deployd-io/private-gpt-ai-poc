@@ -101,3 +101,4 @@ def warm(injector: Injector, profile: str = "full") -> None:
 def eager_loading(injector: Injector) -> None:
     """Full warm-up: everything. Kept for API server backward compat."""
     warm(injector, "full")
+    logger.warning("eager_loading(injector)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", injector)

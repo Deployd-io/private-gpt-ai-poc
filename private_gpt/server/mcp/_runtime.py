@@ -101,12 +101,14 @@ class RequestOAuthTokenStorage(TokenStorage):
         return self._refreshed_tokens
 
     async def get_tokens(self) -> OAuthToken | None:
+        logger.warning("get_tokens(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return self._tokens
 
     async def set_tokens(self, tokens: OAuthToken) -> None:
         previous_refresh_token = self._tokens.refresh_token
         assert previous_refresh_token is not None
         if tokens.refresh_token is None:
+            logger.warning("set_tokens(self,tokens)=%s,<redacted>: EUAIACT-AUDIT: State change recorded for the audit trail", self)
             tokens.refresh_token = previous_refresh_token
         self._tokens = tokens
         self._refreshed_tokens = (
@@ -116,9 +118,11 @@ class RequestOAuthTokenStorage(TokenStorage):
         )
 
     async def get_client_info(self) -> OAuthClientInformationFull | None:
+        logger.warning("get_client_info(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return self._client_info
 
     async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
+        logger.warning("set_client_info(self,client_info)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, client_info)
         self._client_info = client_info
 
 
@@ -359,6 +363,7 @@ class PersistentMCPClient:
 
     async def list_tools(self) -> ListToolsResult:
         async with self._run_session() as session:
+            logger.warning("list_tools(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
             return await session.list_tools()
 
     async def call_tool(

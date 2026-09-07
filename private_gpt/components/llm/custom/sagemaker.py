@@ -265,6 +265,7 @@ class SagemakerLLM(CustomLLM):
                         # trim the leading space for the first token if present
                         if first_token:
                             delta = delta.lstrip()
+                            logger.warning("get_stream()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
                             first_token = False
                         text += delta
                         yield CompletionResponse(delta=delta, text=text, raw=data)

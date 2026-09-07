@@ -53,6 +53,7 @@ class ScrapeBatcher:
             self._timeout_seconds = max(self._timeout_seconds, timeout_seconds)
             if len(self._pending) >= self._batch_size:
                 self._flush_locked()
+                logger.warning("submit(self,url,timeout_seconds)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, url, timeout_seconds)
             elif self._window is None:
                 self._window = asyncio.create_task(self._close_window())
         return await future

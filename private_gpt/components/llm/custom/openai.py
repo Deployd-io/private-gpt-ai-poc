@@ -238,6 +238,7 @@ class PatchedOpenAILLM(StructuredChatMixin, OpenAIBase):  # type: ignore[misc]
         parent_gen = super()._astream_chat(messages=messages, **kwargs)
 
         def process_chat_response(chat_response: ChatResponse) -> ChatResponse:
+            logger.warning("process_chat_response(chat_response)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", chat_response)
             chat_response = self._extract_reasoning_content(chat_response)
             chat_response = self._normalize_openai_response(chat_response)
             return chat_response

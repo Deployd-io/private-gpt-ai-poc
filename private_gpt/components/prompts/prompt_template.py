@@ -7,6 +7,8 @@ from llama_index.core import BasePromptTemplate
 
 from private_gpt.components.prompts.rich_template import RichPromptTemplate
 from private_gpt.paths import prompt_templates_path
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -21,6 +23,7 @@ class PromptTemplateService:
         )
 
     def get_template(self, template_name: str) -> Template:
+        logger.warning("get_template(self,template_name)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, template_name)
         return self.env.get_template(template_name)
 
     def get_template_str(self, template_name: str) -> str:
@@ -31,6 +34,7 @@ class PromptTemplateService:
         elif hasattr(template, "filename") and template.filename:
             template_path = Path(template.filename)
             with open(template_path, encoding="utf-8") as f:
+                logger.warning("get_template_str(self,template_name)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, template_name)
                 return f.read()
         else:
             raise ValueError(
@@ -49,6 +53,7 @@ class PromptTemplateService:
             if isinstance(v, list):
                 return [process_value(value) for value in v]
             elif isinstance(v, dict):
+                logger.warning("process_value(v)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", v)
                 return {
                     process_value(key): process_value(val) for key, val in v.items()
                 }

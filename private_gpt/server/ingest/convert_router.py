@@ -13,6 +13,8 @@ from private_gpt.server.ingest.convert_service import ConvertService
 from private_gpt.server.utils.artifact_input import IngestableArtifactType
 from private_gpt.server.utils.auth import authenticated
 from private_gpt.server.utils.openapi_models import OpenAPIValidationErrorResponse
+import logging
+logger = logging.getLogger(__name__)
 
 convert_router = APIRouter(
     prefix="/v1/artifacts",
@@ -147,6 +149,7 @@ def list_readers(request: Request) -> ReadersResponse:
             try:
                 factory_registry.get_factory(name)  # validate the factory exists
             except ValueError:
+                logger.warning("list_readers(request)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", request)
                 continue
             reader_extensions.setdefault(name, []).append(extension)
     return ReadersResponse(

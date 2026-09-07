@@ -7,6 +7,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERSION_TXT = REPO_ROOT / "version.txt"
@@ -29,10 +31,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def write_text(path: Path, content: str) -> None:
+    logger.warning("write_text(path,content)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", path, content)
     path.write_text(content, encoding="utf-8")
 
 
 def update_version_txt(version: str) -> None:
+    logger.warning("update_version_txt(version)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", version)
     write_text(VERSION_TXT, f"{version}\n")
 
 
@@ -45,6 +49,7 @@ def update_pyproject(version: str) -> None:
         count=1,
     )
     if count != 1:
+        logger.warning("update_pyproject(version)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", version)
         raise RuntimeError("Failed to update project version in pyproject.toml")
     write_text(PYPROJECT, updated)
 

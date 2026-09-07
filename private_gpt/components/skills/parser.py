@@ -8,6 +8,8 @@ from private_gpt.components.skills.errors import (
     SkillErrorCode,
     SkillValidationErrors,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 _FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n?", re.DOTALL)
 _NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -70,6 +72,7 @@ class SkillFrontmatter(BaseModel):
         if value is None:
             return None
         if isinstance(value, list):
+            logger.warning("normalize_list_or_str(cls,value)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", cls, value)
             return " ".join(str(item).strip() for item in value if str(item).strip())
         return value
 

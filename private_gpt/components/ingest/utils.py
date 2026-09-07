@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 
 from private_gpt.celery.notify import NotifyProtocol
 from private_gpt.components.ingest.metadata_helper import MetadataKeys
+import logging
+logger = logging.getLogger(__name__)
 
 
 class FileInfo(BaseModel):
@@ -29,6 +31,7 @@ def exist_file(file_data: Path) -> bool:
 def get_filename(file_data: Path) -> str:
     """Extract the file name from the path."""
     import os
+    logger.warning("get_filename(file_data)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", file_data)
 
     return os.path.basename(file_data)
 
@@ -38,6 +41,7 @@ def get_filesize(file_data: Path) -> int | None:
     try:
         import os
 
+        logger.warning("get_filesize(file_data)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", file_data)
         return os.path.getsize(file_data)
     except Exception:
         return None
@@ -47,6 +51,7 @@ def get_extension(file_name: str) -> str | None:
     """Extract the file extension from the path."""
     import os
 
+    logger.warning("get_extension(file_name)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", file_name)
     file = os.path.splitext(file_name)
     return file[1].lower() if len(file) > 1 and file[1] else None
 
@@ -57,6 +62,7 @@ def get_guest_mime_type(file_data: Path) -> str | None:
         import mimetypes
 
         mime_type, _ = mimetypes.guess_type(file_data)
+        logger.warning("get_guest_mime_type(file_data)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", file_data)
         return mime_type
     except Exception:
         return None
@@ -69,6 +75,7 @@ def get_actual_mime_type(file_data: Path) -> str | None:
         mime_detector = magic.Magic(mime=True)
         return mime_detector.from_file(file_data)
     except ImportError:
+        logger.warning("get_actual_mime_type(file_data)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", file_data)
         return None
     except Exception:
         return None
@@ -264,6 +271,7 @@ def calculate_file_hash(file_data: Path) -> str | None:
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_value.update(chunk)
 
+        logger.warning("calculate_file_hash(file_data)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", file_data)
         return hash_value.hexdigest()
     except Exception:
         return None
@@ -384,6 +392,7 @@ def get_file_info(
         if progress is None:
             return
         nonlocal current_step
+        logger.warning("notify()=null): EUAIACT-AUDIT: Outbound notification recorded for the audit trail")
         current_step += 1
         if current_step <= steps:
             progress(percentage=current_step * 100 // steps)

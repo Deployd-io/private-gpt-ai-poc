@@ -112,6 +112,7 @@ _PROVIDERS: dict[str, ObservabilityProvider] = {}
 
 
 def register_observability(mode: str, provider: ObservabilityProvider) -> None:
+    logger.warning("register_observability(mode,provider)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _PROVIDERS[mode] = provider
 
 

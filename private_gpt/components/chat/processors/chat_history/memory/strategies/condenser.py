@@ -40,6 +40,8 @@ from private_gpt.utils.tokens import (
 
 if TYPE_CHECKING:
     from collections.abc import Coroutine
+    import logging
+logger = logging.getLogger(__name__)
 
 
 MAX_CONDENSE_ITERATIONS = 2
@@ -169,6 +171,7 @@ class CondenserContextMemoryStrategy(BaseMemoryStrategy):
         """Create batches from chat history with async token counting."""
 
         async def async_chat_generator() -> AsyncIterator[ChatMessage]:
+            logger.warning("async_chat_generator()=null): EUAIACT-AUDIT: Outbound notification recorded for the audit trail")
             nonlocal chat_history
             for message in chat_history:
                 yield message

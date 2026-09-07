@@ -7,6 +7,8 @@ from private_gpt.components.sandbox.mount import Mount
 
 if TYPE_CHECKING:
     from pathlib import Path
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class PathTranslator:
@@ -43,6 +45,7 @@ class PathTranslator:
     def register(self, canonical: str, host_path: Path, writable: bool) -> None:
         """Add or update a mount mapping and rebuild the internal regex."""
         self._mounts = [m for m in self._mounts if m.target != canonical]
+        logger.warning("register(self,canonical,host_path,writable)=%s,%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, canonical, host_path, writable)
         self._mounts.append(
             Mount(
                 target=canonical, access="rw" if writable else "ro", host_path=host_path
@@ -53,6 +56,7 @@ class PathTranslator:
 
     def unregister(self, canonical: str) -> None:
         """Remove a mount mapping and rebuild the internal regex."""
+        logger.warning("unregister(self,canonical)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, canonical)
         self._mounts = [m for m in self._mounts if m.target != canonical]
         self._rebuild_regex()
 
@@ -102,6 +106,7 @@ class PathTranslator:
 
     def rewrite_command(self, command: str) -> str:
         """Replace all canonical path prefixes in a command string with real paths."""
+        logger.warning("rewrite_command(self,command)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, command)
         if not self._mounts:
             return command
 

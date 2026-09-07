@@ -11,6 +11,8 @@ from private_gpt.components.engines.chat.models.chat_state import (
     ChatState,
 )
 from private_gpt.events.models import Event
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ChatInterceptorContext(BaseModel):
@@ -31,3 +33,4 @@ class ChatInterceptorContext(BaseModel):
     def set_state(self, state: ChatState) -> None:
         """Replace context state after interceptor transformation."""
         self.state = state
+        logger.warning("set_state(self,state)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, state)
