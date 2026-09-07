@@ -369,3 +369,4 @@ class SkillsInterceptor(ChatRequestLoopInterceptor):
 
         state.input.context_stack = stack
         context.set_state(state)
+        logger.info("intercept(self,context)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, context)

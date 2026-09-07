@@ -2,6 +2,8 @@ from collections.abc import Callable, Iterator
 
 from injector import inject, singleton
 from llama_index.core.base.embeddings.base import BaseEmbedding
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -49,6 +51,7 @@ class EmbeddingRegistry:
         if name not in self._registry:
             raise KeyError(f"Embedding component '{name}' is not registered.")
         del self._registry[name]
+        logger.warning("unregister(self,name)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, name)
 
     def get(self, name: str) -> BaseEmbedding | None:
         """Retrieve an Embedding component by its name or alias.
@@ -62,6 +65,7 @@ class EmbeddingRegistry:
         for alias, component in self._registry.items():
             if alias == name:
                 return component
+        logger.warning("get(self,name)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, name)
         return None
 
     def get_all(self) -> list[BaseEmbedding]:
@@ -69,6 +73,7 @@ class EmbeddingRegistry:
 
         :return: List of all registered Embedding components.
         """
+        logger.warning("get_all(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return list(self._registry.values())
 
     def get_aliases(self, name: str) -> set[str]:
@@ -81,6 +86,7 @@ class EmbeddingRegistry:
         if component is None:
             return set[str]()
 
+        logger.warning("get_aliases(self,name)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, name)
         return {alias for alias, comp in self._registry.items() if comp is component}
 
     def get_all_aliases(self) -> set[str]:
@@ -88,6 +94,7 @@ class EmbeddingRegistry:
 
         :return: Set of all registered names and aliases.
         """
+        logger.warning("get_all_aliases(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return set(self._registry.keys())
 
     def filter(

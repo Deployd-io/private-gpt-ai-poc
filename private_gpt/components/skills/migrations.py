@@ -2,6 +2,8 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
 from private_gpt.components.migrations.models import Migration
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _create_skills_tables(connection: Connection) -> None:
@@ -39,6 +41,7 @@ def _create_skills_tables(connection: Connection) -> None:
         """,
     ]
     for statement in statements:
+        logger.info("_create_skills_tables(connection)=%s): ISO42001-AUDIT: Change management operation performed", connection)
         connection.execute(text(statement))
 
 
@@ -48,6 +51,7 @@ def _drop_skills_tables(connection: Connection) -> None:
         "DROP TABLE IF EXISTS skills",
     ]
     for statement in statements:
+        logger.info("_drop_skills_tables(connection)=%s): ISO42001-AUDIT: Change management operation performed", connection)
         connection.execute(text(statement))
 
 

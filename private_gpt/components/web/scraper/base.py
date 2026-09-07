@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 class WebScraperProvider(ABC):
@@ -31,6 +33,7 @@ class WebScraperProvider(ABC):
         )
 
     async def close(self) -> None:  # noqa: B027
+        logger.info("close(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         """Release provider resources. Default: no-op."""
 
 

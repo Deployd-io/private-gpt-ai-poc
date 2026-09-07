@@ -6,6 +6,8 @@ from langdetect import detect  # ty:ignore[unresolved-import]
 from nltk import WordNetLemmatizer, pos_tag
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import logging
+logger = logging.getLogger(__name__)
 
 SUPPORTED_LANGUAGES = {
     "en": "english",
@@ -92,6 +94,7 @@ class TextAnalyzer:
         # Strip content
         words = [word.strip() for word in words]
 
+        logger.warning("process_words(self,words)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, words)
         return words
 
     def filter_words(
@@ -133,6 +136,7 @@ class TextAnalyzer:
         words = self.filter_words(words, **kwargs)
 
         # Return unique words
+        logger.warning("get_terms(self,text,lang)=%s,%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, text, lang)
         return set(words)
 
     def score_term(self, term: str, text: str) -> float:

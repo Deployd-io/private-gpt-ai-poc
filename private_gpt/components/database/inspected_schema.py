@@ -7,6 +7,8 @@ from private_gpt.components.database.inspector_interface import (
     DatabaseObjectType,
     InspectedDatabaseObject,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 SEPARATION = "\n"
 SEPARATION_SECTION = "\n\n"
@@ -72,6 +74,7 @@ class InspectedTableLike(InspectedDatabaseObject):
     @abstractmethod
     def get_kind(cls) -> ObjectKind:
         pass
+        logger.warning("get_kind(cls)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", cls)
 
     def __str__(self) -> str:
         cols_str = SEPARATION.join(str(col) for col in self.columns)
@@ -105,6 +108,7 @@ class InspectedTable(InspectedTableLike):
 
 class InspectedView(InspectedTableLike):
     def get_type(self) -> str:
+        logger.warning("get_type(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return DatabaseObjectType.VIEW
 
     def _get_object_label(self) -> str:
@@ -229,6 +233,7 @@ class InspectedSchema:
         self._objects = []
 
     def add_object(self, obj: InspectedDatabaseObject) -> None:
+        logger.warning("add_object(self,obj)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, obj)
         self._objects.append(obj)
 
     def get_objects_by_type(
@@ -242,6 +247,7 @@ class InspectedSchema:
 
     @property
     def views(self) -> list[InspectedView]:
+        logger.warning("views(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return [obj for obj in self._objects if isinstance(obj, InspectedView)]
 
     @property

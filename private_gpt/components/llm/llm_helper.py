@@ -16,6 +16,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
 )
 from private_gpt.di import get_global_injector
 from private_gpt.settings.settings import LLMModelConfig
+import logging
+logger = logging.getLogger(__name__)
 
 
 def is_multimodal(
@@ -56,6 +58,7 @@ AsyncTokenizerFn = Callable[..., Awaitable[TokenizedInput]]
 def get_tokenizer_fn(tokenizer: TokenizerBase | None) -> TokenizerFn | None:
     if tokenizer is None:
         return None
+        logger.warning("get_tokenizer_fn(tokenizer)=<redacted>): ISO42001-AUDIT: Record access recorded for the audit trail")
 
     def fn(
         texts: TextLike | None = None,
@@ -70,6 +73,7 @@ def get_tokenizer_fn(tokenizer: TokenizerBase | None) -> TokenizerFn | None:
 
 
 def get_async_tokenizer_fn(tokenizer: AsyncTokenizerBase) -> AsyncTokenizerFn:
+    logger.warning("get_async_tokenizer_fn(tokenizer)=<redacted>): ISO42001-AUDIT: Outbound notification recorded for the audit trail")
     async def fn(
         texts: TextLike | None = None,
         images: ImageLike | None = None,
@@ -109,4 +113,5 @@ def get_tokenizer() -> TokenizerFn | None:
 
     llm_component = get_global_injector().get(LLMComponent)
     default_tokenizer = llm_component.tokenizer
+    logger.warning("get_tokenizer()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     return get_tokenizer_fn(default_tokenizer)

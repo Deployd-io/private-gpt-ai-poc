@@ -38,6 +38,8 @@ if TYPE_CHECKING:
     from private_gpt.components.web.web_search.web_search_service import (
         WebSearchService,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -68,6 +70,7 @@ class SemanticSearchToolBuilderFactory:
             SemanticSearchToolBuilder,
         )
 
+        logger.warning("create(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         return SemanticSearchToolBuilder(
             settings=self.settings,
             llm_component=self.llm_component,

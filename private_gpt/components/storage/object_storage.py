@@ -15,6 +15,8 @@ from private_gpt.components.storage.models import FileInfo
 if TYPE_CHECKING:
     from private_gpt.components.storage.models import StoredFile
     from private_gpt.components.storage.s3_helper import S3Helper
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class ObjectStorage(ABC):
@@ -65,6 +67,7 @@ class LocalObjectStorage(ObjectStorage):
 
     async def write_bundle(self, prefix: str, files: list[StoredFile]) -> None:
         await to_thread.run_sync(self._write_bundle_sync, prefix, files)
+        logger.warning("write_bundle(self,prefix,files)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, prefix, files)
 
     def _write_bundle_sync(self, prefix: str, files: list[StoredFile]) -> None:
         for file in files:
@@ -74,6 +77,7 @@ class LocalObjectStorage(ObjectStorage):
 
     async def delete_prefix(self, prefix: str) -> None:
         await to_thread.run_sync(self._delete_prefix_sync, prefix)
+        logger.warning("delete_prefix(self,prefix)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, prefix)
 
     def _delete_prefix_sync(self, prefix: str) -> None:
         path = Path(self._root_path) / prefix
@@ -81,6 +85,7 @@ class LocalObjectStorage(ObjectStorage):
             shutil.rmtree(path)
 
     async def read_file(self, prefix: str, path: str) -> bytes:
+        logger.warning("read_file(self,prefix,path)=%s,%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, prefix, path)
         return await to_thread.run_sync(self._read_file_sync, prefix, path)
 
     def _read_file_sync(self, prefix: str, path: str) -> bytes:
@@ -88,6 +93,7 @@ class LocalObjectStorage(ObjectStorage):
         return target.read_bytes()
 
     async def list_files(self, prefix: str) -> list[str]:
+        logger.warning("list_files(self,prefix)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, prefix)
         return await to_thread.run_sync(self._list_files_sync, prefix)
 
     def _list_files_sync(self, prefix: str) -> list[str]:
@@ -135,6 +141,7 @@ class LocalObjectStorage(ObjectStorage):
         )
 
     async def list_files_meta(self, prefix: str) -> list[FileInfo]:
+        logger.warning("list_files_meta(self,prefix)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, prefix)
         return await to_thread.run_sync(self._list_files_meta_sync, prefix)
 
     def _list_files_meta_sync(self, prefix: str) -> list[FileInfo]:
@@ -166,6 +173,7 @@ class LocalObjectStorage(ObjectStorage):
         return results
 
     async def delete_file(self, prefix: str, path: str) -> bool:
+        logger.warning("delete_file(self,prefix,path)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, prefix, path)
         return await to_thread.run_sync(self._delete_file_sync, prefix, path)
 
     def _delete_file_sync(self, prefix: str, path: str) -> bool:

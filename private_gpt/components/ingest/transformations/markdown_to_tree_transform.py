@@ -28,6 +28,8 @@ if TYPE_CHECKING:
     from llama_index.core.schema import BaseNode
 
     from private_gpt.components.readers.nodes.tree_node import TreeNode
+    import logging
+logger = logging.getLogger(__name__)
 
 
 _MD_CONVERTER = MarkdownConverter(heading_style="ATX")
@@ -386,6 +388,7 @@ class MarkdownTreeNodeParser(TransformComponent):
         node.excluded_embed_metadata_keys.append("headers")
         for child in node.children or []:
             self._update_headers_metadata(child, headers)
+            logger.info("_update_headers_metadata(self,node,headers)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, node, headers)
 
     def _copy_metadata_to_children(self, node: TreeNode) -> None:
         """Copy metadata from parent to children."""

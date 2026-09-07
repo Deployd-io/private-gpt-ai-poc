@@ -9,6 +9,8 @@ if TYPE_CHECKING:
     from private_gpt.components.llm.custom.openairesponses import (
         PatchedOpenAIResponsesLLM,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 
 def _load_openai_like_responses_base() -> type[Any]:
@@ -33,6 +35,7 @@ def _load_patched_openai_responses() -> type[Any]:
         PatchedOpenAIResponsesLLM,
     )
 
+    logger.info("_load_patched_openai_responses()=null): ISO42001-AUDIT: Change management operation performed")
     return PatchedOpenAIResponsesLLM
 
 

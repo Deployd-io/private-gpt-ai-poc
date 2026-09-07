@@ -17,6 +17,8 @@ from private_gpt.components.filesystems.mount_entry import MountEntry
 from private_gpt.events.models import TLDRBlock, ToolResultBlock, ToolUseBlock
 from private_gpt.server.mcp.config import McpServerConfig
 from private_gpt.server.utils.artifact_input import ArtifactType
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ChatBody(MessagesInputBase):
@@ -277,10 +279,13 @@ class ChatBody(MessagesInputBase):
 
     def system_list(self) -> list[System]:
         """Return system configuration normalized as a list of System blocks."""
+        logger.info("system_list(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
+        logger.warning("system_list(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return self.system
 
     def merged_system(self) -> System:
         """Return system configuration merged into a single System object."""
+        logger.info("merged_system(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return validate_system_config(self.system_list())
 
     @model_validator(mode="after")

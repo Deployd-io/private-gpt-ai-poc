@@ -35,9 +35,11 @@ class SQLiteClient:
         self.async_session = self.new_async_session()
 
     def new_sync_session(self) -> sessionmaker[Session]:
+        logger.warning("new_sync_session(self)=%s): ISO42001-AUDIT: Outbound notification recorded for the audit trail", self)
         return sessionmaker(self._sync_engine)
 
     def new_async_session(self) -> async_sessionmaker[AsyncSession]:
+        logger.warning("new_async_session(self)=%s): ISO42001-AUDIT: Outbound notification recorded for the audit trail", self)
         return async_sessionmaker(self._async_engine, class_=AsyncSession)
 
     def close(self) -> None:
@@ -62,6 +64,7 @@ class LazySQLiteFactory:
                         local_path=settings.database.local_path,
                         database=settings.database.database,
                     )
+        logger.warning("get_instance(cls,settings)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", cls, settings)
         return cls._instance
 
     @classmethod

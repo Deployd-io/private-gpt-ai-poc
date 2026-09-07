@@ -5,6 +5,8 @@ from private_gpt.components.streaming.providers.models import (
     StreamMetadata,
     StreamStatus,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Event(NamedTuple):
@@ -40,6 +42,7 @@ class StreamService(ABC):
     async def get_stream_metadata(self, correlation_id: str) -> StreamMetadata | None:
         """Get stream metadata by correlation ID."""
         pass
+        logger.warning("get_stream_metadata(self,correlation_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     @abstractmethod
     async def push_event(
@@ -78,6 +81,7 @@ class StreamService(ABC):
     async def delete_stream(self, correlation_id: str) -> None:
         """Delete stream and its metadata."""
         pass
+        logger.warning("delete_stream(self,correlation_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     @abstractmethod
     async def list_streams(
@@ -103,6 +107,7 @@ class StreamService(ABC):
         its event loop.
         """
         pass
+        logger.warning("set_cancel_flag(self,correlation_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
 
     @abstractmethod
     async def is_cancelled(self, correlation_id: str) -> bool:

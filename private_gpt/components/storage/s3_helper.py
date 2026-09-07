@@ -169,6 +169,7 @@ class S3Helper:
             raise RuntimeError("Failed to create S3 client")
         response = s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
         content = response["Body"].read()
+        logger.warning("load_file_from_s3(self,s3_url)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, s3_url)
         return io.BytesIO(content)
 
     async def async_load_file_from_s3(self, s3_url: str, **kwargs: Any) -> BinaryIO:
@@ -177,6 +178,7 @@ class S3Helper:
             response = await s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
             async with response["Body"] as body:
                 content = await body.read()
+        logger.warning("async_load_file_from_s3(self,s3_url)=%s,%s: ISO42001-AUDIT: Outbound notification recorded for the audit trail", self, s3_url)
         return io.BytesIO(content)
 
     def remove_file_from_s3(self, s3_url: str) -> None:
@@ -193,11 +195,13 @@ class S3Helper:
         s3_key = s3_components[1] if len(s3_components) > 1 else ""
 
         s3_client.delete_object(Bucket=s3_bucket, Key=s3_key)
+        logger.warning("remove_file_from_s3(self,s3_url)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, s3_url)
 
     async def async_remove_file_from_s3(self, s3_url: str) -> None:
         s3_bucket, s3_key = self._parse_s3_url(s3_url)
         async with self._get_async_s3_client() as s3_client:
             await s3_client.delete_object(Bucket=s3_bucket, Key=s3_key)
+            logger.warning("async_remove_file_from_s3(self,s3_url)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, s3_url)
 
     def head_object(self, bucket_name: str, key: str) -> dict[str, Any] | None:
         """Return metadata for a single S3 object, or None if it doesn't exist."""
@@ -245,6 +249,7 @@ class S3Helper:
         existed = self.head_object(bucket_name, key) is not None
         if existed:
             s3_client.delete_object(Bucket=bucket_name, Key=key)
+        logger.warning("delete_key(self,bucket_name,key)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, bucket_name, key)
         return existed
 
     async def async_delete_key(self, bucket_name: str, key: str) -> bool:
@@ -256,6 +261,7 @@ class S3Helper:
                     return False
                 raise
             await s3_client.delete_object(Bucket=bucket_name, Key=key)
+        logger.warning("async_delete_key(self,bucket_name,key)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, bucket_name, key)
         return True
 
     def list_objects_by_prefix(self, bucket_name: str, prefix: str) -> list[str]:
@@ -270,6 +276,7 @@ class S3Helper:
                 key = item.get("Key")
                 if key:
                     keys.append(str(key))
+        logger.warning("list_objects_by_prefix(self,bucket_name,prefix)=%s,%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, bucket_name, prefix)
         return keys
 
     async def async_list_objects_by_prefix(

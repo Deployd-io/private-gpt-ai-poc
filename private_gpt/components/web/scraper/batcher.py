@@ -55,6 +55,7 @@ class ScrapeBatcher:
                 self._flush_locked()
             elif self._window is None:
                 self._window = asyncio.create_task(self._close_window())
+        logger.warning("submit(self,url,timeout_seconds)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, url, timeout_seconds)
         return await future
 
     def _flush_locked(self) -> None:
@@ -68,6 +69,7 @@ class ScrapeBatcher:
             task = asyncio.create_task(self._dispatch(batch, timeout_seconds))
             self._dispatches.add(task)
             task.add_done_callback(self._dispatches.discard)
+            logger.info("_flush_locked(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
 
     async def _close_window(self) -> None:
         await asyncio.sleep(self._wait)
@@ -105,3 +107,4 @@ class ScrapeBatcher:
                 p.future.set_exception(RuntimeError("Scrape batcher is closed"))
         if self._dispatches:
             await asyncio.gather(*self._dispatches, return_exceptions=True)
+            logger.info("close(self)=%s): ISO42001-AUDIT: Change management operation performed", self)

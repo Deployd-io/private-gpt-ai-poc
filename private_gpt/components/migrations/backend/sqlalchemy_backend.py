@@ -21,6 +21,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
         self.engine = engine
         self._schema_name = schema_name
         self._migration_table_name = "schema_migrations"
+        logger.info("__init__(self,engine,schema_name)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, engine, schema_name)
 
     def has_migration_table(self) -> bool:
         inspector = sa_inspect(self.engine)
@@ -34,6 +35,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
             self._effective_schema(),
             exists,
         )
+        logger.info("has_migration_table(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return exists
 
     def applied_migrations(self) -> dict[str, "AppliedMigration"]:
@@ -54,6 +56,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 checksum=row[2],
             )
         logger.debug("Loaded applied migrations: count=%s", len(applied))
+        logger.info("applied_migrations(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return applied
 
     def apply(self, migration: "Migration") -> None:
@@ -83,6 +86,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                     "Migration already tracked, skip insert: version=%s",
                     migration.version,
                 )
+                logger.info("apply(self,migration)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, migration)
                 return
             conn.execute(
                 text(
@@ -100,6 +104,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 values,
             )
             logger.debug("Migration tracked: version=%s", migration.version)
+            logger.warning("apply(self,migration)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, migration)
 
     def revert(self, migration: "Migration") -> None:
         with self.engine.begin() as conn:
@@ -108,6 +113,7 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 self._migration_table_name,
                 schema=self._effective_schema(),
             ):
+                logger.info("revert(self,migration)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, migration)
                 return
             conn.execute(
                 text(
@@ -116,18 +122,21 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
                 {"version": migration.version},
             )
             logger.debug("Migration untracked: version=%s", migration.version)
+            logger.warning("revert(self,migration)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, migration)
 
     def is_applied(self, version: str) -> bool:
         if not self.has_migration_table():
             return False
 
         with self.engine.begin() as conn:
+            logger.info("is_applied(self,version)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, version)
             row = conn.execute(
                 text(
                     f"SELECT version FROM {self._qualified_table_name()} WHERE version = :version"
                 ),
                 {"version": version},
             ).first()
+        logger.warning("is_applied(self,version)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, version)
         return row is not None
 
     def _is_postgres(self) -> bool:
@@ -149,4 +158,5 @@ class SQLAlchemyMigrationBackend(MigrationBackend):
         schema_name = self._effective_schema()
         if schema_name is not None:
             return f"{schema_name}.{self._migration_table_name}"
+            logger.info("_qualified_table_name(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return self._migration_table_name

@@ -9,6 +9,8 @@ from watchdog.events import (
     FileSystemEventHandler,
 )
 from watchdog.observers import Observer
+import logging
+logger = logging.getLogger(__name__)
 
 
 class IngestWatcher:
@@ -28,6 +30,7 @@ class IngestWatcher:
                 if isinstance(event, FileCreatedEvent):
                     if isinstance(event.src_path, str):
                         on_file_changed(Path(event.src_path))
+                        logger.warning("on_created(self,event)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, event)
 
         event_handler = Handler()
         observer: Any = Observer()

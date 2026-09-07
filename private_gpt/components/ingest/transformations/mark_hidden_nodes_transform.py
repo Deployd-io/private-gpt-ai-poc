@@ -7,6 +7,8 @@ from pydantic import Field
 
 from private_gpt.components.ingest.metadata_helper import MetadataFlags
 from private_gpt.components.readers.nodes import TextNode, TreeNode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MarkHiddenNodesTransform(TransformComponent):
@@ -26,6 +28,7 @@ class MarkHiddenNodesTransform(TransformComponent):
 
         for child in node.children or []:
             self._update_hidden_elements(child)
+            logger.info("_update_hidden_elements(self,node)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, node)
 
     def __call__(self, nodes: Sequence[BaseNode], **kwargs: Any) -> Sequence[BaseNode]:
         for node in nodes:

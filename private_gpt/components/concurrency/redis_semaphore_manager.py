@@ -180,6 +180,7 @@ class RedisSemaphoreManager(SemaphoreManager):
                 await asyncio.sleep(1)
 
         logger.debug("Worker stopped for queue: %s", self.queue_key)
+        logger.info("_worker_loop(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
 
     async def start_processor(self) -> None:
         if self._started:
@@ -194,6 +195,7 @@ class RedisSemaphoreManager(SemaphoreManager):
             self.queue_key,
             self.max_concurrency,
         )
+        logger.warning("start_processor(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
     async def execute(
         self,

@@ -46,6 +46,8 @@ class LivenessProbe(bootsteps.StartStopStep):
         HEARTBEAT_FILE.unlink(missing_ok=True)
 
     def update_heartbeat_file(self, worker: Any) -> None:
+        logger.warning("update_heartbeat_file(self,worker)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, worker)
+        logger.info("update_heartbeat_file(self,worker)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, worker)
         HEARTBEAT_FILE.touch()
 
 
@@ -90,6 +92,7 @@ def _shutdown_stateful_worker() -> None:
 @worker_ready.connect
 def handle_worker_ready(**kwargs: dict[str, Any]) -> None:
     """Signal handler for worker ready event."""
+    logger.warning("handle_worker_ready()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     READINESS_FILE.touch()
 
 
@@ -104,6 +107,7 @@ def handle_worker_process_init(**kwargs: dict[str, Any]) -> None:
         from private_gpt.celery.base import StatefulBackgroundTask
 
         StatefulBackgroundTask.reset_after_fork()
+        logger.warning("handle_worker_process_init()=null): ISO42001-AUDIT: State change recorded for the audit trail")
         _warm_stateful_worker()
 
 
@@ -113,6 +117,7 @@ def handle_worker_process_shutdown(**kwargs: dict[str, Any]) -> None:
     if not _is_stateful():
         return
 
+        logger.warning("handle_worker_process_shutdown()=null): ISO42001-AUDIT: State change recorded for the audit trail")
     _shutdown_stateful_worker()
 
 

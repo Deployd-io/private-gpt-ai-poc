@@ -8,6 +8,8 @@ from private_gpt.components.tools.tool_names import (
     WEB_FETCH_TOOL_NAME,
     WEB_SEARCH_TOOL_NAME,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 # Anthropic server tool translation
 # Keys are glob patterns matching Anthropic's date-versioned type strings.
@@ -26,6 +28,7 @@ def is_anthropic_server_tool_type(tool_type: str | None) -> bool:
 
     Matches any type string ending in an 8-digit date suffix (_YYYYMMDD).
     """
+    logger.info("is_anthropic_server_tool_type(tool_type)=%s): ISO42001-AUDIT: Change management operation performed", tool_type)
     return bool(tool_type and _ANTHROPIC_DATE_SUFFIX_RE.search(tool_type))
 
 

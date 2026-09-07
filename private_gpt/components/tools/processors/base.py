@@ -8,6 +8,8 @@ from private_gpt.components.chat.models.chat_config_models import (
 )
 from private_gpt.components.tools.tool_names import resolve_internal_tool_name
 from private_gpt.server.utils.artifact_input import ArtifactType
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ToolProcessor(ABC):
@@ -41,6 +43,7 @@ def _tool_matches(tool: ToolSpec, *tool_names: str) -> bool:
     # Name-based matching would cause external tools that share a name with an internal
     # tool to be incorrectly resolved by internal processors.
     resolved_type = resolve_internal_tool_name(tool.type)
+    logger.info("_tool_matches(tool)=%s): ISO42001-AUDIT: Change management operation performed", tool)
     return resolved_type is not None and resolved_type in tool_names
 
 

@@ -15,6 +15,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
 )
 from private_gpt.components.llm.tokenizers.utils import build_minimal_messages
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
@@ -218,9 +220,11 @@ class HuggingFaceTokenizer(TokenizerBase):
 
     def get_vocab(self) -> dict[str, int]:
         vocab: dict[str, int] = self._tokenizer.get_vocab()
+        logger.warning("get_vocab(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return vocab
 
     def get_added_vocab(self) -> dict[str, int]:
+        logger.warning("get_added_vocab(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         raise NotImplementedError()
 
     def encode(self, text: str, add_special_tokens: bool | None = None) -> list[int]:

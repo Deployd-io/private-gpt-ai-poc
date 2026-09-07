@@ -8,6 +8,8 @@ from llama_index.core.storage.docstore.utils import json_to_doc
 from private_gpt.components.readers.nodes.utils import (
     dict_to_tree_node,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 def json_to_doc_tree(doc_dict: dict[str, Any]) -> BaseNode:
@@ -18,6 +20,7 @@ def json_to_doc_tree(doc_dict: dict[str, Any]) -> BaseNode:
         return json_to_doc(doc_dict)
 
     node_type, version = doc_type.split("-")
+    logger.info("json_to_doc_tree(doc_dict)=%s): ISO42001-AUDIT: Change management operation performed", doc_dict)
     return dict_to_tree_node(version, node_type, data_dict)
 
 
@@ -55,6 +58,7 @@ class PatchedKVDocumentStore(SimpleDocumentStore):
                 raise ValueError(f"doc_id {doc_id} not found.")
             else:
                 return None
+        logger.warning("get_document(self,doc_id,raise_error)=%s,%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, doc_id, raise_error, doc_id)
         return json_to_doc_tree(json)
 
     async def aget_document(

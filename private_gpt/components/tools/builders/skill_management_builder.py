@@ -19,6 +19,8 @@ from private_gpt.components.tools.tool_names import (
 )
 from private_gpt.di import get_global_injector
 from private_gpt.events.models import ResultContentBlockType, TextBlock
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _ok(data: Any) -> list[ResultContentBlockType]:
@@ -45,6 +47,7 @@ class SkillManagementToolBuilder:
         self._loaded_names = {name for name in (loaded_names or []) if name}
 
     async def _resolved(self) -> list[SkillVersionWithSkillEntity]:
+        logger.info("_resolved(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return await self._skill_service.recover_versions(self._skill_filter)
 
     def build_load_skill(
@@ -66,7 +69,9 @@ class SkillManagementToolBuilder:
                         payload[
                             "instructions"
                         ] = await self._skill_service.get_skill_body(version)
+                        logger.info("load_skill(name)=%s): ISO42001-AUDIT: Change management operation performed", name)
                     return _ok(payload)
+            logger.warning("load_skill(name)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", name)
             return _error(f"Skill '{name}' not found in current skill_filter")
 
         return ToolSpec.from_defaults(
@@ -93,6 +98,7 @@ class SkillManagementToolBuilder:
         type: str = SKILL_UNLOAD_TOOL_NAME + "_v1",
     ) -> ToolSpec:
         async def unload_skill(name: str) -> list[ResultContentBlockType]:
+            logger.warning("unload_skill(name)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", name)
             return _ok({"name": name, "unloaded": True})
 
         return ToolSpec.from_defaults(

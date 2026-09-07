@@ -68,5 +68,7 @@ class MigrationRunner:
                     migration.description,
                 )
                 self._backend.revert(migration)
+                logger.info("run_down(self,migrations,steps)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, migrations, steps)
                 reverted += 1
             logger.info("Migrations down completed: reverted=%s", reverted)
+            logger.warning("run_down(self,migrations,steps)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, migrations, steps)

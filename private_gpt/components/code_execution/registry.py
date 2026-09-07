@@ -4,6 +4,8 @@ from private_gpt.components.code_execution.base import (
 )
 from private_gpt.components.code_execution.local import LocalCodeExecutionProvider
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 _PROVIDERS: dict[str, CodeExecutionProviderFactory] = {
     "local": LocalCodeExecutionProvider,
@@ -35,4 +37,5 @@ class CodeExecutionProviderRegistry:
             )
         provider = provider_factory(self._settings)
         self._providers[name] = provider
+        logger.warning("get_provider(self,name)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, name)
         return provider

@@ -82,6 +82,7 @@ class PromptStyleBase(ABC):
         Returns:
             False by default. Override in subclasses to enable.
         """
+        logger.warning("allow_reasoning_budget(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return False
 
     @property

@@ -747,6 +747,7 @@ class EnhancedPPTXTransform:
         png_files = sorted(temp_dir.glob("slide-*.png"))
         slide_images: dict[int, Path] = dict(enumerate(png_files))
         logger.debug(f"Generated {len(slide_images)} slide images")
+        logger.info("_convert_pptx_to_pngs(self,pptx_path,temp_dir)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, pptx_path, temp_dir)
         return slide_images
 
     async def _group_zone_images_by_slide(

@@ -16,6 +16,8 @@ from private_gpt.components.skills.services.skill_service import SkillService
 from private_gpt.server.chat.interceptors.skills_loop_interceptor import (
     find_skill_filter,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -60,3 +62,4 @@ class SkillsValidationInterceptor(ChatRequestLoopInterceptor):
             resources=resources,
         )
         context.set_state(state)
+        logger.info("intercept(self,context)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, context)

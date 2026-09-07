@@ -13,6 +13,8 @@ from private_gpt.server.ingest.convert_service import ConvertService
 from private_gpt.server.utils.artifact_input import IngestableArtifactType
 from private_gpt.server.utils.auth import authenticated
 from private_gpt.server.utils.openapi_models import OpenAPIValidationErrorResponse
+import logging
+logger = logging.getLogger(__name__)
 
 convert_router = APIRouter(
     prefix="/v1/artifacts",
@@ -149,6 +151,7 @@ def list_readers(request: Request) -> ReadersResponse:
             except ValueError:
                 continue
             reader_extensions.setdefault(name, []).append(extension)
+            logger.warning("list_readers(request)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", request)
     return ReadersResponse(
         data={
             name: ReaderInfo(extensions=exts)

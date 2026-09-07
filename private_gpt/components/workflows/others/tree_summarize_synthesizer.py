@@ -15,6 +15,8 @@ from llama_index.core.response_synthesizers.base import BaseSynthesizer
 from llama_index.core.types import RESPONSE_TEXT_TYPE
 
 from private_gpt.utils.concurrency import bounded_concurrent_execute
+import logging
+logger = logging.getLogger(__name__)
 
 
 def run_async_tasks_with_limit_concurrency(
@@ -72,6 +74,7 @@ class TreeSummarizeSynthesizer(BaseSynthesizer):
         """Update prompts."""
         if "summary_template" in prompts_dict:
             self._summary_template = prompts_dict["summary_template"]
+            logger.info("_update_prompts(self,prompts_dict)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, prompts_dict)
 
     async def aget_response(
         self,

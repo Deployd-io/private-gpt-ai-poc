@@ -134,6 +134,8 @@ async def tool_run_task(*, request_data: dict[str, Any]) -> dict[str, Any]:
             isinstance(response.outcome, ToolExecutionFailure),
             _result_fragment(response),
         )
+        logger.warning("tool_run_task(request_data)=%s): ISO42001-AUDIT: State change recorded for the audit trail", request_data)
+        logger.info("tool_run_task(request_data)=%s): ISO42001-AUDIT: Change management operation performed", request_data)
         return response.model_dump(mode="json")
 
 

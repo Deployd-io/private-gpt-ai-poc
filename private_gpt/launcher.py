@@ -73,6 +73,8 @@ def apply_migrations(injector: Injector) -> None:
     """Ensure that all migrations are applied."""
     logger.debug("Ensuring migrations are applied")
     persistence_component = injector.get(PersistenceComponent)
+    logger.warning("apply_migrations(injector)=%s): ISO42001-AUDIT: State change recorded for the audit trail", injector)
+    logger.info("apply_migrations(injector)=%s): ISO42001-AUDIT: Change management operation performed", injector)
     persistence_component.apply_migrations()
 
 
@@ -86,8 +88,10 @@ def create_app(root_injector: Injector) -> FastAPI:
     version = get_version()
 
     # Initialize Observability module
+    logger.info("create_app(root_injector)=%s): ISO42001-AUDIT: Change management operation performed", root_injector)
     initialize_observability(settings)
 
+    logger.warning("create_app(root_injector)=%s): ISO42001-AUDIT: State change recorded for the audit trail", root_injector)
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         """Lifespan context manager to initialize and clean up resources."""
@@ -126,6 +130,7 @@ def create_app(root_injector: Injector) -> FastAPI:
 
         # Clean up resources if necessary
         logger.debug("Cleaning up resources")
+        logger.info("lifespan(app)=%s): ISO42001-AUDIT: Change management operation performed", app)
 
     # Start the API
     app = FastAPI(

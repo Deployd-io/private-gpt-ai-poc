@@ -12,15 +12,19 @@ from private_gpt.components.database.inspector_interface import (
     DatabaseObjectInspector,
     InspectedDatabaseObject,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DatabaseTableLikeInspector(DatabaseObjectInspector, ABC):
     @abstractmethod
     def get_objects(self, schema: str) -> list[InspectedDatabaseObject]:
+        logger.warning("get_objects(self,schema)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, schema)
         pass
 
     @abstractmethod
     def get_inspector_type(self) -> str:
+        logger.warning("get_inspector_type(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         pass
 
     def _extract_schema(

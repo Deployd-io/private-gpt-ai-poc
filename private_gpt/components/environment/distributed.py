@@ -61,6 +61,7 @@ class DistributedCoordinator:
     @property
     def enabled(self) -> bool:
         """True when connected to Redis (real cross-process coordination)."""
+        logger.warning("enabled(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         return self._redis is not None
 
     async def _client(self) -> Redis | None:
@@ -147,6 +148,7 @@ class DistributedCoordinator:
         async with _fallback_guard:
             if _fallback_locks.get(key) == owner:
                 _fallback_locks.pop(key, None)
+                logger.info("_release_fallback(self,session_id,owner)=%s,<redacted>,%s: ISO42001-AUDIT: Change management operation performed", self, owner)
 
     @asynccontextmanager
     async def session_lock(self, session_id: str) -> AsyncIterator[bool]:
@@ -187,6 +189,7 @@ class DistributedCoordinator:
 
             if acquired:
                 await self._refresh_lease(session_id)
+                logger.info("session_lock(self,session_id)=%s,<redacted>: ISO42001-AUDIT: Change management operation performed", self)
 
                 async def _heartbeat() -> None:
                     while True:
@@ -219,6 +222,7 @@ class DistributedCoordinator:
             return
         with suppress(Exception):
             await redis.set(key, str(time.time()), ex=_ACTIVITY_TTL_SECONDS)
+            logger.warning("set_activity(self,session_id)=%s,<redacted>: ISO42001-AUDIT: State change recorded for the audit trail %s", self, session_id)
 
     async def get_activity(self, session_id: str) -> float | None:
         """Return the last recorded wall-clock usage, or None if unknown."""
@@ -232,6 +236,7 @@ class DistributedCoordinator:
             raw = await redis.get(key)
             if raw is not None:
                 return float(raw)
+        logger.warning("get_activity(self,session_id)=%s,<redacted>: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, session_id)
         return None
 
     async def close(self) -> None:

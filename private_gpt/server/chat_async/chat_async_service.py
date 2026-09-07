@@ -12,6 +12,8 @@ from private_gpt.events.interceptors.ping_event_interceptor import (
 )
 from private_gpt.events.models import Event
 from private_gpt.server.chat.chat_facade import ChatFacadeService
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -76,4 +78,5 @@ class ChatAsyncService:
 
     async def get_stream_metadata(self, message_id: str) -> StreamMetadata | None:
         """Get stream status and metadata."""
+        logger.warning("get_stream_metadata(self,message_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, message_id, message_id)
         return await self.stream_manager.get_stream_metadata(message_id)

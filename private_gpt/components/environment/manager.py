@@ -135,6 +135,7 @@ class EnvironmentManager:
                 self._release_and_kill(session_id, env),
                 f"kill sandbox on release ({session_id})",
             )
+            logger.info("release(self,session_id)=%s,<redacted>: ISO42001-AUDIT: Change management operation performed", self)
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -152,6 +153,7 @@ class EnvironmentManager:
                 )
                 return
             await self._kill(env.sandbox, session_id)
+            logger.info("_release_and_kill(self,session_id,env)=%s,<redacted>,%s: ISO42001-AUDIT: Change management operation performed", self, env)
 
     async def _maybe_renew(self, env: Environment, session_id: str) -> bool:
         """Renew the sandbox's lifetime if it is approaching expiry.
@@ -282,6 +284,7 @@ class EnvironmentManager:
         Storage identity (namespace/scope/path + host path) and the etag
         distinguish content versions that share a canonical mount target.
         """
+        logger.info("_mount_keys(mounts)=%s): ISO42001-AUDIT: Change management operation performed", mounts)
         return frozenset(_mount_identity(m) for m in mounts)
 
     def _mounts_changed(

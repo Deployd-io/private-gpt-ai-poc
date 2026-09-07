@@ -41,6 +41,8 @@ if TYPE_CHECKING:
         QueryResult,
         QueryResultType,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 
 def _load_database_query_dependencies() -> tuple[
@@ -428,4 +430,5 @@ class DatabaseQueryToolBuilder:
 
 async def rebuild_database_query_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(DatabaseQueryToolBuilder)
+    logger.warning("rebuild_database_query_tool()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     return await builder.build_tool(**cast(Any, kwargs))

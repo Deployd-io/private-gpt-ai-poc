@@ -8,6 +8,8 @@ from typing import Any, Protocol
 from private_gpt.events.models import (
     Event,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SSEEventProducer(Protocol):
@@ -34,6 +36,7 @@ class SSEStreamManager:
         with self._lock:
             self._queue.put_nowait(event)
             self._aqueue.put_nowait(event)
+            logger.warning("send_event(self,event)=%s,%s: ISO42001-AUDIT: Outbound notification recorded for the audit trail", self, event)
 
     def __iter__(self) -> Iterator[Event]:
         while True:
@@ -72,6 +75,7 @@ class SSEStreamManager:
             finally:
                 # Signal end of stream
                 self._queue.put(None)
+                logger.warning("run_producer()=null): ISO42001-AUDIT: State change recorded for the audit trail")
 
         try:
             self._sync_thread = Thread(target=run_producer, daemon=True)

@@ -9,6 +9,8 @@ from private_gpt.components.ingest.metadata_helper import (
     MetadataKeys,
     MetadataNode,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -81,6 +83,7 @@ class Document:
             text=node.get_content(MetadataMode.LLM),
             _metadata=node.metadata if node.metadata else None,
         )
+        logger.warning("from_node(cls,node)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", cls, node)
 
     @classmethod
     def from_chunk(cls, chunk: Chunk) -> "Document":
@@ -148,5 +151,7 @@ class Document:
     def update_metadata(self, key: str, value: Any) -> None:
         """Update the metadata of the document."""
         if self._metadata is None:
+            logger.info("update_metadata(self,key,value)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", self, key, value)
             self._metadata = {}
         self._metadata[key] = value
+        logger.warning("update_metadata(self,key,value)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, key, value)

@@ -47,6 +47,8 @@ if TYPE_CHECKING:
     from private_gpt.components.engines.chat.models.chat_state import ChatState
     from private_gpt.components.tools.remote_execution import ToolExecutionResponse
     from private_gpt.events.models import Event
+    import logging
+logger = logging.getLogger(__name__)
 
 
 _RESUME_HOOKS = ExecutionHooks(
@@ -309,6 +311,7 @@ class ResumableChatRunner:
                 )
             except Exception:
                 await self._state.release_resume(execution_id)
+                logger.info("_resume_if_ready(self,execution_id)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, execution_id)
                 raise
 
     async def _cancel_pending_tools(self, execution_id: str) -> None:

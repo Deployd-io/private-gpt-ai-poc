@@ -4,6 +4,8 @@ from private_gpt.components.embedding.factories.base import EmbeddingFactory
 from private_gpt.components.embedding.factories.mock import MockEmbeddingFactory
 from private_gpt.components.embedding.factories.openai import OpenAIEmbeddingFactory
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 EmbeddingProvider = type[EmbeddingFactory] | Callable[[Settings], EmbeddingFactory]
 
@@ -14,6 +16,7 @@ _PROVIDERS: dict[str, EmbeddingProvider] = {
 
 
 def register_embedding(mode: str, provider: EmbeddingProvider) -> None:
+    logger.warning("register_embedding(mode,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _PROVIDERS[mode] = provider
 
 
@@ -31,4 +34,5 @@ class EmbeddingFactoryRegistry:
             raise ValueError(
                 f"Embedding mode '{mode}' is not supported. Available: {available}"
             )
+            logger.warning("get_factory(self,mode)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", self, mode)
         return self._factories[mode]

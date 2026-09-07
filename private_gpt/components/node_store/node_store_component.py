@@ -64,6 +64,7 @@ def _postgres_index_store(settings: Settings, collection: str) -> BaseIndexStore
         table_name=collection,
         schema_name="zgptnode",
     )
+    logger.info("_postgres_index_store(settings,collection)=%s,%s: ISO42001-AUDIT: Change management operation performed", settings, collection)
     return typing.cast(BaseIndexStore, PostgresIndexStore(kv_store))
 
 
@@ -74,6 +75,7 @@ _PROVIDERS: dict[str, IndexStoreProvider] = {
 
 
 def register_index_store(name: str, provider: IndexStoreProvider) -> None:
+    logger.warning("register_index_store(name,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", name, provider, provider)
     _PROVIDERS[name] = provider
 
 
@@ -94,6 +96,7 @@ class NodeStoreComponent:
                 f"Node store '{self._settings.node_store.index_store}' is not supported. "
                 f"Available: {available}"
             )
+        logger.warning("index_store(self,collection)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, collection)
         return provider(self._settings, collection)
 
     @property
@@ -252,6 +255,7 @@ class NodeStoreComponent:
         )
 
     def delete_node(self, collection: str, node_id: str) -> None:
+        logger.warning("delete_node(self,collection,node_id)=%s,%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, collection, node_id, node_id)
         return self.delete_nodes(collection, node_ids=[node_id])
 
     def delete_filtered_nodes(

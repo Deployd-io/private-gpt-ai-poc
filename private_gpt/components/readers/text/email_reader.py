@@ -127,6 +127,7 @@ class EmailContent(BaseModel):
         Returns:
             Dict with keys 'from', 'to', 'cc', 'bcc' containing lists of email addresses
         """
+        logger.warning("get_extracted_emails(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return {
             "from": [email.address for email in self.from_],
             "to": [email.address for email in self.to],

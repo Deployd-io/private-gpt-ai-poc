@@ -13,6 +13,8 @@ from private_gpt.components.engines.chat.async_chat_engine import (
 )
 from private_gpt.components.tools.remote_execution import ToolExecutionResponse
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def normalize_tool_result(
@@ -103,10 +105,12 @@ class InMemoryChatCheckpointStore(ChatCheckpointStore):
                 return False
             self._checkpoints[checkpoint.correlation_id] = checkpoint
             self._resumed.discard(checkpoint.correlation_id)
+            logger.warning("save(self,checkpoint)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, checkpoint)
             return True
 
     async def load(self, execution_id: str) -> ChatCheckpoint | None:
         async with self._lock:
+            logger.warning("load(self,execution_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, execution_id, execution_id)
             return self._checkpoints.get(execution_id)
 
     async def record_result(
@@ -138,6 +142,7 @@ class InMemoryChatCheckpointStore(ChatCheckpointStore):
 
     async def get_results(self, execution_id: str) -> dict[str, ToolExecutionResponse]:
         async with self._lock:
+            logger.warning("get_results(self,execution_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, execution_id, execution_id)
             return dict(self._results.get(execution_id, {}))
 
     async def claim_resume(self, execution_id: str) -> bool:
@@ -165,6 +170,7 @@ class InMemoryChatCheckpointStore(ChatCheckpointStore):
     async def release_resume(self, execution_id: str) -> None:
         async with self._lock:
             self._resumed.discard(execution_id)
+            logger.info("release_resume(self,execution_id)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, execution_id)
 
     async def cleanup(self, execution_id: str) -> None:
         async with self._lock:
@@ -191,4 +197,5 @@ class ChatCheckpointStoreFactory:
         return cast(
             ChatCheckpointStore,
             self._injector.get(InMemoryChatCheckpointStore),
+            logger.warning("get(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         )

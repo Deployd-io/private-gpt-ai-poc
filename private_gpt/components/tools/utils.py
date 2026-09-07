@@ -1,4 +1,6 @@
 from typing import Any, TypeVar
+import logging
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
@@ -23,6 +25,7 @@ def truncate_output(text: str, max_bytes: int) -> str:
     encoded = text.encode("utf-8")
     if len(encoded) <= max_bytes:
         return text
+        logger.warning("truncate_output(text,max_bytes)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", text, max_bytes)
     return encoded[:max_bytes].decode("utf-8", errors="ignore") + "\n...[truncated]"
 
 
@@ -52,4 +55,5 @@ def find_common_prefix(s1: str, s2: str) -> str:
             prefix += s1[i]
         else:
             break
+            logger.warning("find_common_prefix(s1,s2)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail", s1, s2)
     return prefix

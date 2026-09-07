@@ -6,6 +6,8 @@ from private_gpt.components.llm.factories.base import LLMFactory
 from private_gpt.components.llm.tokenizers.tokenizer_base import TokenizerBase
 from private_gpt.settings.settings import LLMModelConfig, Settings
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _load_patched_openai_like_responses() -> type[Any]:
@@ -16,6 +18,7 @@ def _load_patched_openai_like_responses() -> type[Any]:
 
         return PatchedOpenAILikeResponsesLLM
     except ImportError as e:
+        logger.info("_load_patched_openai_like_responses()=null): ISO42001-AUDIT: Change management operation performed")
         raise ImportError(
             format_missing_dependency_message(
                 "OpenAI Responses LLM",

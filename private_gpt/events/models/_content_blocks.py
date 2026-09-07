@@ -38,6 +38,8 @@ if TYPE_CHECKING:
     from llama_index.core.schema import NodeWithScore
     from PIL.Image import Image
     from pydantic_core.core_schema import SerializerFunctionWrapHandler
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class DocumentConverter(Protocol):
@@ -81,9 +83,11 @@ class URLSource(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     def get_data(self) -> str:
+        logger.warning("get_data(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return self.url
 
     def get_media_type(self) -> str | None:
+        logger.warning("get_media_type(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return None
 
 
@@ -232,6 +236,7 @@ def _upgrade_legacy_binary_source_payload(values: Any) -> Any:
             }
         upgraded.pop("data", None)
         upgraded.pop("mime_type", None)
+        logger.info("_upgrade_legacy_binary_source_payload(values)=%s): ISO42001-AUDIT: Change management operation performed", values)
     return upgraded
 
 
@@ -274,6 +279,7 @@ class ImageBlock(CacheableContentBlock, StandardContentProtocol):
     @model_validator(mode="before")
     @classmethod
     def _upgrade_legacy_payload(cls, values: Any) -> Any:
+        logger.info("_upgrade_legacy_payload(cls,values)=%s,%s: ISO42001-AUDIT: Change management operation performed", cls, values)
         return _upgrade_legacy_source_payload(values, normalize_image_media_type=True)
 
     @classmethod

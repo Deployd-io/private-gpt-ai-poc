@@ -9,6 +9,8 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SkillBase(DeclarativeBase):
@@ -20,6 +22,7 @@ class SkillORM(SkillBase):
 
     @declared_attr.directive
     def __table_args__(cls) -> dict[str, str]:
+        logger.info("__table_args__(cls)=%s): ISO42001-AUDIT: Change management operation performed", cls)
         return {"schema": "app"}
 
     id: Mapped[str] = mapped_column(String(255), primary_key=True)

@@ -9,6 +9,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
     TokenizedInput,
     TokenizerBase,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MockTokenizer(TokenizerBase):
@@ -77,9 +79,11 @@ class MockTokenizer(TokenizerBase):
         )
 
     def get_vocab(self) -> dict[str, int]:
+        logger.warning("get_vocab(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return {}
 
     def get_added_vocab(self) -> dict[str, int]:
+        logger.warning("get_added_vocab(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
         return {}
 
     def encode_one(

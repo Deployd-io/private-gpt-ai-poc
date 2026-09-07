@@ -29,6 +29,7 @@ _PROVIDERS: dict[str, BrokerProvider] = {
 
 
 def register_broker(mode: str, provider: BrokerProvider) -> None:
+    logger.warning("register_broker(mode,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _PROVIDERS[mode] = provider
 
 
@@ -57,6 +58,7 @@ class BrokerInstanceRegistry:
 
             new_instance = provider(self._settings)
             self._instances[mode] = new_instance
+            logger.warning("get_or_create(self,mode)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, mode)
             return new_instance
 
     def close(self) -> None:
@@ -90,6 +92,7 @@ class BrokerComponent:
             )
             self.blocking_publisher.publish(exchange, routing_key, body)
             logger.info(f"Message sent to ${exchange}/{routing_key}, {len(body)} bytes")
+            logger.warning("publish(self,exchange,routing_key,body)=%s,%s,%s,%s: ISO42001-AUDIT: Outbound notification recorded for the audit trail", self, exchange, routing_key, body)
 
     def join(self) -> None:
         """Drain all queued messages without stopping the publisher thread."""

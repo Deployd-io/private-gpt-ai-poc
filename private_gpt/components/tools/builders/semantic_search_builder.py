@@ -51,6 +51,8 @@ if TYPE_CHECKING:
     from private_gpt.components.workflows.retrieval.semantic_search import (
         SemanticSearchResultEvent,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 config = settings()
 
@@ -349,4 +351,5 @@ class SemanticSearchToolBuilder:
 
 async def rebuild_semantic_search_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(SemanticSearchToolBuilder)
+    logger.warning("rebuild_semantic_search_tool()=null): ISO42001-AUDIT: Record access recorded for the audit trail")
     return await builder.build_tool(**kwargs)

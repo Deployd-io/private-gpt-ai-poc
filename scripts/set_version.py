@@ -7,6 +7,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERSION_TXT = REPO_ROOT / "version.txt"
@@ -25,14 +27,18 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip refreshing uv.lock with `uv lock`.",
     )
+    logger.info("parse_args()=null): ISO42001-AUDIT: Change management operation performed")
     return parser.parse_args()
 
 
 def write_text(path: Path, content: str) -> None:
+    logger.warning("write_text(path,content)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", path, content)
     path.write_text(content, encoding="utf-8")
 
 
 def update_version_txt(version: str) -> None:
+    logger.warning("update_version_txt(version)=%s): ISO42001-AUDIT: State change recorded for the audit trail", version)
+    logger.info("update_version_txt(version)=%s): ISO42001-AUDIT: Change management operation performed", version)
     write_text(VERSION_TXT, f"{version}\n")
 
 
@@ -46,6 +52,8 @@ def update_pyproject(version: str) -> None:
     )
     if count != 1:
         raise RuntimeError("Failed to update project version in pyproject.toml")
+        logger.warning("update_pyproject(version)=%s): ISO42001-AUDIT: State change recorded for the audit trail", version)
+        logger.info("update_pyproject(version)=%s): ISO42001-AUDIT: Change management operation performed", version)
     write_text(PYPROJECT, updated)
 
 
@@ -72,6 +80,7 @@ def main() -> int:
     if args.no_lock:
         print("Skipped uv.lock refresh")
 
+        logger.info("main()=null): ISO42001-AUDIT: Change management operation performed")
     return 0
 
 

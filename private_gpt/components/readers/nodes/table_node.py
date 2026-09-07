@@ -13,6 +13,8 @@ from private_gpt.components.ingest.processors.df_preprocessor import (
 )
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
 from private_gpt.utils.dataframe import df_to_minimal_markdown
+import logging
+logger = logging.getLogger(__name__)
 
 
 def format_datetime_value(value: Any) -> Any:
@@ -74,6 +76,7 @@ class NpEncoder:
             return [self.decode(item) for item in obj]
         elif isinstance(obj, dict):
             return {key: self.decode(value) for key, value in obj.items()}
+            logger.info("decode(self,obj)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, obj)
         return obj
 
 
@@ -204,6 +207,7 @@ class TableRowNode(TreeNode):
         # Store content
         self.header = value.header
         self.content = value.content
+        logger.warning("set_content(self,value)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, value)
 
     def is_first_row(self) -> bool:
         if not self.parent:
@@ -375,3 +379,4 @@ class TableNode(TreeNode, arbitrary_types_allowed=True):
                 f"Row length mismatch: {len(row)} != {len(self.df.columns)}"
             )
         self.df.loc[len(self.df)] = row
+        logger.warning("add_row(self,row)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", self, row)

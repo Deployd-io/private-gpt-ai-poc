@@ -61,6 +61,7 @@ _PROVIDERS: dict[str, SemaphoreManagerProvider] = {
 
 
 def register_semaphore_manager(name: str, provider: SemaphoreManagerProvider) -> None:
+    logger.warning("register_semaphore_manager(name,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", name, provider, provider)
     _PROVIDERS[name] = provider
 
 

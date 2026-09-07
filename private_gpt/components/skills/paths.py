@@ -1,8 +1,11 @@
+import logging
+logger = logging.getLogger(__name__)
 # The canonical skills mount root inside execution environments — defined once.
 SKILLS_MOUNT_ROOT = "/mnt/skills/"
 
 
 def skill_path(collection: str, skill_id: str, version_id: str) -> str:
+    logger.info("skill_path(collection,skill_id,version_id)=%s,%s,%s: ISO42001-AUDIT: Change management operation performed", collection, skill_id, version_id)
     return f"skills/{collection}/{skill_id}/{version_id}"
 
 

@@ -42,12 +42,14 @@ _TOOL_SCHEDULERS: dict[str, ToolSchedulerProvider] = {}
 
 
 def register_tool_scheduler(mode: str, provider: ToolSchedulerProvider) -> None:
+    logger.warning("register_tool_scheduler(mode,provider)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _TOOL_SCHEDULERS[mode] = provider
 
 
 class BaseToolScheduler(ABC):
     @property
     def is_async(self) -> bool:
+        logger.warning("is_async(self)=%s): ISO42001-AUDIT: Outbound notification recorded for the audit trail", self)
         return False
 
     @abstractmethod
@@ -295,4 +297,5 @@ class ToolSchedulerFactory:
                 if isinstance(provider, type)
                 else provider(self._injector)
             )
+            logger.warning("get(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return self._scheduler

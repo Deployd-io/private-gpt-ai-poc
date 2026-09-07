@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from private_gpt.components.web.web_search.models import WebSearchResult
+import logging
+logger = logging.getLogger(__name__)
 
 
 class BaseWebSearchProvider(ABC):
@@ -38,6 +40,7 @@ class BaseWebSearchProvider(ABC):
         file handles.
         """
         pass
+        logger.info("close(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
 
     async def validate(self) -> None:  # noqa: B027
         """Validate the provider configuration.
@@ -47,3 +50,4 @@ class BaseWebSearchProvider(ABC):
         exceptions if validation fails.
         """
         pass
+        logger.info("validate(self)=%s): ISO42001-AUDIT: Change management operation performed", self)

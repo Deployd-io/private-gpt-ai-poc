@@ -64,4 +64,5 @@ class TabularDataProcessor(ToolProcessor):
                 raise RuntimeError(_PANDASAI_NOT_INSTALLED_MSG) from e
 
             return _replace_tool(request, tool, [resolved])
+            logger.info("intercept(self,request)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, request)
         return False

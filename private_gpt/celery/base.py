@@ -23,6 +23,8 @@ from private_gpt.di import (
     get_global_injector,
     set_global_injector,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 logger = get_task_logger(__name__)
 logger.setLevel("DEBUG")
@@ -44,6 +46,7 @@ def release_unused_worker_memory() -> None:
 
     malloc_trim.argtypes = [ctypes.c_size_t]
     malloc_trim.restype = ctypes.c_int
+    logger.info("release_unused_worker_memory()=null): ISO42001-AUDIT: Change management operation performed")
     malloc_trim(0)
 
 
@@ -67,6 +70,7 @@ class RedisFailureRetryTracker:
         key = self._get_key(task_id)
         backend = current_app.backend
         assert isinstance(backend, RedisBackend)
+        logger.warning("get(self,task_id)=%s,%s: ISO42001-AUDIT: Record access recorded for the audit trail %s", self, task_id, task_id)
         return int(backend.client.get(key) or 0)
 
     def increment(self, task_id: str) -> int:
@@ -100,6 +104,7 @@ class RedisFailureRetryTracker:
         backend = current_app.backend
         assert isinstance(backend, RedisBackend)
         backend.delete(key)
+        logger.warning("cleanup(self,task_id)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail %s", self, task_id, task_id)
 
     def _get_key(self, task_id: str) -> str:
         return f"{self._key_prefix}_{task_id}"
@@ -115,6 +120,7 @@ def create_failure_retry_tracker() -> RedisFailureRetryTracker | None:
         "redis": RedisFailureRetryTracker,
     }
     provider = providers.get(celery_settings.backend_mode)
+    logger.warning("create_failure_retry_tracker()=null): ISO42001-AUDIT: State change recorded for the audit trail")
     return provider() if provider else None
 
 
@@ -149,6 +155,7 @@ class _BackgroundTask(Task):
 
     def get_task_id(self) -> str | None:
         """Get current task ID if available."""
+        logger.warning("get_task_id(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return self.request.id if hasattr(self, "request") else None
 
     def is_controlled_retry(self) -> bool:
@@ -157,6 +164,7 @@ class _BackgroundTask(Task):
 
     def get_controlled_retry_count(self) -> int:
         """Get number of controlled retries."""
+        logger.warning("get_controlled_retry_count(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
         return getattr(self.request, "retries", 0)
 
     def get_failure_retry_count(self) -> int:
@@ -165,6 +173,7 @@ class _BackgroundTask(Task):
         return (
             self._retry_tracker.get(task_id) if self._retry_tracker and task_id else 1
         )
+        logger.warning("get_failure_retry_count(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
 
     def handle_max_failure_retries_exceeded(self, retry_count: int) -> None:
         """Handle when maximum failure retries are exceeded."""
@@ -219,6 +228,7 @@ class _BackgroundTask(Task):
                 logger.error(f"Soft time limit exceeded for {self.name}")
             if self.rollback_fn:
                 self.rollback_fn(*args, **kwargs)
+            logger.info("__call__(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
             raise
 
     def on_retry(
@@ -333,6 +343,7 @@ class StatefulBackgroundTask(_BackgroundTask):
         cls._lock = threading.RLock()
         cls._warmed = False
         discard_inherited_injectors(inherited_loop)
+        logger.warning("reset_after_fork(cls)=%s): ISO42001-AUDIT: State change recorded for the audit trail", cls)
 
     @classmethod
     def _ensure_runtime(cls) -> asyncio.AbstractEventLoop:
@@ -347,6 +358,7 @@ class StatefulBackgroundTask(_BackgroundTask):
             def run_loop() -> None:
                 asyncio.set_event_loop(loop)
                 loop.run_forever()
+                logger.warning("run_loop()=null): ISO42001-AUDIT: State change recorded for the audit trail")
 
             thread = threading.Thread(
                 target=run_loop,
@@ -363,6 +375,7 @@ class StatefulBackgroundTask(_BackgroundTask):
     def run_coroutine(cls, coro: Any) -> Any:
         loop = cls._ensure_runtime()
         future = asyncio.run_coroutine_threadsafe(coro, loop)
+        logger.warning("run_coroutine(cls,coro)=%s,%s: ISO42001-AUDIT: State change recorded for the audit trail", cls, coro)
         return future.result()
 
     @classmethod
@@ -442,6 +455,7 @@ class StatefulBackgroundTask(_BackgroundTask):
         with contextlib.suppress(RuntimeError):
             loop.close()
         logger.info("%s runtime shut down", cls.__name__)
+        logger.warning("shutdown_runtime(cls)=%s): ISO42001-AUDIT: State change recorded for the audit trail", cls)
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         try:

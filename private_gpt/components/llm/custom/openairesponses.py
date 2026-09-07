@@ -303,6 +303,7 @@ class PatchedOpenAIResponsesLLM(StructuredChatMixin, OpenAIResponsesBase):  # ty
             if text_format is not None:
                 model_kwargs["text"] = {"format": text_format}
 
+        logger.info("_get_model_kwargs(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
         return model_kwargs
 
     def _stream_chat(

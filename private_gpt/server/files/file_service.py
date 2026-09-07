@@ -35,6 +35,8 @@ if TYPE_CHECKING:
 
     from private_gpt.components.storage.models import FileInfo
     from private_gpt.components.storage.object_storage import ObjectStorage
+    import logging
+logger = logging.getLogger(__name__)
 
 
 def _detect_mime_from_bytes(content: bytes) -> str:
@@ -102,6 +104,7 @@ class FileService:
                 for name in names
             ]
         )
+        logger.warning("list_namespaces(self)=%s): ISO42001-AUDIT: Record access recorded for the audit trail", self)
 
     def _ns_uses_storage(self, namespace: str) -> bool:
         """Return True when *namespace* is served by the ObjectStorage backend.

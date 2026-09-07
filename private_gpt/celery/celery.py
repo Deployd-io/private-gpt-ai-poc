@@ -9,12 +9,15 @@ from private_gpt.celery.config import CeleryConfig, backend_config, broker_confi
 from private_gpt.celery.task_registry import get_task_packages
 from private_gpt.initialize import initialize_globals, initialize_observability
 from private_gpt.settings.settings import Settings, settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _configured_task_packages(task_packages: Sequence[str]) -> tuple[str, ...]:
     if task_packages:
         return tuple(task_packages)
     configured = os.environ.get("PGPT_CELERY_TASK_PACKAGES", "")
+    logger.info("_configured_task_packages(task_packages)=%s): ISO42001-AUDIT: Change management operation performed", task_packages)
     return tuple(
         package.strip() for package in configured.split(",") if package.strip()
     )
@@ -46,6 +49,7 @@ def _enable_sync_send_task(
 
         # Get the task and execute it
         task = celery_app.tasks[name]
+        logger.warning("send_task_sync(name,args,kwargs)=%s,%s,%s: ISO42001-AUDIT: Outbound notification recorded for the audit trail", name, args, kwargs)
         return task.apply(args, kwargs, **opts)
 
     # Monkey-patching of Celery send_task to make it run synchronously

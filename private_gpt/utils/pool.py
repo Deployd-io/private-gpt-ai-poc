@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 from typing import Any, Generic, TypeVar
+import logging
+logger = logging.getLogger(__name__)
 
 _T = TypeVar("_T", bound=Any)
 
@@ -32,6 +34,7 @@ class SimplePool(ABC, Generic[_T]):
     def create(self) -> _T:
         """Create a new object to be pooled."""
         pass
+        logger.warning("create(self)=%s): ISO42001-AUDIT: State change recorded for the audit trail", self)
 
     def destroy(self, obj: _T) -> None:
         """Destroy an object. Override for custom cleanup."""
@@ -55,6 +58,7 @@ class SimplePool(ABC, Generic[_T]):
             except Exception:
                 if self._semaphore:
                     self._semaphore.release()
+                logger.info("acquire(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
                 raise
 
     def validate(self, obj: _T) -> bool:
@@ -74,6 +78,7 @@ class SimplePool(ABC, Generic[_T]):
 
         if self._semaphore:
             self._semaphore.release()
+            logger.info("release(self,obj)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, obj)
 
     def discard(self, obj: _T) -> None:
         """Discard an object without returning it to the pool.
@@ -86,6 +91,7 @@ class SimplePool(ABC, Generic[_T]):
             if obj in self._pooled_objects:
                 self._pooled_objects.remove(obj)
             self.destroy(obj)
+            logger.info("discard(self,obj)=%s,%s: ISO42001-AUDIT: Change management operation performed", self, obj)
 
     def close(self) -> None:
         """Close pool and clean up all objects."""
@@ -204,3 +210,4 @@ class AsyncSimplePool(ABC, Generic[_T]):
             raise e
         finally:
             await self.release(obj)
+            logger.info("acquire_context(self)=%s): ISO42001-AUDIT: Change management operation performed", self)
