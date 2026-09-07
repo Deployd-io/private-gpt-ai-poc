@@ -61,6 +61,7 @@ class DistributedCoordinator:
     @property
     def enabled(self) -> bool:
         """True when connected to Redis (real cross-process coordination)."""
+        logger.warning("enabled(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         return self._redis is not None
 
     async def _client(self) -> Redis | None:
@@ -216,6 +217,7 @@ class DistributedCoordinator:
         if redis is None:
             async with _fallback_guard:
                 _fallback_activity[key] = time.time()
+                logger.warning("set_activity(self,session_id)=%s,<redacted>: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, session_id)
             return
         with suppress(Exception):
             await redis.set(key, str(time.time()), ex=_ACTIVITY_TTL_SECONDS)
@@ -230,6 +232,7 @@ class DistributedCoordinator:
             return ts
         with suppress(Exception):
             raw = await redis.get(key)
+            logger.warning("get_activity(self,session_id)=%s,<redacted>: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, session_id)
             if raw is not None:
                 return float(raw)
         return None

@@ -4,6 +4,8 @@ from private_gpt.components.web.scraper.base import (
 )
 from private_gpt.components.web.scraper.local import LocalWebScraperProvider
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 _PROVIDERS: dict[str, WebScraperProviderFactory] = {"local": LocalWebScraperProvider}
 
@@ -31,6 +33,7 @@ class WebScraperProviderRegistry:
                 f"Web scraper provider '{name}' is not registered. "
                 f"Available: {available}"
             )
+            logger.warning("get_provider(self,name)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, name)
         provider = provider_factory(self._settings)
         self._providers[name] = provider
         return provider

@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from private_gpt.components.skills.models.skill_entities import SkillFilter
 from private_gpt.components.storage.models import StoredFile
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SkillFileInput(BaseModel):
@@ -29,6 +31,7 @@ class SkillFileInput(BaseModel):
         return value
 
     def to_payload(self) -> StoredFile:
+        logger.warning("to_payload(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return StoredFile(
             path=self.path,
             content=base64.b64decode(self.content_base64),

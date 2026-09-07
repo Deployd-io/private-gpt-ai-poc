@@ -43,6 +43,8 @@ if TYPE_CHECKING:
         CodeExecutionSessionConfig,
     )
     from private_gpt.events.models import ResultContentBlockType
+    import logging
+logger = logging.getLogger(__name__)
 
 
 def _truncated(output: str, max_bytes: int) -> str:
@@ -277,20 +279,24 @@ class TextEditorToolBuilder:
 
 
 async def rebuild_text_editor_view_tool(**kwargs: Any) -> ToolSpec:
+    logger.warning("rebuild_text_editor_view_tool()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     builder = get_global_injector().get(TextEditorToolBuilder)
     return await builder.build_view_tool(**cast(Any, kwargs))
 
 
 async def rebuild_text_editor_str_replace_tool(**kwargs: Any) -> ToolSpec:
+    logger.warning("rebuild_text_editor_str_replace_tool()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     builder = get_global_injector().get(TextEditorToolBuilder)
     return await builder.build_str_replace_tool(**cast(Any, kwargs))
 
 
 async def rebuild_text_editor_create_tool(**kwargs: Any) -> ToolSpec:
+    logger.warning("rebuild_text_editor_create_tool()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     builder = get_global_injector().get(TextEditorToolBuilder)
     return await builder.build_create_tool(**cast(Any, kwargs))
 
 
 async def rebuild_text_editor_insert_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(TextEditorToolBuilder)
+    logger.warning("rebuild_text_editor_insert_tool()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     return await builder.build_insert_tool(**cast(Any, kwargs))

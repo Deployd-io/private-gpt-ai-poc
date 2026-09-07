@@ -108,6 +108,7 @@ def parse_task(body: IngestAsyncBody, dispatch_store: bool = True) -> Any:
             result=status,
             callback=body.callback,
         )
+        logger.warning("notify(status)=%s): EUAIACT-AUDIT: Outbound notification recorded for the audit trail", status)
 
     service = get_global_injector().get(IngestService)
     content = body.ingest_body.input.to_binary_content(
@@ -201,6 +202,7 @@ def store_vectors_task(body: IngestAsyncBody) -> Any:
         collection=body.ingest_body.collection,
         artifact=body.ingest_body.artifact,
     ):
+        logger.warning("store_vectors_task(body)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", body)
         logger.info(
             f"Store-vectors task for {body.ingest_body.artifact} was skipped. "
             "A delete task is scheduled or running."
@@ -296,6 +298,7 @@ def ensure_to_remove_temporal_files(body: IngestAsyncBody) -> None:
                 uri_value = body.ingest_body.input.value
                 logger.info(f"Removing temporary S3 file: {uri_value}")
                 s3_helper = get_global_injector().get(S3Helper)
+                logger.warning("ensure_to_remove_temporal_files(body)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", body)
                 s3_helper.remove_file_from_s3(uri_value)
     except Exception as e:
         logger.error(f"Failed to remove temporal files: {e}")

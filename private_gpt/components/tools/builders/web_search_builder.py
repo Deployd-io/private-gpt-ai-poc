@@ -15,6 +15,8 @@ from private_gpt.events.models import (
     ResultContentBlockType,
     WebSearchResultBlock,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -45,6 +47,7 @@ class WebSearchToolBuilder:
         runtime: Literal["client", "server"] = "server",
     ) -> ToolSpec:
         async def validate_search() -> None:
+            logger.warning("validate_search()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
             await self.web_search_service.validate()
 
         async def run_tool(query: str) -> list[ResultContentBlockType]:
@@ -52,6 +55,7 @@ class WebSearchToolBuilder:
                 # It is not validated because that would imply another call;
                 # it is validated directly by making the query.
                 pass
+                logger.warning("run_tool(query)=%s): EUAIACT-AUDIT: State change recorded for the audit trail")
 
             results = await self.web_search_service.search(query, model_id=model_id)
             return [WebSearchResultBlock.from_web_search_result(r) for r in results]
@@ -84,4 +88,5 @@ class WebSearchToolBuilder:
 
 async def rebuild_web_search_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(WebSearchToolBuilder)
+    logger.warning("rebuild_web_search_tool()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
     return await builder.build_tool(**cast(Any, kwargs))

@@ -4,6 +4,8 @@ from urllib.parse import urlparse
 
 from private_gpt.components.storage.s3_helper import S3Helper
 from private_gpt.di import get_global_injector
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _load_file_from_url(url: str, **kwargs: Any) -> BinaryIO:
@@ -64,6 +66,7 @@ def load_file_from_uri(uri: str, **kwargs: Any) -> BinaryIO:
         return _load_file_from_url(uri, **kwargs)
     elif _is_base64(uri):
         # Base64 encoded data
+        logger.warning("load_file_from_uri(uri)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", uri)
         return _load_file_from_base64(uri, **kwargs)
     else:
         # Default to Local file

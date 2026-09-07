@@ -10,6 +10,8 @@ import typer
 
 from private_gpt.settings.settings import CelerySettings, settings
 from private_gpt.worker.registry import register_worker_mode
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _app_module() -> str:
@@ -123,6 +125,7 @@ def _with_healthcheck(command: list[str]) -> list[list[str]]:
 def run_arq(args: Sequence[str]) -> None:
     if args:
         raise ValueError("The arq worker mode does not support arguments yet")
+        logger.warning("run_arq(args)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", args)
     arq_app = importlib.import_module(f"{_app_module()}.arq")
     arq_app.run_arq_worker()
 
@@ -150,6 +153,7 @@ def run_celery(
 def run_flower(args: Sequence[str]) -> None:
     flower_args = _build_flower_args()
     typer.echo(f"Starting flower on port {os.environ.get('PGPT_FLOWER_PORT', '5555')}")
+    logger.warning("run_flower(args)=%s): EUAIACT-AUDIT: PHI operation logged for audit compliance", args)
     command = [
         sys.executable,
         "-m",

@@ -477,6 +477,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
         for node, point_id, similarity in results:
             nodes.append(node)
             ids.append(point_id)
+            logger.warning("parse_to_query_result(self,response)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, response)
             similarities.append(similarity)
 
         return VectorStoreQueryResult(nodes=nodes, similarities=similarities, ids=ids)
@@ -860,6 +861,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
         if self._collection_initialized and self._legacy_vector_format is None:
             self._detect_vector_format(self.collection_name)
 
+            logger.warning("add(self,nodes)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, nodes)
         points, ids = self._build_points(nodes, self.sparse_vector_name)
         shard_key_selector = (
             self._generate_shard_key_selector(shard_identifier)
@@ -880,6 +882,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
                 wait=True,
                 shard_key_selector=shard_key_selector,
             )
+            logger.warning("upload(batch)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", batch)
 
         executor = self.executor(max_workers=min(self.parallel, len(batches)))
         if executor is None:
@@ -914,6 +917,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
             if shard_identifier is not None
             else None
         )
+        logger.warning("async_add(self,nodes)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, nodes)
         queue = asyncio.Queue[list[Any] | None]()
         batches = list(iter_batch(points, self.batch_size))
         num_consumers = min(self.parallel, len(batches))
@@ -952,6 +956,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
     def delete(self, ref_doc_id: str, **delete_kwargs: Any) -> None:
         """Override to add retry logic to the delete method."""
         super().delete(ref_doc_id, **delete_kwargs)
+        logger.warning("delete(self,ref_doc_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, ref_doc_id, ref_doc_id)
 
     @retry(is_async=True, tries=_MAX_RETRIES, jitter=_JITTER, logger=logger)
     async def adelete(self, ref_doc_id: str, **kwargs: Any) -> None:
@@ -1161,6 +1166,7 @@ class PatchedQdrantVectorStore(QdrantVectorStore):
         """Override to add retry logic to the query method."""
         if query.query_str == "":
             # If we pass a empty parameter, it returns an error
+            logger.warning("query(self,query)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self)
             return VectorStoreQueryResult(nodes=[], similarities=[], ids=[])
 
         parent: VectorStoreQueryResult = self._query(query, **kwargs)

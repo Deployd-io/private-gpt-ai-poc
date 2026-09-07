@@ -42,12 +42,14 @@ _TOOL_SCHEDULERS: dict[str, ToolSchedulerProvider] = {}
 
 
 def register_tool_scheduler(mode: str, provider: ToolSchedulerProvider) -> None:
+    logger.warning("register_tool_scheduler(mode,provider)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _TOOL_SCHEDULERS[mode] = provider
 
 
 class BaseToolScheduler(ABC):
     @property
     def is_async(self) -> bool:
+        logger.warning("is_async(self)=%s): EUAIACT-AUDIT: Outbound notification recorded for the audit trail", self)
         return False
 
     @abstractmethod
@@ -289,6 +291,7 @@ class ToolSchedulerFactory:
             mode = self._settings.scheduler.tools.mode
             provider = _TOOL_SCHEDULERS.get(mode)
             if provider is None:
+                logger.warning("get(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
                 raise ValueError(f"Unknown scheduler.tools.mode: {mode}")
             self._scheduler = (
                 self._injector.get(provider)

@@ -8,6 +8,8 @@ from private_gpt.components.llm.tokenizers.tokenizer_base import (
     TokenizedInput,
     TokenizerBase,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class EstimatorTokenizer(TokenizerBase):
@@ -80,9 +82,11 @@ class EstimatorTokenizer(TokenizerBase):
         )
 
     def get_vocab(self) -> dict[str, int]:
+        logger.warning("get_vocab(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return self._tokenizer.get_vocab()
 
     def get_added_vocab(self) -> dict[str, int]:
+        logger.warning("get_added_vocab(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
         return self._tokenizer.get_added_vocab()
 
     def encode(self, text: str, add_special_tokens: bool | None = None) -> list[int]:

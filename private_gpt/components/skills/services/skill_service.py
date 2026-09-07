@@ -31,6 +31,8 @@ from private_gpt.components.skills.repositories.skill_repository import (
 from private_gpt.components.storage.models import StoredFile
 from private_gpt.components.storage.storage_component import StorageComponent
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 _SKILL_METADATA_CACHE_TTL_SECONDS = 60
 _SKILL_BODY_CACHE_TTL_SECONDS = 86400
@@ -145,6 +147,7 @@ class SkillService:
         return await self._skill_repository.get_skill(
             skill_id=skill_id, collection=collection
         )
+        logger.warning("get_skill(self,skill_id,collection)=%s,%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, skill_id, collection, skill_id)
 
     async def delete_skill(self, skill_id: str, collection: str) -> bool:
         versions = await self._skill_repository.list_versions(
@@ -156,6 +159,7 @@ class SkillService:
             skill_id=skill_id, collection=collection
         )
         if deleted and versions is not None:
+            logger.warning("delete_skill(self,skill_id,collection)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, skill_id, collection, skill_id)
             for version in versions.data:
                 await self._storage_component.delete_prefix(version.storage_prefix)
         return deleted
@@ -298,6 +302,7 @@ class SkillService:
         markdown_bytes = await self._storage_component.read_file(
             version.storage_prefix, "SKILL.md"
         )
+        logger.warning("get_skill_body(self,version)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, version)
         parsed = parse_skill_markdown(markdown_bytes.decode("utf-8"))
         self._cache.set(
             "skill-body",
@@ -309,6 +314,7 @@ class SkillService:
 
     async def list_version_files(self, version: SkillVersionEntity) -> list[str]:
         """Relative paths of all files bundled in a skill version."""
+        logger.warning("list_version_files(self,version)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, version)
         files = await self._storage_component.list_files(version.storage_prefix)
         return sorted(files)
 

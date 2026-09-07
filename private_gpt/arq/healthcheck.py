@@ -105,6 +105,7 @@ def validate_worker_route_settings(settings: Settings) -> dict[str, Any] | None:
 
     expected_queue = expected_queue_for_worker(settings, worker_type)
     if expected_queue is not None and actual_queue != expected_queue:
+        logger.warning("validate_worker_route_settings(settings)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", settings)
         return _unhealthy(
             "queue_config_mismatch",
             worker_type=worker_type,
@@ -263,6 +264,7 @@ async def probe_publisher_route(settings: Settings) -> dict[str, Any] | None:
 
     actual_database = get_redis_settings(settings).database
     if route.queue_name != actual_queue or route.database != actual_database:
+        logger.warning("probe_publisher_route(settings)=%s): EUAIACT-AUDIT: PHI operation logged for audit compliance", settings)
         return _unhealthy(
             "publisher_route_mismatch",
             worker_type=worker_type,
@@ -311,6 +313,7 @@ async def check_health() -> dict[str, Any]:
             ongoing=arq_health.ongoing,
             pending_jobs=due_jobs.pickable,
         )
+        logger.warning("check_health()=null): EUAIACT-AUDIT: PHI operation logged for audit compliance")
 
     return _healthy(
         ongoing=arq_health.ongoing,

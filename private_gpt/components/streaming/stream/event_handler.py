@@ -3,6 +3,8 @@ from typing import Protocol
 from pydantic import BaseModel
 
 from private_gpt.components.streaming.providers.models import StreamStatus
+import logging
+logger = logging.getLogger(__name__)
 
 
 class EventHandler(Protocol):
@@ -18,6 +20,7 @@ class EventHandler(Protocol):
 
     async def get_current_status(self, event: BaseModel) -> StreamStatus | None:
         """Check if the stream is currently being processed."""
+        logger.warning("get_current_status(self,event)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, event)
         ...
 
     def error_event(self, correlation_id: str, error: Exception) -> BaseModel:

@@ -145,6 +145,7 @@ class SemanticSearchWorkflow(Workflow):
                 )
                 return result.retrieval.nodes
             except asyncio.CancelledError as e:
+                logger.warning("semantic_search()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
                 if handler:
                     await handler.cancel_run()
                 raise e

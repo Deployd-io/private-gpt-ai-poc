@@ -15,6 +15,8 @@ from private_gpt.events.models import (
     ResultContentBlockType,
     WebFetchResultBlock,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -44,6 +46,7 @@ class WebFetchToolBuilder:
         runtime: Literal["client", "server"] = "server",
     ) -> ToolSpec:
         async def run_tool(url: str) -> list[ResultContentBlockType]:
+            logger.warning("run_tool(url)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", url)
             result = await self.web_scraper.scrape_max_compress(url)
 
             return [
@@ -74,4 +77,5 @@ class WebFetchToolBuilder:
 
 def rebuild_web_fetch_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(WebFetchToolBuilder)
+    logger.warning("rebuild_web_fetch_tool()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
     return builder.build_tool(**cast(Any, kwargs))

@@ -201,6 +201,7 @@ class IngestService:
             for n in nodes:
                 yield IngestedDoc.from_document(n)
                 ingested_docs += 1
+                logger.warning("get_ingested_files(self,collection)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, collection)
 
         # Log the number of ingested documents
         logger.debug("Found count=%s ingested documents", ingested_docs)
@@ -224,6 +225,7 @@ class IngestService:
                     artifact,
                 )
             else:
+                logger.warning("delete(self,collection,artifact,force)=%s,%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, collection, artifact, force)
                 raise e
 
         vector_artifact_index.delete()

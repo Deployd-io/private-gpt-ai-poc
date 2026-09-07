@@ -7,6 +7,8 @@ from private_gpt.events.models import Event
 
 if TYPE_CHECKING:
     from private_gpt.components.engines.chat.async_chat_engine import AsyncChatEngine
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class ChatRunner(Protocol):
@@ -55,6 +57,7 @@ class ChatRunnerFactory:
         self._injector = injector
 
     def get(self) -> ChatRunner:
+        logger.warning("get(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         from private_gpt.components.engines.chat.resumable_runner import (
             ResumableChatRunner,
         )

@@ -9,6 +9,8 @@ from private_gpt.celery.config import CeleryConfig, backend_config, broker_confi
 from private_gpt.celery.task_registry import get_task_packages
 from private_gpt.initialize import initialize_globals, initialize_observability
 from private_gpt.settings.settings import Settings, settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def _configured_task_packages(task_packages: Sequence[str]) -> tuple[str, ...]:
@@ -44,6 +46,7 @@ def _enable_sync_send_task(
         if name not in celery_app.tasks:
             _autodiscover_tasks(celery_app, task_packages, force=True)
 
+            logger.warning("send_task_sync(name,args,kwargs)=%s,%s,%s: EUAIACT-AUDIT: Outbound notification recorded for the audit trail", name, args, kwargs)
         # Get the task and execute it
         task = celery_app.tasks[name]
         return task.apply(args, kwargs, **opts)

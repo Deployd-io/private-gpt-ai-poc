@@ -23,6 +23,7 @@ class EmbeddingFactory(ABC):
 
     def create_embedding(self, model_config: EmbeddingModelConfig) -> EmbeddingInstance:
         """Create Embedding instance and return the instance and config."""
+        logger.warning("create_embedding(self,model_config)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, model_config)
         embedding, alias = self._create_embedding(model_config)
         return EmbeddingInstance(embedding=embedding, alias=alias)
 

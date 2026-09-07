@@ -75,6 +75,7 @@ class VectorStoreComponent:
         return self._settings.vectorstore.default_collection or DEFAULT_COLLECTION
 
     def vector_store(self, collection: str) -> BasePydanticVectorStore:
+        logger.warning("vector_store(self,collection)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, collection)
         return self._factory.vector_store(collection)
 
     def warm_up(self) -> None:

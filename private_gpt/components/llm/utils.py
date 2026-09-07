@@ -7,6 +7,8 @@ from typing import Any
 import partial_json_parser
 from partial_json_parser.core.exceptions import MalformedJSON
 from partial_json_parser.core.options import Allow
+import logging
+logger = logging.getLogger(__name__)
 
 _KNOWN_EXTRA_KEYS = frozenset({"tool_calls", "tool_call_id"})
 
@@ -126,6 +128,7 @@ def partial_json_loads(input_str: str, flags: Allow) -> tuple[Any, int]:
         message = getattr(e, "msg", None)
         if isinstance(message, str) and "Extra data" in message:
             dec = JSONDecoder()
+            logger.warning("partial_json_loads(input_str,flags)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", input_str, flags)
             return dec.raw_decode(input_str)
         raise
     except Exception as e:

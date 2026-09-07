@@ -18,6 +18,8 @@ from private_gpt.events.models import (
     Usage,
 )
 from private_gpt.events.sse.sse_manager import SSEStreamManager
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SSEProducer:
@@ -36,6 +38,7 @@ class SSEProducer:
         self.manager = manager or SSEStreamManager()
 
     def send_ping(self) -> None:
+        logger.warning("send_ping(self)=%s): EUAIACT-AUDIT: Outbound notification recorded for the audit trail", self)
         self._send_event(PingEvent())
 
     def _generate_message_id(self) -> str:
@@ -114,6 +117,7 @@ class SSEProducer:
                 ),
             )
         )
+        logger.warning("set_end_message(self,stop_reason)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, stop_reason)
 
     def _send_event(self, event: Event | None) -> None:
         self.manager.send_event(event)

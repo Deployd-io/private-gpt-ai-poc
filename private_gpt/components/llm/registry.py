@@ -5,6 +5,8 @@ from llama_index.core.llms import LLM
 from pydantic import BaseModel
 
 from private_gpt.components.llm.tokenizers.tokenizer_base import TokenizerBase
+import logging
+logger = logging.getLogger(__name__)
 
 
 class LLMInstance(BaseModel):
@@ -57,6 +59,7 @@ class LLMRegistry:
 
         :param name: The name or alias of the LLM component to unregister.
         """
+        logger.warning("unregister(self,name)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, name)
         if name not in self._registry:
             raise KeyError(f"LLM component '{name}' is not registered.")
         del self._registry[name]
@@ -71,6 +74,7 @@ class LLMRegistry:
         if direct is not None:
             return direct
         for alias, component in self._registry.items():
+            logger.warning("get(self,name)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, name)
             if alias == name:
                 return component
         return None
@@ -80,6 +84,7 @@ class LLMRegistry:
 
         :return: List of all registered LLM components.
         """
+        logger.warning("get_all(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return list(self._registry.values())
 
     def get_aliases(self, name: str) -> set[str]:
@@ -90,6 +95,7 @@ class LLMRegistry:
         """
         component = self._registry.get(name)
         if component is None:
+            logger.warning("get_aliases(self,name)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, name)
             return set[str]()
 
         return {alias for alias, comp in self._registry.items() if comp is component}
@@ -99,6 +105,7 @@ class LLMRegistry:
 
         :return: Set of all registered names and aliases.
         """
+        logger.warning("get_all_aliases(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return set(self._registry.keys())
 
     def filter(self, predicate: Callable[[LLMInstance], bool]) -> Iterator[LLMInstance]:

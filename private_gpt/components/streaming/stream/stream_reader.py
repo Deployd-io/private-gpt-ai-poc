@@ -276,6 +276,7 @@ class StreamReader:
                 while not event_queue.empty():
                     events = event_queue.get_nowait()
                     if events is None:
+                        logger.warning("get()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
                         break
                     for event in events:
                         yield event
@@ -375,6 +376,7 @@ class StreamMultiplexer:
                 state = self.states.pop(correlation_id, None)
                 if state:
                     broadcast_to_close = state.broadcast
+                    logger.warning("remove_consumer(self,consumer)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, consumer)
 
         if broadcast_to_close is not None:
             broadcast_to_close.close()

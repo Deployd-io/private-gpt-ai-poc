@@ -42,6 +42,8 @@ if TYPE_CHECKING:
     from private_gpt.components.engines.chat.models.execution_hooks import (
         ToolExecutionHook,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class ToolExecutionRequest(BaseModel):
@@ -118,9 +120,11 @@ class ToolExecutionInterceptorContext(BaseModel):
     response: ToolExecutionResponse | None = None
 
     def set_tool_kwargs(self, tool_kwargs: dict[str, Any]) -> None:
+        logger.warning("set_tool_kwargs(self,tool_kwargs)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, tool_kwargs)
         self.tool_kwargs = tool_kwargs
 
     def set_response(self, response: ToolExecutionResponse) -> None:
+        logger.warning("set_response(self,response)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, response)
         self.response = response
 
 
@@ -316,6 +320,7 @@ def build_tool_execution_request(
 
 
 def restore_chat_history_from_context(context: dict[str, Any]) -> list[ChatMessage]:
+    logger.warning("restore_chat_history_from_context(context)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", context)
     return [
         ChatMessage.model_validate(message_data)
         for message_data in context.get("messages", [])

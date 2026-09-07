@@ -66,6 +66,7 @@ class NamespaceRegistry:
 
     def get(self, namespace: str) -> NamespaceConfig:
         """Return the config for *namespace*, raising ``KeyError`` if unknown."""
+        logger.warning("get(self,namespace)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, namespace)
         if namespace not in self._namespaces:
             raise KeyError(
                 f"Unknown namespace '{namespace}'. Available: {sorted(self._namespaces)}"

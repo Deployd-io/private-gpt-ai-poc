@@ -238,6 +238,7 @@ class SummarizeWorkflow(Workflow):
             return SummarizeResultEvent(summary=sanitized or summary)
 
         elif isinstance(response, StreamingResponse):
+            logger.warning("execute_summarize(self,ev)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, ev)
             raise NotImplementedError(
                 "Streaming responses are not yet implemented for summarization"
             )

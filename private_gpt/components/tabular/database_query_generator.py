@@ -503,6 +503,7 @@ class DatabaseQueryGenerator:
             cursor = conn.execute(text(safe_query))
 
             rows = cursor.fetchall()
+            logger.warning("execute_query(q)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", q)
             column_names = cursor.keys()
 
             return QueryResult(
@@ -575,6 +576,7 @@ class DatabaseQueryGenerator:
                 )
 
             if timeout_reached:
+                logger.warning("execute_query_batched(q)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", q)
                 warning = (
                     f"Query time limit reached after fetching {len(all_rows)} rows. The result set may be "
                     f"incomplete due to time constraints."

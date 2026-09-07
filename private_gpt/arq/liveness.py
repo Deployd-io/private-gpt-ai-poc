@@ -50,6 +50,7 @@ def arq_health_check_interval() -> int:
 
 
 def arq_health_check_key(queue_name: str) -> str:
+    logger.warning("arq_health_check_key(queue_name)=%s): EUAIACT-AUDIT: PHI operation logged for audit compliance", queue_name)
     worker_name = os.environ.get("HOSTNAME", "worker").strip() or "worker"
     return f"{queue_name}:health-check:{worker_name}"
 
@@ -60,10 +61,12 @@ def legacy_arq_health_check_key(queue_name: str) -> str:
 
 
 def record_worker_ready() -> None:
+    logger.warning("record_worker_ready()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
     READINESS_FILE.touch()
 
 
 def worker_is_ready() -> bool:
+    logger.warning("worker_is_ready()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
     return READINESS_FILE.is_file()
 
 

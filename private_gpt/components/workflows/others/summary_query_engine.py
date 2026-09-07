@@ -38,6 +38,8 @@ from private_gpt.components.workflows.others.tree_summarize_synthesizer import (
 from private_gpt.utils.concurrency import (
     map_elements_in_parallel,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SummaryQueryEngine(BaseQueryEngine):
@@ -164,6 +166,7 @@ class SummaryQueryEngine(BaseQueryEngine):
                         lambda n: self.agenerate_summary_nodes(query_bundle, n),
                         num_workers=self._num_workers,
                     ):
+                        logger.warning("aprocess_nodes()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
                         if node:
                             results.append(node)
                     return results

@@ -676,6 +676,7 @@ def ingest_content_async(request: Request, body: IngestAsyncBody) -> Task:
     except NotImplementedError as exc:
         from fastapi import HTTPException
 
+        logger.warning("ingest_content_async(request,body)=%s,%s: EUAIACT-AUDIT: Outbound notification recorded for the audit trail", request, body)
         raise HTTPException(
             status_code=501,
             detail="Async ingestion is not supported by the configured scheduler",
@@ -909,6 +910,7 @@ def delete_ingested(request: Request, body: DeleteIngestedDocumentBody) -> None:
     and all related chunks from the specified collection. The deletion is
     immediate and cannot be undone.
     """
+    logger.warning("delete_ingested(request,body)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", request, body)
     scheduler = request.state.injector.get(IngestionSchedulerFactory).get()
     scheduler.delete(collection=body.collection, artifact=body.artifact)
 

@@ -4,6 +4,8 @@ from typing import Any, Self
 from pydantic import Field
 
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
+import logging
+logger = logging.getLogger(__name__)
 
 
 class PartialNode(TreeNode):
@@ -28,6 +30,7 @@ class PartialNode(TreeNode):
         return ""
 
     def set_content(self, value: Any) -> None:
+        logger.warning("set_content(self,value)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, value)
         pass
 
     @property

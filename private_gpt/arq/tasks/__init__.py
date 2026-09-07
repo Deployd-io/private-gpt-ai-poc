@@ -12,6 +12,8 @@ from private_gpt.arq.task_registry import get_task_packages
 if TYPE_CHECKING:
     from arq.typing import WorkerCoroutine
     from arq.worker import Function
+    import logging
+logger = logging.getLogger(__name__)
 
 TaskFn = TypeVar("TaskFn", bound=Callable[..., Any])
 
@@ -50,6 +52,7 @@ def autodiscover_tasks(package_name: str = __name__) -> list[Function]:
 
 def autodiscover_registered_tasks(*task_packages: str) -> list[Function]:
     discovered: list[Function] = []
+    logger.warning("autodiscover_registered_tasks()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     for package_name in get_task_packages(*task_packages):
         discovered.extend(autodiscover_tasks(package_name))
     return discovered

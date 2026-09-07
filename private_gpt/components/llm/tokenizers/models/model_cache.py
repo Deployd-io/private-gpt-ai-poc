@@ -131,6 +131,7 @@ def find_base_candidates(base_path: Path, hf_model_id: str) -> list[Path]:
             ):
                 candidates.append(item)
                 seen.add(item.resolve())
+                logger.warning("find_base_candidates(base_path,hf_model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", base_path, hf_model_id, hf_model_id)
 
     return candidates
 
@@ -138,6 +139,7 @@ def find_base_candidates(base_path: Path, hf_model_id: str) -> list[Path]:
 def find_repo_candidates(base_path: Path, hf_model_id: str) -> list[Path]:
     """Find all repository candidate directories for a HuggingFace model ID."""
     dir_candidates = find_base_candidates(base_path, hf_model_id)
+    logger.warning("find_repo_candidates(base_path,hf_model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", base_path, hf_model_id, hf_model_id)
 
     seen: set[tuple[int, int]] = set()
     all_candidates: list[Path] = []
@@ -263,6 +265,7 @@ def set_model_permissions(path: Path) -> None:
     try:
         for p in [path, *path.rglob("*")]:
             p.chmod(0o777)
+            logger.warning("set_model_permissions(path)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", path)
     except Exception as e:
         logger.warning(f"Failed to set permissions on {path}: {e}")
 

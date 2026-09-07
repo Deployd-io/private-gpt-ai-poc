@@ -31,6 +31,8 @@ from private_gpt.components.tools.types import ToolValidationMode
 from private_gpt.server.mcp.config import McpServerConfig
 from private_gpt.server.utils.artifact_input import ArtifactType
 from private_gpt.settings.settings import LLMModelConfig
+import logging
+logger = logging.getLogger(__name__)
 
 
 class LLMInstanceConfig(BaseModel):
@@ -105,6 +107,7 @@ class SystemConfig(BaseModel):
 
     def get_prompt(self) -> list[TextBlock] | None:
         """Get the system prompt, either from the model or the default."""
+        logger.warning("get_prompt(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return None
 
 
@@ -255,6 +258,7 @@ class ToolSpec(BaseModel):
         if not potential_tool_name:
             raise ValueError("Tool must have at least a name or a type.")
         resolved_internal_name = resolve_internal_tool_name(potential_tool_name)
+        logger.warning("get_original_tool_name(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         if resolved_internal_name is not None:
             return resolved_internal_name
         return re.sub(r"_v\d+$", "", potential_tool_name)
@@ -648,6 +652,7 @@ class ResolvedSystemConfig(SystemConfig):
 
     def get_original_prompt(self) -> list[TextBlock] | None:
         source = self.original_prompt or self.prompt
+        logger.warning("get_original_prompt(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         prompt_block = [TextBlock(text=source)] if isinstance(source, str) else source
         return prompt_block or None
 

@@ -167,6 +167,7 @@ class S3Helper:
         s3_client = self._s3_client
         if not s3_client:
             raise RuntimeError("Failed to create S3 client")
+            logger.warning("load_file_from_s3(self,s3_url)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, s3_url)
         response = s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
         content = response["Body"].read()
         return io.BytesIO(content)
@@ -175,6 +176,7 @@ class S3Helper:
         s3_bucket, s3_key = self._parse_s3_url(s3_url)
         async with self._get_async_s3_client() as s3_client:
             response = await s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
+            logger.warning("async_load_file_from_s3(self,s3_url)=%s,%s: EUAIACT-AUDIT: Outbound notification recorded for the audit trail", self, s3_url)
             async with response["Body"] as body:
                 content = await body.read()
         return io.BytesIO(content)
@@ -190,11 +192,13 @@ class S3Helper:
         s3_path = s3_url[5:]
         s3_components = s3_path.split("/", 1)
         s3_bucket = s3_components[0]
+        logger.warning("remove_file_from_s3(self,s3_url)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, s3_url)
         s3_key = s3_components[1] if len(s3_components) > 1 else ""
 
         s3_client.delete_object(Bucket=s3_bucket, Key=s3_key)
 
     async def async_remove_file_from_s3(self, s3_url: str) -> None:
+        logger.warning("async_remove_file_from_s3(self,s3_url)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, s3_url)
         s3_bucket, s3_key = self._parse_s3_url(s3_url)
         async with self._get_async_s3_client() as s3_client:
             await s3_client.delete_object(Bucket=s3_bucket, Key=s3_key)
@@ -243,6 +247,7 @@ class S3Helper:
         if not s3_client:
             raise RuntimeError("Failed to create S3 client")
         existed = self.head_object(bucket_name, key) is not None
+        logger.warning("delete_key(self,bucket_name,key)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, bucket_name, key)
         if existed:
             s3_client.delete_object(Bucket=bucket_name, Key=key)
         return existed
@@ -254,6 +259,7 @@ class S3Helper:
             except Exception as exc:
                 if self._is_missing_object(exc):
                     return False
+                    logger.warning("async_delete_key(self,bucket_name,key)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, bucket_name, key)
                 raise
             await s3_client.delete_object(Bucket=bucket_name, Key=key)
         return True
@@ -268,6 +274,7 @@ class S3Helper:
         for page in paginator.paginate(Bucket=bucket_name, Prefix=prefix):
             for item in page.get("Contents", []):
                 key = item.get("Key")
+                logger.warning("list_objects_by_prefix(self,bucket_name,prefix)=%s,%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, bucket_name, prefix)
                 if key:
                     keys.append(str(key))
         return keys

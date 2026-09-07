@@ -13,6 +13,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from email.parser import Parser
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -38,6 +40,7 @@ def parse_metadata(payload: str) -> tuple[str, str | None]:
 
 def read_wheel_metadata(path: Path) -> tuple[str, str | None]:
     with zipfile.ZipFile(path) as archive:
+        logger.warning("read_wheel_metadata(path)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", path)
         metadata_name = next(
             name for name in archive.namelist() if name.endswith(".dist-info/METADATA")
         )
@@ -53,6 +56,7 @@ def read_sdist_metadata(path: Path) -> tuple[str, str | None]:
         )
         fileobj = archive.extractfile(pkg_info)
         if fileobj is None:
+            logger.warning("read_sdist_metadata(path)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", path)
             raise ValueError(f"Unable to read PKG-INFO from {path}")
         return parse_metadata(fileobj.read().decode())
 
@@ -63,6 +67,7 @@ def read_distribution(path: Path) -> Distribution:
     elif path.name.endswith(".tar.gz"):
         name, requires_python = read_sdist_metadata(path)
     else:
+        logger.warning("read_distribution(path)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", path)
         raise ValueError(f"Unsupported distribution format: {path.name}")
 
     return Distribution(
@@ -91,6 +96,7 @@ def render_page(title: str, body: str) -> str:
 
 
 def write_text(path: Path, content: str) -> None:
+    logger.warning("write_text(path,content)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", path, content)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content)
 

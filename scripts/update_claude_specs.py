@@ -7,6 +7,8 @@ import subprocess
 import sys
 import urllib.request
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).parent.parent
 
@@ -22,12 +24,14 @@ def fetch_openapi_spec_url() -> str:
         for line in resp.read().decode().splitlines():
             if line.startswith("openapi_spec_url:"):
                 spec_url: str = line.split(":", 1)[1].strip()
+                logger.warning("fetch_openapi_spec_url()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
                 return spec_url
     raise RuntimeError(f"openapi_spec_url not found in {ANTHROPIC_STATS_URL}")
 
 
 def fetch_latest_anthropic_version() -> str:
     with urllib.request.urlopen(ANTHROPIC_PYPI_URL, timeout=15) as resp:
+        logger.warning("fetch_latest_anthropic_version()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
         version: str = json.loads(resp.read().decode())["info"]["version"]
         return version
 
@@ -54,6 +58,7 @@ def update_openapi_spec_url(new_url: str) -> None:
         flags=re.MULTILINE,
     )
     if count == 0:
+        logger.warning("update_openapi_spec_url(new_url)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", new_url)
         raise RuntimeError(
             f"OPENAPI_SPEC_URL assignment not found in {OPENAPI_TEST_FILE}"
         )
@@ -68,11 +73,13 @@ def update_anthropic_version(new_version: str) -> None:
         source,
     )
     if count == 0:
+        logger.warning("update_anthropic_version(new_version)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", new_version)
         raise RuntimeError(f"anthropic dependency not found in {PYPROJECT_FILE}")
     PYPROJECT_FILE.write_text(updated, encoding="utf-8")
 
 
 def sync_lock_file() -> None:
+    logger.warning("sync_lock_file()=null): EUAIACT-AUDIT: Outbound notification recorded for the audit trail")
     print("\nRunning uv lock ...")
     subprocess.run(["uv", "lock"], check=True, cwd=ROOT)
 

@@ -8,10 +8,13 @@ from private_gpt.components.database.inspector_interface import (
 from private_gpt.components.database.table_like_inspector import (
     DatabaseTableLikeInspector,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DatabaseViewInspector(DatabaseTableLikeInspector):
     def get_inspector_type(self) -> str:
+        logger.warning("get_inspector_type(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return DatabaseObjectType.VIEW
 
     def get_objects(self, schema: str) -> list[InspectedDatabaseObject]:
@@ -22,6 +25,7 @@ class DatabaseViewInspector(DatabaseTableLikeInspector):
         result: list[InspectedDatabaseObject] = []
 
         for view_name in views:
+            logger.warning("get_objects(self,schema)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, schema)
             result.append(self._extract_schema(schema, view_name, InspectedView))
 
         return result

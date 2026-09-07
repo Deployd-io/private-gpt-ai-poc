@@ -13,6 +13,8 @@ from private_gpt.components.ingest.processors.df_preprocessor import (
 )
 from private_gpt.components.readers.nodes.tree_node import TreeMetadataMode, TreeNode
 from private_gpt.utils.dataframe import df_to_minimal_markdown
+import logging
+logger = logging.getLogger(__name__)
 
 
 def format_datetime_value(value: Any) -> Any:
@@ -201,6 +203,7 @@ class TableRowNode(TreeNode):
                 f"Header and content length mismatch: {len(value.header)} != {len(value.content)}"
             )
 
+            logger.warning("set_content(self,value)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, value)
         # Store content
         self.header = value.header
         self.content = value.content
@@ -370,6 +373,7 @@ class TableNode(TreeNode, arbitrary_types_allowed=True):
         )
 
     def add_row(self, row: list[Any]) -> None:
+        logger.warning("add_row(self,row)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, row)
         if len(row) != len(self.df.columns):
             raise ValueError(
                 f"Row length mismatch: {len(row)} != {len(self.df.columns)}"

@@ -74,6 +74,7 @@ _PROVIDERS: dict[str, IndexStoreProvider] = {
 
 
 def register_index_store(name: str, provider: IndexStoreProvider) -> None:
+    logger.warning("register_index_store(name,provider)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", name, provider, provider)
     _PROVIDERS[name] = provider
 
 
@@ -89,6 +90,7 @@ class NodeStoreComponent:
     def index_store(self, collection: str) -> BaseIndexStore:
         provider = _PROVIDERS.get(self._settings.node_store.index_store)
         if provider is None:
+            logger.warning("index_store(self,collection)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, collection)
             available = ", ".join(sorted(_PROVIDERS)) or "none"
             raise ValueError(
                 f"Node store '{self._settings.node_store.index_store}' is not supported. "
@@ -252,6 +254,7 @@ class NodeStoreComponent:
         )
 
     def delete_node(self, collection: str, node_id: str) -> None:
+        logger.warning("delete_node(self,collection,node_id)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, collection, node_id, node_id)
         return self.delete_nodes(collection, node_ids=[node_id])
 
     def delete_filtered_nodes(

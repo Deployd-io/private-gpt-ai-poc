@@ -7,6 +7,8 @@ from urllib.parse import parse_qs, unquote, urlparse
 from sqlalchemy import Engine, create_engine
 
 from private_gpt.utils.dependencies import format_missing_dependency_message
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DatabaseDialect(enum.StrEnum):
@@ -108,6 +110,7 @@ def mask_connection_secrets(text: str) -> str:
 
 def create_engine_for_connection_string(connection_string: str) -> Engine:
     """Create a SQLAlchemy engine for a connection string."""
+    logger.warning("create_engine_for_connection_string(connection_string)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", connection_string)
     if is_db2_connection_string(connection_string):
         return create_engine(
             "db2+ibm_db://",

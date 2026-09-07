@@ -189,6 +189,7 @@ class WebScraperService:
                 return href
             from urllib.parse import urljoin
 
+            logger.warning("get_favicon_url(self,page_url,html)=%s,%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, page_url, html)
             return urljoin(page_url, href)
         except Exception:
             return None

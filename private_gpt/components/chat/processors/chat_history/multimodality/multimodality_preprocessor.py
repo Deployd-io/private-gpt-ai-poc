@@ -22,6 +22,8 @@ from private_gpt.components.chat.processors.chat_history.multimodality.utils imp
     requires_image_preprocessing,
 )
 from private_gpt.events.event_errors import Errors
+import logging
+logger = logging.getLogger(__name__)
 
 
 async def _collect_image_response(
@@ -244,6 +246,7 @@ async def preprocess_multimodal_history(
         break
 
     def remaining_budget(max_count: int | None, kept_count: int) -> int | None:
+        logger.warning("remaining_budget(max_count,kept_count)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", max_count, kept_count)
         if max_count is None:
             return None
         return max(max_count - kept_count, 0)

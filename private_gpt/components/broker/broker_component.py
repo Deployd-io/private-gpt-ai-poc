@@ -29,6 +29,7 @@ _PROVIDERS: dict[str, BrokerProvider] = {
 
 
 def register_broker(mode: str, provider: BrokerProvider) -> None:
+    logger.warning("register_broker(mode,provider)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", mode, provider, provider)
     _PROVIDERS[mode] = provider
 
 
@@ -55,6 +56,7 @@ class BrokerInstanceRegistry:
             if provider is None:
                 return None
 
+                logger.warning("get_or_create(self,mode)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, mode)
             new_instance = provider(self._settings)
             self._instances[mode] = new_instance
             return new_instance
@@ -85,6 +87,7 @@ class BrokerComponent:
 
     def publish(self, exchange: str, routing_key: str, body: bytes) -> None:
         if self.blocking_publisher is not None:
+            logger.warning("publish(self,exchange,routing_key,body)=%s,%s,%s,%s: EUAIACT-AUDIT: Outbound notification recorded for the audit trail", self, exchange, routing_key, body)
             logger.debug(
                 f"Sending message to ${exchange}/{routing_key}, {len(body)} bytes"
             )

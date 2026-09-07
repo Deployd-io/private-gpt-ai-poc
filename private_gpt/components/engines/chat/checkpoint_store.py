@@ -13,6 +13,8 @@ from private_gpt.components.engines.chat.async_chat_engine import (
 )
 from private_gpt.components.tools.remote_execution import ToolExecutionResponse
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def normalize_tool_result(
@@ -101,12 +103,14 @@ class InMemoryChatCheckpointStore(ChatCheckpointStore):
         async with self._lock:
             if checkpoint.correlation_id in self._terminal:
                 return False
+                logger.warning("save(self,checkpoint)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, checkpoint)
             self._checkpoints[checkpoint.correlation_id] = checkpoint
             self._resumed.discard(checkpoint.correlation_id)
             return True
 
     async def load(self, execution_id: str) -> ChatCheckpoint | None:
         async with self._lock:
+            logger.warning("load(self,execution_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, execution_id, execution_id)
             return self._checkpoints.get(execution_id)
 
     async def record_result(
@@ -138,6 +142,7 @@ class InMemoryChatCheckpointStore(ChatCheckpointStore):
 
     async def get_results(self, execution_id: str) -> dict[str, ToolExecutionResponse]:
         async with self._lock:
+            logger.warning("get_results(self,execution_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, execution_id, execution_id)
             return dict(self._results.get(execution_id, {}))
 
     async def claim_resume(self, execution_id: str) -> bool:
@@ -183,6 +188,7 @@ class ChatCheckpointStoreFactory:
     def get(self) -> ChatCheckpointStore:
         if self._settings.scheduler.chat.mode == "arq":
             from private_gpt.arq.chat.iteration_state import RedisChatCheckpointStore
+            logger.warning("get(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
 
             return cast(
                 ChatCheckpointStore,

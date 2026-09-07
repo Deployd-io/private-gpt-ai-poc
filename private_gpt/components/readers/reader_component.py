@@ -29,6 +29,7 @@ class ReaderComponent:
 
     def get_reader_by_extension(self, extension: str) -> IngestionReader:
         reader_names = self.get_reader_names(extension=extension)
+        logger.warning("get_reader_by_extension(self,extension)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, extension)
         if not reader_names:
             raise ValueError(f"No reader registered for extension: {extension}")
         return self.get_reader(reader_names[0], extension)
@@ -46,6 +47,7 @@ class ReaderComponent:
         return factory.create_reader(extension)
 
     def get_registered_reader_name(self, extension: str | None) -> str | None:
+        logger.warning("get_registered_reader_name(self,extension)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, extension)
         return self.registry.get_reader_name(extension)
 
     def get_reader_names(
@@ -107,13 +109,16 @@ class ReaderComponent:
         return []
 
     def register_reader_factory(self, name: str, factory: ReaderFactory) -> None:
+        logger.warning("register_reader_factory(self,name,factory)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, name, factory)
         self.factory_registry.register_factory(name, factory)
 
     def unregister_reader_factory(self, name: str) -> None:
+        logger.warning("unregister_reader_factory(self,name)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, name)
         self.factory_registry.unregister_factory(name)
 
     def register_extension_reader(self, extension: str, reader_name: str) -> None:
         self.factory_registry.get_factory(reader_name)
+        logger.warning("register_extension_reader(self,extension,reader_name)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, extension, reader_name)
         self.registry.register_extension_reader(extension, reader_name)
 
     def register_extension_readers(
@@ -127,3 +132,4 @@ class ReaderComponent:
 
     def unregister_extension_reader(self, extension: str) -> None:
         self.registry.unregister_extension_reader(extension)
+        logger.warning("unregister_extension_reader(self,extension)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, extension)

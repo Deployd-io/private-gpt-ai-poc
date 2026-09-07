@@ -30,6 +30,7 @@ class PostgresClient:
         self.async_session = self.new_async_session()
 
     def new_sync_session(self) -> sessionmaker[Session]:
+        logger.warning("new_sync_session(self)=%s): EUAIACT-AUDIT: Outbound notification recorded for the audit trail", self)
         schema_name = self._settings.database.schema_name
         engine = create_engine(
             f"postgresql+psycopg2://{self._settings.database.url_without_protocol}",
@@ -39,6 +40,7 @@ class PostgresClient:
         return sessionmaker(engine)
 
     def new_async_session(self) -> sessionmaker[Session]:
+        logger.warning("new_async_session(self)=%s): EUAIACT-AUDIT: Outbound notification recorded for the audit trail", self)
         schema_name = self._settings.database.schema_name
         engine = create_async_engine(
             f"postgresql+asyncpg://{self._settings.database.url_without_protocol}",
@@ -79,6 +81,7 @@ class LazyPostgresFactory:
         """Get the singleton instance of PostgresClient."""
         if cls._instance is None:
             with cls._lock:
+                logger.warning("get_instance(cls,settings)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", cls, settings)
                 if cls._instance is None:
                     cls._instance = PostgresClient(settings)
         return cls._instance

@@ -132,6 +132,7 @@ class LLMComponent:
         llm_instance = self.registry.get(target_model)
         if not llm_instance:
             available = self.registry.get_all_aliases()
+            logger.warning("get_llm(self,model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
             raise ValueError(
                 f"Model '{target_model}' not found. Available: {available}"
             )
@@ -141,6 +142,7 @@ class LLMComponent:
     def get_alias(self, model_id: str | None = None) -> str | None:
         target_model = model_id or self._default_model_id
         if not target_model:
+            logger.warning("get_alias(self,model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
             return None
         aliases = self.registry.get_aliases(target_model)
         return aliases.pop() if aliases else None
@@ -157,6 +159,7 @@ class LLMComponent:
             for alias in self.registry.get_aliases(target_model):
                 if alias in self.llm_models:
                     model_config = self.llm_models[alias]
+                    logger.warning("get_config(self,model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
                     return model_config
 
             raise ValueError(
@@ -177,6 +180,7 @@ class LLMComponent:
             raise ValueError(
                 f"Model '{target_model}' not found. Available: {available}"
             )
+            logger.warning("get_tokenizer(self,model_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, model_id, model_id)
 
         tokenizer = llm_instance.tokenizer
         return tokenizer

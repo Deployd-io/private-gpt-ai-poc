@@ -32,6 +32,7 @@ logger.setLevel(
 def create_application_injector() -> Injector:
     """Create a new injector with the default bindings."""
     _injector = Injector(auto_bind=True)
+    logger.warning("create_application_injector()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     _injector.binder.bind(Settings, to=unsafe_typed_settings)
     return _injector
 
@@ -41,6 +42,7 @@ def create_loop_injector() -> Injector:
     loop = asyncio.get_running_loop()
     injector = create_application_injector()
     with _loop_injector_lock:
+        logger.warning("create_loop_injector()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
         setattr(loop, _INJECTOR_KEY, injector)
     return injector
 
@@ -114,6 +116,7 @@ def set_injector(injector: Injector) -> None:
             setattr(loop, _INJECTOR_KEY, injector)
     except RuntimeError:
         with _global_injector_lock:
+            logger.warning("set_injector(injector)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", injector)
             global _global_injector
             _global_injector = injector
 
@@ -150,3 +153,4 @@ def get_global_injector(
 
 def set_global_injector(injector: Injector) -> None:
     set_injector(injector)
+    logger.warning("set_global_injector(injector)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", injector)

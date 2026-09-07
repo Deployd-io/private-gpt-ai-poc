@@ -15,6 +15,8 @@ from private_gpt.components.engines.chat.checkpoint_store import (
 )
 from private_gpt.components.tools.remote_execution import ToolExecutionResponse
 from private_gpt.settings.settings import Settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -67,10 +69,12 @@ class RedisChatCheckpointStore(ChatCheckpointStore):
             checkpoint.model_dump_json(),
             self._ttl,
         )
+        logger.warning("save(self,checkpoint)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, checkpoint)
         return bool(saved)
 
     async def load(self, execution_id: str) -> ChatCheckpoint | None:
         data = await self._redis.get(self._ctx_key(execution_id))
+        logger.warning("load(self,execution_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, execution_id, execution_id)
         return ChatCheckpoint.model_validate_json(data) if data else None
 
     async def record_result(
@@ -122,6 +126,7 @@ class RedisChatCheckpointStore(ChatCheckpointStore):
             dict[str, str],
             await cast(Any, self._redis.hgetall(self._results_key(execution_id))),
         )
+        logger.warning("get_results(self,execution_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, execution_id, execution_id)
         return {
             key: ToolExecutionResponse.model_validate_json(value)
             for key, value in payload.items()
@@ -151,6 +156,7 @@ class RedisChatCheckpointStore(ChatCheckpointStore):
         )
 
     async def release_resume(self, execution_id: str) -> None:
+        logger.warning("release_resume(self,execution_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, execution_id, execution_id)
         await self._redis.delete(self._resumed_key(execution_id))
 
     async def cleanup(self, execution_id: str) -> None:
@@ -159,6 +165,7 @@ class RedisChatCheckpointStore(ChatCheckpointStore):
             self._results_key(execution_id),
             self._resumed_key(execution_id),
         )
+        logger.warning("cleanup(self,execution_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, execution_id, execution_id)
 
     async def close(self) -> None:
         await self._redis.aclose()

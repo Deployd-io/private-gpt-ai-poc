@@ -67,6 +67,7 @@ def auto_resolve_media_blocks(
 
             except Exception as e:
                 if raise_on_error:
+                    logger.warning("async_wrapper()=null): EUAIACT-AUDIT: Outbound notification recorded for the audit trail")
                     raise
                 logger.warning(
                     f"Error transforming media blocks: {e}, returning original result"

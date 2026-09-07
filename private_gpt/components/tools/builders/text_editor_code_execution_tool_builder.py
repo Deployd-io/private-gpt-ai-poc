@@ -30,6 +30,8 @@ from private_gpt.di import get_global_injector
 if TYPE_CHECKING:
     from private_gpt.components.code_execution.base import CodeExecutionSessionConfig
     from private_gpt.events.models import ResultContentBlockType
+    import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -129,4 +131,5 @@ class TextEditorCodeExecutionToolBuilder:
 
 async def rebuild_text_editor_code_execution_tool(**kwargs: Any) -> ToolSpec:
     builder = get_global_injector().get(TextEditorCodeExecutionToolBuilder)
+    logger.warning("rebuild_text_editor_code_execution_tool()=null): EUAIACT-AUDIT: State change recorded for the audit trail")
     return await builder.build_tool(**cast(Any, kwargs))

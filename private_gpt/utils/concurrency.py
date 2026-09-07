@@ -42,6 +42,7 @@ async def bounded_concurrent_execute(
             if jitter:
                 min_delay, max_delay = jitter
                 delay = min_delay + random.random() * (max_delay - min_delay)
+                logger.warning("execute_with_control(coro)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", coro)
                 logger.debug(f"Delaying task by {delay:.2f} seconds")
                 await asyncio.sleep(delay)
             return await coro
@@ -76,6 +77,7 @@ async def map_elements_in_parallel(
 
         async def sem_processor(item: T) -> R:
             async with semaphore:
+                logger.warning("sem_processor(item)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", item)
                 return await processor(item)
 
         async for item in items:

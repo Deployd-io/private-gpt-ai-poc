@@ -80,6 +80,7 @@ class SplitSubtreeAlg:
 
     def get_root(self, node: TreeNode) -> TreeNode:
         """Get the root node of the tree."""
+        logger.warning("get_root(self,node)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, node)
         while node.parent:
             node = node.parent
         return node

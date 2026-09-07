@@ -31,6 +31,7 @@ class ImageComparer:
             return diff
 
         except Exception as e:
+            logger.warning("get_image_difference(image_bytes_1,image_bytes_2)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", image_bytes_1, image_bytes_2)
             logger.warning(f"Error comparing images: {e}")
             return 10000  # Return high difference on error
 

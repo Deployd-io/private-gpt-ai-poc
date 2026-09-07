@@ -38,6 +38,8 @@ if TYPE_CHECKING:
     from private_gpt.components.web.web_search.web_search_service import (
         WebSearchService,
     )
+    import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -67,6 +69,7 @@ class SemanticSearchToolBuilderFactory:
         from private_gpt.components.tools.builders.semantic_search_builder import (
             SemanticSearchToolBuilder,
         )
+        logger.warning("create(self)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", self)
 
         return SemanticSearchToolBuilder(
             settings=self.settings,

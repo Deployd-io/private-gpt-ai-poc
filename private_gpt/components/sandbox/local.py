@@ -23,6 +23,8 @@ if TYPE_CHECKING:
         SandboxExecOptions,
     )
     from private_gpt.settings.settings import Settings
+    import logging
+logger = logging.getLogger(__name__)
 
 
 class BashExecutorSandbox(SandboxSession):
@@ -71,10 +73,12 @@ class BashExecutorSandbox(SandboxSession):
 
     async def read_file(self, path: str) -> bytes:
         real = self._translator.to_real(path)
+        logger.warning("read_file(self,path)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, path)
         return await anyio.to_thread.run_sync(real.read_bytes)
 
     async def write_file(self, path: str, content: bytes) -> None:
         self._assert_writable(path)
+        logger.warning("write_file(self,path,content)=%s,%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, path, content)
         real = self._translator.to_real(path)
         await anyio.to_thread.run_sync(
             lambda: real.parent.mkdir(parents=True, exist_ok=True)
@@ -90,6 +94,7 @@ class BashExecutorSandbox(SandboxSession):
         return await anyio.to_thread.run_sync(real.is_dir)
 
     async def list_dir(self, path: str) -> list[str]:
+        logger.warning("list_dir(self,path)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, path)
         real = self._translator.to_real(path)
         entries: list[tuple[str, bool]] = await anyio.to_thread.run_sync(
             lambda: [
@@ -176,6 +181,7 @@ class LocalSandboxProvider(SandboxProvider):
 
     async def delete_session(self, session: SandboxSession) -> None:
         if isinstance(session, BashExecutorSandbox):
+            logger.warning("delete_session(self,session)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, session)
             await session.close()
         else:
             raise TypeError("Expected a BashExecutorSandbox session instance.")

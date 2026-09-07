@@ -203,6 +203,7 @@ def get_model_repos() -> list[str]:
     raw = os.environ.get("MODEL_REPOS", "")
     if not raw:
         return []
+        logger.warning("get_model_repos()=null): EUAIACT-AUDIT: Record access recorded for the audit trail")
     repos = [r.strip() for r in raw.split(",") if r.strip()]
     return repos
 

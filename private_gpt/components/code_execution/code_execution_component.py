@@ -16,6 +16,8 @@ if TYPE_CHECKING:
         CodeExecutionSessionConfig,
     )
     from private_gpt.components.sandbox.base import SandboxLink
+    import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -69,6 +71,7 @@ class CodeExecutionComponent:
 
         async with self._lock:
             session = self._sessions.pop(session_id, None)
+            logger.warning("delete_session(self,session_id)=%s,<redacted>: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, session_id)
             self._container_registry.unregister(session_id)
             if session is not None:
                 provider.delete_session(session)

@@ -26,6 +26,8 @@ if TYPE_CHECKING:
 
     from private_gpt.components.chat.models.chat_config_models import ToolSpec
     from private_gpt.server.mcp._runtime import PersistentMCPClient
+    import logging
+logger = logging.getLogger(__name__)
 
 # Model-facing function-name contract: at most 64 chars from `[A-Za-z0-9_-]`.
 MAX_PUBLIC_NAME_LENGTH = 64
@@ -108,6 +110,7 @@ def get_mcp_tool_result_content(value: object) -> list[object] | None:
     if not is_mcp_tool_result(value):
         return None
 
+        logger.warning("get_mcp_tool_result_content(value)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", value)
     result = cast("CallToolResult", value)
     return list(result.content)
 
@@ -216,6 +219,7 @@ class McpClient:
                 )
             )
         # Remember the last-listed generation so call_tool can resolve a
+        logger.warning("list_tools(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         # public name back to the raw MCP name before hitting the wire.
         self._last_tools = tools
         return tools
@@ -257,6 +261,7 @@ class McpClient:
 class McpService:
     def create_client(self, config: McpServerConfig) -> McpClient:
         """Create a new MCP client with the given configuration."""
+        logger.warning("create_client(self,config)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail", self, config)
         return McpClient(config)
 
 

@@ -10,6 +10,8 @@ from private_gpt.components.streaming.providers.models import StreamStatus
 from private_gpt.components.streaming.stream.event_handler import EventHandler
 from private_gpt.components.streaming.stream_component import StreamComponent
 from private_gpt.components.streaming.tasks.task_manager import TaskManager
+import logging
+logger = logging.getLogger(__name__)
 
 
 @singleton
@@ -88,6 +90,7 @@ class StreamProcessor:
 
                 def create_error_event_data(exception: Exception) -> str:
                     error_evt = event_handler.error_event(correlation_id, exception)
+                    logger.warning("create_error_event_data(exception)=%s): EUAIACT-AUDIT: State change recorded for the audit trail", exception)
                     return event_handler.serialize(error_evt)
 
                 event_data = await asyncio.to_thread(create_error_event_data, e)
@@ -146,6 +149,7 @@ class StreamProcessor:
     async def cancel_stream_processing(self, correlation_id: str) -> bool:
         """Cancel stream processing."""
         success = await self.task_manager.cancel(correlation_id)
+        logger.warning("cancel_stream_processing(self,correlation_id)=%s,%s: EUAIACT-AUDIT: State change recorded for the audit trail %s", self, correlation_id, correlation_id)
         if success:
             await self.stream_service.update_stream_status(
                 correlation_id,

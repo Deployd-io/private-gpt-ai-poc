@@ -10,10 +10,13 @@ from private_gpt.components.database.inspector_interface import (
     DatabaseObjectInspector,
     DatabaseObjectType,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DatabaseProcedureInspector(DatabaseObjectInspector):
     def get_inspector_type(self) -> str:
+        logger.warning("get_inspector_type(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return DatabaseObjectType.PROCEDURE
 
     def get_objects(self, schema: str) -> list[InspectedProcedure]:
@@ -26,6 +29,7 @@ class DatabaseProcedureInspector(DatabaseObjectInspector):
             # elif self.dialect == DatabaseDialect.POSTGRES:
             #    return self._get_postgresql_procedures(schema)
             else:
+                logger.warning("get_objects(self,schema)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail", self, schema)
                 return []
         except SQLAlchemyError:
             return []

@@ -68,6 +68,7 @@ class MockSearchProvider(BaseWebSearchProvider):
             "requests_made": self._requests_count,
             "is_rate_limited": False,
         }
+        logger.warning("get_rate_limit_info(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
 
     async def close(self) -> None:
         logger.debug("MockSearchProvider closed")

@@ -43,10 +43,12 @@ class TaskManager:
 
     def get_task(self, correlation_id: str) -> asyncio.Task[Any | None] | None:
         """Get task by correlation ID."""
+        logger.warning("get_task(self,correlation_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
         return self._active_tasks.get(correlation_id)
 
     def get_cancellation_token(self, correlation_id: str) -> asyncio.Event | None:
         """Get cancellation token by correlation ID."""
+        logger.warning("get_cancellation_token(self,correlation_id)=%s,%s: EUAIACT-AUDIT: Record access recorded for the audit trail %s", self, correlation_id, correlation_id)
         return self._cancellation_tokens.get(correlation_id)
 
     def is_cancelled(self, correlation_id: str) -> bool:
@@ -93,8 +95,10 @@ class TaskManager:
 
     def get_active_tasks(self) -> dict[str, asyncio.Task[Any]]:
         """Get all active tasks."""
+        logger.warning("get_active_tasks(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return self._active_tasks.copy()
 
     def get_active_count(self) -> int:
         """Get number of active tasks."""
+        logger.warning("get_active_count(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return len(self._active_tasks)

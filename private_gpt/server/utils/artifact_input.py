@@ -10,6 +10,8 @@ from pydantic import BaseModel, Field, field_validator
 from private_gpt.chat.extensions.context_filter import ContextFilter
 from private_gpt.components.skills.models.skill_entities import SkillFilter
 from private_gpt.server.ingest.uri_loader import load_file_from_uri
+import logging
+logger = logging.getLogger(__name__)
 
 
 class BinaryContent(NamedTuple):
@@ -157,6 +159,7 @@ class IngestedArtifact(Artifact):
 
     def get_context_filter(self) -> ContextFilter:
         """Get the ContextFilter directly."""
+        logger.warning("get_context_filter(self)=%s): EUAIACT-AUDIT: Record access recorded for the audit trail", self)
         return self.context_filter
 
 
